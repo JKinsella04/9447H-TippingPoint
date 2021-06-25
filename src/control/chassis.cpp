@@ -1,20 +1,45 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
 #include "pros/misc.hpp"
+#include "pros/motors.h"
 
 macro::PID drive_PID;
 macro::PID turn_PID;
 
-ChassisState chassis_mode = ChassisState::OFF;
+ChassisState chassis_mode = ChassisState::IDLE;
 
 bool Chassis::isRunning = false;
+bool Chassis::isSettled = true;
+int Chassis::tol = 0;
+double Chassis::target = 0, Chassis::theta = 0, Chassis::current = 0, Chassis::output = 0;
 
-// Chassis::Chassis() { }
+Chassis::Chassis() { }
+
+void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
+  LF.set_brake_mode(state);
+  // LM.set_brake_mode(state);
+  LB.set_brake_mode(state);
+  RF.set_brake_mode(state);
+  // RM.set_brake_mode(state);
+  RB.set_brake_mode(state);
+}
+void Chassis::waitUntilSettled() {
+  while(!isSettled) pros::delay(20);
+}
+
+void Chassis::reset(){
+  LF.tare_position();
+  // LM.tare_position();
+  LB.tare_position();
+  RF.tare_position();
+  // RM.tare_position();
+  RB.tare_position();
+}
 
 Chassis &Chassis::withGains(double kP_, double kI_, double kD_) {
   switch (chassis_mode) {
   case ChassisState::DRIVE:
-    drive_PID.set(kP_, kD_, kI_);
+    drive_PID.set(kP_, kI_, kD_);
     break;
 
   case ChassisState::TURN:
@@ -33,26 +58,28 @@ Chassis &Chassis::withTol(int tol_) {
 }
 
 Chassis &Chassis::drive(double target_) {
-  target = target_;
+  isSettled = false;
+  target = target_ * CONVERSION;
   chassis_mode = ChassisState::DRIVE;
   return *this;
 }
 
 Chassis &Chassis::turn(double theta_) {
+  isSettled = false;
   theta = theta_;
   chassis_mode = ChassisState::TURN;
   return *this;
 }
 
-void Chassis::start(void *ignore) {
-  if (!isRunning) {
+void Chassis::start(void* ignore) {
+  if(!isRunning) {
     pros::delay(500);
-    Chassis *that = static_cast<Chassis *>(ignore);
-    that->run();
+    Chassis *that = static_cast<Chassis*>(ignore);
+    that -> run();
   }
 }
 
-Chassis &Chassis::run() {
+void Chassis::run() {
   isRunning = true;
 
   while (isRunning) {
@@ -60,26 +87,94 @@ Chassis &Chassis::run() {
     if(!pros::competition::is_autonomous()) goto end;
 
     switch (chassis_mode) {
-    case ChassisState::DRIVE:
+    case ChassisState::DRIVE: {
       current = ( LOdometer.get_position() + ROdometer.get_position() ) /2.0;
-      drive_PID.calculate(target,  current);
-      break;
+      output = drive_PID.calculate(target, current);
 
-    case ChassisState::TURN:
-      current = ( L_IMU.get_heading() + M_IMU.get_heading() + R_IMU.get_heading() )/3;
-      if( current >= 358) current = 0;
-      turn_PID.calculate(target, current);
-      break;
+      std::cout << "Error:" << drive_PID.getError() <<std::endl; //Debug
 
-    case ChassisState::OPCONTROL:
-      break;
+      LF.move_voltage(output);
+      // LM.move_voltage(output);
+      LB.move_voltage(output);
+      RF.move_voltage(output);
+      // RM.move_voltage(output);
+      RB.move_voltage(output);
 
-    case ChassisState::OFF:
+      if(fabs(drive_PID.getError()) < tol){
+        LF.move(0);
+        // LM.move(0);
+        LB.move(0);
+        RF.move(0);
+        // RM.move(0);
+        RB.move(0);
+        isSettled = true;
+        chassis_mode = ChassisState::IDLE;
+        goto end;
+      }
       break;
     }
 
-    end:
-    pros::delay(10);
+    case ChassisState::TURN: {
+      // pros::c::imu_gyro_s_t gyro = L_IMU.get_gyro_rate();
+      // printf("IMU gyro values: {x: %f, y: %f, z: %f}\n", gyro.x, gyro.y, gyro.z);      
+      current = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() )/3;
+      
+      //Find quickest turn.
+
+      output = turn_PID.calculate(theta, current);
+
+      if (fabs(turn_PID.getError()) > 180) { 
+        turn_PID.setError( turn_PID.getError() - 360); 
+        output = turn_PID.calculate(); //recalculate output
+      }
+    
+      std::cout << "Error:" << turn_PID.getError() << std::endl; //Debug
+
+      LF.move_voltage(output);
+      // LM.move_voltage(output);
+      LB.move_voltage(output);
+      RF.move_voltage(-output);
+      // RM.move_voltage(output);
+      RB.move_voltage(-output);
+
+      if(fabs(turn_PID.getError()) < tol){
+        LF.move(0);
+        // LM.move(0);
+        LB.move(0);
+        RF.move(0);
+        // RM.move(0);
+        RB.move(0);
+        isSettled = true;
+        chassis_mode = ChassisState::IDLE;
+        goto end;
+      }
+
+      break;
+    }
+
+    case ChassisState::OPCONTROL: {
+      break;
+    }
+
+    case ChassisState::IDLE: {
+      LF.move(0);
+      // LM.move(0);
+      LB.move(0);
+      RF.move(0);
+      // RM.move(0);
+      RB.move(0);
+      // std::cout << "State: IDLE " << std::endl;
+      break;
+    }
+
+    default: {
+      break;
+    }
   }
-  return *this;
+
+    // std::cout << "Error: " << std::endl;
+
+    end:
+    pros::delay(2);
+  }
 }

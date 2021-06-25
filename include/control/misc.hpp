@@ -23,10 +23,19 @@ namespace macro {
             /*
             calculates output based off set values.
             */
-            double calculate(double target, double current);
+            double calculate(double target = 0, double current = 0);
+          
+            /*
+            Sets error to given value.
+            */
+            void setError(double error_);
 
+            /*
+            Returns error.
+            */
+            double getError();
         private:
-          double target, current, error, integral, derivative, prevError, kP, kD, kI, output;
+          static double target, current, error, integral, derivative, prevError, kP, kI, kD, output;
     };
 }
 

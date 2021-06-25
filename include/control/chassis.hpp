@@ -1,20 +1,39 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
+#include "pros/motors.h"
 
-
+#define CONVERSION 4169.079328314997
+#define HOLD pros::E_MOTOR_BRAKE_HOLD
+#define BRAKE pros::E_MOTOR_BRAKE_BRAKE
+#define COAST pros::E_MOTOR_BRAKE_COAST
 
 enum class ChassisState { 
-    DRIVE, TURN, OPCONTROL, OFF
+    DRIVE, TURN, OPCONTROL, IDLE
 }; 
 
 class Chassis {
     public:
     
     /*
-    sets the state of the chassis.
+    Constructor.
     */
-    void setState(ChassisState s);
+    Chassis();
+
+    /*
+    sets brake mode
+    */
+    void setBrakeType(pros::motor_brake_mode_e_t state);
+
+    /*
+    Delays thread until action is completed.
+    */
+    void waitUntilSettled();
+
+    /*
+    stops motors and resets relative variables.
+    */
+    void reset();
 
     /*
     Sets PID constants for both Chassis::drive() and Chassis::turn().
@@ -38,12 +57,12 @@ class Chassis {
 
     static void start(void* ignore);
 
-    Chassis& run();
+    void run();
 
     private:
     static bool isSettled;
     static bool isRunning;
 
-    int tol;
-    double target, theta, current;
+    static int tol;
+    static double target, theta, current, output;
 };
