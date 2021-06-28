@@ -1,18 +1,31 @@
 #pragma once
 #include "main.h"
 
-template<class State>
-class StateMachine{
-    public:
-    void setState(State newState){
-        state = newState;
-    }
-    
-    State state;
-
-};
+#define ACCEL 1
+#define DECCEL 2
 
 namespace macro {
+    class Slew{
+        public:
+
+        Slew(double accel_);
+        Slew(double accel_, double decel_);
+        Slew(double accel_, double decel_, bool reversible_);
+
+        Slew& withLimit(double limit_);
+
+        double calculate(int input);
+
+        double getOutput();
+
+        void reset();
+
+        private:
+            double accel, decel;
+            double input, output, limit;
+            bool isReversible, noDecel, isLimited;
+    };
+
     class PID{
         public:
             /*

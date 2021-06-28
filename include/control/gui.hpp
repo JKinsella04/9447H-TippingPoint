@@ -3,13 +3,11 @@
 #include "globals.hpp"
 #include "gif-pros/gifclass.hpp"
 
-//TODO: INIT Phase
-//TODO: Auton Screen
+
 //TODO: Debug Screen
 //TODO: Reset Screen
 
-LV_IMG_DECLARE(destiny)
-LV_IMG_DECLARE(field)
+LV_IMG_DECLARE(destiny) // background image is a destiny 2 emblem 
 LV_IMG_DECLARE(noAuton_IMG)
 LV_IMG_DECLARE(homeRow_IMG)
 LV_IMG_DECLARE(oneGoal_IMG)

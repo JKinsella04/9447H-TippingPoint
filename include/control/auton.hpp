@@ -2,12 +2,6 @@
 #include "main.h"
 #include "globals.hpp"
 
-
-// struct setAuton{
-//     std::string name;
-//     int id;
-// };
-
 class Autonomous{
     public:
 
@@ -37,8 +31,10 @@ class Autonomous{
   AUTON DECLARATIONS
 ===========================================*/
 
-void test();
-
 void homeRow();
 void oneGoal();
 void twoGoal();
+
+void skills();
+
+void test();

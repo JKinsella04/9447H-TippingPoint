@@ -6,6 +6,9 @@
 macro::PID drive_PID;
 macro::PID turn_PID;
 
+macro::Slew left(900, 900, true);
+macro::Slew right(900, 900, true);
+
 ChassisState chassis_mode = ChassisState::IDLE;
 
 bool Chassis::isRunning = false;
@@ -14,6 +17,12 @@ int Chassis::tol = 0;
 double Chassis::target = 0, Chassis::theta = 0, Chassis::current = 0, Chassis::output = 0;
 
 Chassis::Chassis() { }
+
+Chassis::~Chassis() { }
+
+void Chassis::setState(ChassisState s){
+  chassis_mode = s;
+}
 
 void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
   LF.set_brake_mode(state);
@@ -84,7 +93,7 @@ void Chassis::run() {
 
   while (isRunning) {
 
-    if(!pros::competition::is_autonomous()) goto end;
+    if(pros::competition::is_disabled()) goto end;
 
     switch (chassis_mode) {
     case ChassisState::DRIVE: {
@@ -150,6 +159,18 @@ void Chassis::run() {
     }
 
     case ChassisState::OPCONTROL: {
+      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
+      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
+      
+      double leftOutput = left.calculate(leftJoystick);
+      double rightOutput = right.calculate(rightJoystick);
+
+      LF.move_voltage(leftOutput);
+      // LM.move_voltage(leftOutput);
+      LB.move_voltage(leftOutput);
+      RF.move_voltage(rightOutput);
+      // RM.move_voltage(rightOutput);
+      RB.move_voltage(rightOutput);
       break;
     }
 

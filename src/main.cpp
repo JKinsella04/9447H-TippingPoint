@@ -4,15 +4,15 @@
 #include "control/mobileGoal.hpp"
 #include "control/intake.hpp"
 #include "control/gui.hpp"
+#include "control/auton.hpp"
 
+// Class Init
 
 
 void initialize() {
-	// Class Init
-    Chassis chassis;
-	Display display;
-
-	// Sensors
+	Chassis Chassis;
+ 	Display Display;
+    // Sensors
 	L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
 	while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(10); }
 
@@ -21,10 +21,10 @@ void initialize() {
     ROdometer.set_reversed(true);
 
     // Threads
-	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");
-	chassis.setBrakeType(HOLD);
+	pros::Task ChassisController(Chassis.start, NULL, "Chassis Controller");
+	Chassis.setBrakeType(HOLD);
 
-	pros::Task DisplayController(display.start, NULL, "Display Controller");
+	pros::Task DisplayController(Display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);
 	
 
@@ -36,12 +36,16 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-	// chassis.drive(20).withGains(.3, 0.01, .15).withTol(100).waitUntilSettled();
-	// chassis.turn(90).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
+	Autonomous Auton;
+	Auton.runAuton();
 }
 
 void opcontrol() {
+	Chassis Chassis;
+	Chassis.setState(ChassisState::OPCONTROL);
+	Chassis.setBrakeType(COAST);
 	while (true) {
-		pros::delay(5);
+
+	  pros::delay(5);
 	}
 }

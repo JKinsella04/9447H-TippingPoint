@@ -4,6 +4,7 @@
 #include "pros/motors.h"
 
 #define CONVERSION 4169.079328314997
+#define DRIVE_CONVERSION 94.48818897637795
 #define HOLD pros::E_MOTOR_BRAKE_HOLD
 #define BRAKE pros::E_MOTOR_BRAKE_BRAKE
 #define COAST pros::E_MOTOR_BRAKE_COAST
@@ -20,6 +21,11 @@ class Chassis {
     */
     Chassis();
 
+    ~Chassis();
+    /*
+    Sets state for Chassis state machine.
+    */
+    void setState(ChassisState s);
     /*
     sets brake mode
     */

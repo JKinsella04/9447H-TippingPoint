@@ -21,7 +21,7 @@ static lv_obj_t *autonGraphic;
 
 static lv_res_t btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
-
+  //TODO: RESET BUTTONS
   switch (id) {
   case 1:
     break;
@@ -40,19 +40,12 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
   Auton.setId(id);
 
   switch (id) {
-  case 1:
-    lv_img_set_src(autonGraphic, &homeRow_IMG);
-    break;
-  case 2:
-    lv_img_set_src(autonGraphic, &oneGoal_IMG);
-    break;
-  case 3:
-    lv_img_set_src(autonGraphic, &twoGoal_IMG);
-    break;
-  default:
-    break;
+  case 1: lv_img_set_src(autonGraphic, &homeRow_IMG); break;
+  case 2: lv_img_set_src(autonGraphic, &oneGoal_IMG); break;
+  case 3: lv_img_set_src(autonGraphic, &twoGoal_IMG); break;
+  
+  default: break;
   }
-
   return LV_RES_OK;
 }
 
@@ -97,22 +90,9 @@ Display::Display() {
     style_btn_released.body.border.width = 2;
     style_btn_released.text.color = LV_COLOR_WHITE;
 
-    // Switch Style
-    lv_style_copy(&switch_red, &lv_style_plain);
-    switch_red.body.main_color = LV_COLOR_RED;
-    switch_red.body.grad_color = LV_COLOR_RED;
-    switch_red.body.border.color = LV_COLOR_RED;
-    switch_red.body.radius = 100;
-
-    lv_style_copy(&switch_blue, &lv_style_plain);
-    switch_blue.body.main_color = LV_COLOR_BLUE;
-    switch_blue.body.grad_color = LV_COLOR_BLUE;
-    switch_blue.body.border.color = LV_COLOR_BLUE;
-    switch_blue.body.radius = 100;
-
     pros::delay(1000);
 
-    // gif.clean();
+    gif.clean(); // Destroy loading screen gif.
 
     scr = lv_cont_create(NULL, NULL);
     lv_scr_load(scr);
@@ -122,9 +102,11 @@ Display::Display() {
     lv_obj_set_pos(background, 0, 0);
     lv_img_set_src(background, &destiny);
 
+    // Overlay
     autonName = createLabel(10, 0, "Auton Selected: ", scr);
     lv_label_set_style(autonName, &style_btn);
 
+    // Tabs
     tab = lv_tabview_create(scr, NULL);
     lv_obj_set_pos(tab, 0, 0);
     lv_obj_set_size(tab, 480, 250);
@@ -144,7 +126,9 @@ Display::Display() {
   }
 }
 
-void Display::cleanUp() { lv_obj_clean(lv_layer_sys()); }
+void Display::cleanUp() { 
+    lv_obj_clean(lv_layer_sys()); 
+}
 
 void Display::tabAuton(lv_obj_t *parent) {
   lv_obj_t *homeRow = createButton(1, 0, 20, 200, 40, "Home Row", parent, btn_auton_action, &style_btn, &style_btn_released);
@@ -156,17 +140,12 @@ void Display::tabAuton(lv_obj_t *parent) {
   lv_img_set_src(autonGraphic, &noAuton_IMG);
 }
 
-void Display::tabDebug(lv_obj_t *parent) {}
+void Display::tabDebug(lv_obj_t *parent) { }
+
 void Display::tabSettings(lv_obj_t *parent) {
-  lv_obj_t *resetIMU =
-      createButton(1, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action,
-                   &style_btn, &style_btn_released);
-  lv_obj_t *resetOdom =
-      createButton(2, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action,
-                   &style_btn, &style_btn_released);
-  lv_obj_t *resetLift =
-      createButton(3, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action,
-                   &style_btn, &style_btn_released);
+  lv_obj_t *resetIMU = createButton(1, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *resetOdom = createButton(2, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *resetLift = createButton(3, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
 }
 void Display::start(void *ignore) {
   pros::delay(500);
@@ -183,6 +162,7 @@ void Display::run() {
   lv_obj_align(s_logo, NULL, LV_ALIGN_CENTER, 0, 25);
   lv_obj_set_pos(s_logo, 380, 0);
   Gif small_gif("/usd/small_logo.gif", s_logo);
+  // Tiny logo in top right corner
 
   while (isRunning) {
     // Current Auton Label
@@ -195,8 +175,7 @@ void Display::run() {
 
 void Display::stop() { isRunning = false; }
 
-lv_obj_t *Display::createLabel(int x, int y, std::string text_,
-                               lv_obj_t *parent) {
+lv_obj_t *Display::createLabel(int x, int y, std::string text_, lv_obj_t *parent) {
   lv_obj_t *label = lv_label_create(parent, NULL);
   lv_obj_set_pos(label, x, y);
   lv_label_set_text(label, text_.c_str());
@@ -204,10 +183,7 @@ lv_obj_t *Display::createLabel(int x, int y, std::string text_,
   return label;
 }
 
-lv_obj_t *Display::createButton(int id, int x, int y, int width, int height,
-                                std::string text, lv_obj_t *parent,
-                                lv_action_t action, lv_style_t *btn_pr,
-                                lv_style_t *btn_rel) {
+lv_obj_t *Display::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t *parent, lv_action_t action, lv_style_t *btn_pr,lv_style_t *btn_rel) {
   lv_obj_t *button = lv_btn_create(parent, NULL);
   lv_obj_set_pos(button, x, y);
   lv_obj_set_size(button, width, height);
