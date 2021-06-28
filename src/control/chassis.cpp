@@ -115,14 +115,11 @@ void Chassis::run() {
     }
 
     case ChassisState::TURN: {
-      // pros::c::imu_gyro_s_t gyro = L_IMU.get_gyro_rate();
-      // printf("IMU gyro values: {x: %f, y: %f, z: %f}\n", gyro.x, gyro.y, gyro.z);      
       current = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() )/3;
       
-      //Find quickest turn.
-
       output = turn_PID.calculate(theta, current);
-
+      
+      //Find quickest turn.
       if (fabs(turn_PID.getError()) > 180) { 
         turn_PID.setError( turn_PID.getError() - 360); 
         output = turn_PID.calculate(); //recalculate output
