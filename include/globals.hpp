@@ -1,5 +1,6 @@
 #pragma once
 #include "main.h"
+
 //Controller Definition
 extern pros::Controller master;
 

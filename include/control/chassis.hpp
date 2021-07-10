@@ -1,7 +1,6 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
-#include "pros/motors.h"
 
 #define CONVERSION 4169.079328314997
 #define DRIVE_CONVERSION 94.48818897637795

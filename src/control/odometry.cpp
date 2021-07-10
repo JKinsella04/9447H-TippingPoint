@@ -1,113 +1,144 @@
-#include "control/odometry.hpp"
-#include "control/chassis.hpp"
+#include "odometry.hpp"
 
-bool Odom::isRunning = false;
+bool Odometry::isRunning = false;
 
-int Odom::currentL = 0, Odom::currentR = 0;
-int Odom::deltaL = 0, Odom::deltaR = 0, Odom::lastDeltaL = 0, Odom::lastDeltaR = 0;
+double  Odometry::sideDistance = -3,  // Distance in inches from tracking center to center of side tracker
+        Odometry::backDistance = -8, // Distance in inches from tracking center to center of back tracker
+        Odometry::sideDiameter = 2.75,   // Side tracker diameter in inches
+        Odometry::backDiameter = 2.75;   // Back tracker diameter in inches
 
-double Odom::inertL = 0, Odom::inertR = 0, Odom::inertT = 0;
-double Odom::thetaRad = 0, Odom::thetaDeg = 0, Odom::offset = 0, Odom::posX = 0, Odom::posY = 0;
+double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0;
 
-double Odom::output = 0, Odom::Desiredtheta = 0, Odom::DesiredX = 0, Odom::DesiredY = 0;
+Odometry::Odometry() {
+  calibrateGyro();
+ }
 
-int Odom::getL() {
-  return currentL;
+
+void Odometry::calibrateGyro(){
+  L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
+  while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
+  LOdometer.reset();
+  ROdometer.reset();
 }
 
-int Odom::getR() {
-  return currentR;
+double Odometry::getX(){
+  return x;
 }
 
-int Odom::getDL() {
-  return deltaL;
+double Odometry::getY(){
+  return y;
 }
 
-int Odom::getDR() {
-  return deltaR;
+double Odometry::getThetaDeg(){
+  return radToDeg(angle);
 }
 
-double Odom::getThetaRad() {
-  return thetaRad;
+double Odometry::getThetaRad(){
+  return angle;
 }
 
-double Odom::getThetaDeg() {
-  return thetaDeg;
+//Math
+double Odometry::radToDeg(double rad){
+  return rad/M_PI * 180.0;
 }
 
-double Odom::getX() {
-  return posX;
+double Odometry::degToRad(double deg){
+  return deg * M_PI / 180.0;
 }
 
-double Odom::getY() {
-  return posY;
+//L_IMU Filter
+double Odometry::filter(const double& currentVal, const double& lastVal){
+  double filteredVal = currentVal - lastVal;
+  if(fabs(filteredVal) < 0.01){
+    filteredVal = 0;
+  }
+  return filteredVal;
 }
 
-Odom& Odom::calibrateGyro() {
-  M_IMU.reset();
-  L_IMU.reset();
-  R_IMU.reset();
-
-  while( M_IMU.is_calibrating() || L_IMU.is_calibrating() || R_IMU.is_calibrating() ) { pros::delay(20); }
-  // io::master.rumble(" . .");
-  return *this;
-}
-
-Odom& Odom::zero() {
-  float left = fabs( L_IMU.get_heading() - 360 ) * M_PI / 180;
-  float right = fabs( R_IMU.get_heading() - 360 ) * M_PI / 180;
-
-  float x = ( cos( left + M_PI ) + cos( right + M_PI ) ) / 2;
-  float y = ( sin( left + M_PI ) + sin( right + M_PI ) ) / 2;
-
-  offset = fabs( atan2f(y, x) + M_PI );
-  return *this;
-}
-
-Odom& Odom::reset() {
-  posX = posY = 0;
-  return *this;
-}
-
-void Odom::start(void *ignore) {
+void Odometry::start(void* ignore) {
   if(!isRunning) {
     pros::delay(500);
-    Odom *that = static_cast<Odom*>(ignore);
-    that -> run();
+    Odometry *that = static_cast<Odometry*>(ignore);
+    that -> track();
   }
 }
 
-void Odom::run() {
+//Tracking
+void Odometry::track(){
+
   isRunning = true;
 
-  while(isRunning) {
-    inertL = fabs( L_IMU.get_heading() - 360 ) * M_PI / 180;
-    inertR = fabs( R_IMU.get_heading() - 360 ) * M_PI / 180;
+  LOdometer.reset();
+  ROdometer.reset();
 
-    float x = ( cos( inertL - offset + M_PI ) + cos( inertR - offset + M_PI ) ) / 2;
-    float y = ( sin( inertL - offset + M_PI ) + sin( inertR - offset + M_PI ) ) / 2;
+  float Ss = sideDistance,
+        Sb = backDistance,
+        wheelDiameter = sideDiameter,
+        trackingDiameter = backDiameter;
 
-    thetaRad = fabs( atan2f(y, x) + M_PI );
-    thetaDeg = thetaRad * 180 / M_PI;
+  float deltaTheta = 0,
+        thetaFiltered = 0,
+        thetaNew = 0,
+        thetaAvg = 0,
+        curRotation = 0,
+        lastRotation = 0,
 
-    currentL = LOdometer.get_position();
-    currentR = ROdometer.get_position();
+        curSide = 0,
+        curBack = 0,
+        lastSide = 0,
+        lastBack = 0,
+        deltaSide = 0,
+        deltaBack = 0,
+        sideChord = 0,
+        backChord = 0,
+        i, Ri = L_IMU.get_rotation();
 
-    deltaL = currentL - lastDeltaL;
-    deltaR = currentR - lastDeltaR;
+  while(isRunning){
 
-    posX = posX + (( deltaL + deltaR ) / 2.0) * cos( thetaRad );
-    posY = posY + (( deltaL + deltaR ) / 2.0) * sin( thetaRad );
+    i = (L_IMU.get_rotation() - Ri - diff);
 
-    lastDeltaL = LOdometer.get_position();
-    lastDeltaR = ROdometer.get_position();
+    curRotation = i;
 
-    std::cout << "(" << getX() << "," << getY() << "," << getThetaDeg() << ")" <<std::endl;
+    thetaFiltered += filter(curRotation, lastRotation);
+    lastRotation = curRotation;
+    thetaNew = degToRad(thetaFiltered);
+    deltaTheta = thetaNew - angle;
+
+    curSide = ROdometer.get_position() * M_PI/360;
+    curBack = LOdometer.get_position() * M_PI/360;
+    deltaSide = (curSide - lastSide)*(wheelDiameter);
+    deltaBack = (curBack - lastBack)*(trackingDiameter);
+    lastSide = curSide;
+    lastBack = curBack;
+
+    if(deltaTheta != 0){
+      backChord = (2*sin(deltaTheta/2))*(deltaBack/deltaTheta + Sb);
+      sideChord = (2*sin(deltaTheta/2))*(deltaSide/deltaTheta + Ss);
+    }
+    else{
+       sideChord = deltaSide;
+       backChord = deltaBack;
+    }
+
+    thetaAvg = angle + deltaTheta/2;
+
+    x += sideChord * sin(thetaAvg);
+    y += sideChord * cos(thetaAvg);
+    x += backChord * -cos(thetaAvg);
+    y += backChord *  sin(thetaAvg);
+
+    // x /= 100;
+    // y /= 100;
     
+    angle += deltaTheta;
+    
+    // std::cout << "(" << x << "," << y << ")" << std::endl;
+
     pros::delay(10);
   }
 }
 
-void Odom::stop() {
+//Tasks
+void Odometry::stopTracking(){
   isRunning = false;
 }

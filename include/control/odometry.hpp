@@ -1,37 +1,36 @@
 #pragma once
-#include "control/misc.hpp"
+#include "main.h"
 #include "globals.hpp"
+#include "odometry.hpp"
 
-class Odom {
+class Odometry{
   public:
 
-    // Getters & Setters
-    int getL();
-    int getR();
-    int getDL();
-    int getDR();
+    Odometry();
 
-    double getThetaDeg();
-    double getThetaRad();
+    void calibrateGyro();
+
     double getX();
+
     double getY();
 
-    Odom& calibrateGyro();
-    Odom& zero();
-    Odom& reset();
+    double getThetaRad();
+
+    double getThetaDeg();
+
+    double radToDeg(double rad);
+
+    double degToRad(double deg);
+
+    double filter(const double& currentVal, const double& lastVal);
 
     static void start(void* ignore);
-    void run();
-    void stop();
 
+    void track();
+
+    void stopTracking();
   private:
     static bool isRunning;
-
-    static int currentL, currentR;
-    static int deltaL, deltaR, lastDeltaL, lastDeltaR;
-
-    static double inertL, inertR, inertT;
-    static double thetaRad, thetaDeg, offset, posX, posY;
-
-    static double output, DesiredX, DesiredY, Desiredtheta;
+    static double x, y, angle, diff;
+    static double sideDistance, backDistance, sideDiameter, backDiameter;
 };
