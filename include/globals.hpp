@@ -5,7 +5,7 @@
 extern pros::Controller master;
 
 //Motor Declarations
-extern pros::Motor intake;
+extern pros::Motor MG;
 extern pros::Motor lift;
 extern pros::Motor LF, /*LM,*/ LB, RF, /*RM,*/ RB;
 

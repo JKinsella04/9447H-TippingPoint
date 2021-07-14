@@ -6,7 +6,7 @@ pros::Controller master(CONTROLLER_MASTER);
 //Motor Definitions
 
 //Intakes
-pros::Motor intake(4, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS); //1
+pros::Motor MG(4, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS); //1
 
 //Drive Base
 pros::Motor LF(13, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS), //19,9,13,

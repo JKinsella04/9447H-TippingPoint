@@ -18,7 +18,8 @@ Slew &Slew::withLimit(double limit_) {
   limit = limit_;
   return *this;
 }
-double Slew::calculate(int input) {
+
+double Slew::calculate(int input) { //Straight from 7k Tower Takeover.
   if (!noDecel) {
 
     if (!isReversible) {
@@ -94,10 +95,6 @@ double Slew::getOutput(){
 void Slew::reset(){
     input = output = 0;
 }
-
-double PID::target = 0, PID::current = 0, PID::error = 0, PID::integral = 0,
-       PID::derivative = 0, PID::prevError = 0, PID::kP = 0, PID::kI = 0,
-       PID::kD = 0, PID::output = 0;
 
 PID &PID::set(double kP_, double kI_, double kD_) {
   kP = kP_;

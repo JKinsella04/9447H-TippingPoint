@@ -48,7 +48,7 @@ namespace macro {
             */
             double getError();
         private:
-          static double target, current, error, integral, derivative, prevError, kP, kI, kD, output;
+            double target = 0, current = 0, error = 0, integral = 0, derivative = 0, prevError = 0, kP = 0, kI = 0, kD = 0, output = 0;
     };
 }
 

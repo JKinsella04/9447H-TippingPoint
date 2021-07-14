@@ -16,5 +16,8 @@ class MobileGoal {
         Runs the mobile goal state machine. 
         */
         MobileGoal& run();
+
+        void reset();
+        
     private:
 };

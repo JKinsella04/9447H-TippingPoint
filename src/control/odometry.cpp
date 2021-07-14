@@ -9,10 +9,7 @@ double  Odometry::sideDistance = -3,  // Distance in inches from tracking center
 
 double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0;
 
-Odometry::Odometry() {
-  calibrateGyro();
- }
-
+Odometry::Odometry() { }
 
 void Odometry::calibrateGyro(){
   L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
@@ -63,13 +60,19 @@ void Odometry::start(void* ignore) {
   }
 }
 
+void Odometry::reset(){
+  x = 0;
+  y = 0;
+  angle = 0;
+  diff = 0;
+}
+
 //Tracking
 void Odometry::track(){
 
   isRunning = true;
 
-  LOdometer.reset();
-  ROdometer.reset();
+  calibrateGyro();
 
   float Ss = sideDistance,
         Sb = backDistance,
@@ -104,8 +107,8 @@ void Odometry::track(){
     thetaNew = degToRad(thetaFiltered);
     deltaTheta = thetaNew - angle;
 
-    curSide = ROdometer.get_position() * M_PI/360;
-    curBack = LOdometer.get_position() * M_PI/360;
+    curSide = ( ROdometer.get_position() * M_PI/360) /100;
+    curBack = ( LOdometer.get_position() * M_PI/360) /100;
     deltaSide = (curSide - lastSide)*(wheelDiameter);
     deltaBack = (curBack - lastBack)*(trackingDiameter);
     lastSide = curSide;

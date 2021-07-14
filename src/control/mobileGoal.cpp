@@ -15,3 +15,7 @@ MobileGoal& MobileGoal::run(){
     return *this;
 }
 
+void MobileGoal::reset(){
+    MG.tare_position();
+}
+

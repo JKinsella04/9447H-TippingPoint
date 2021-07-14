@@ -1,9 +1,16 @@
 #include "control/gui.hpp"
 #include "control/auton.hpp"
-#include "display/lv_core/lv_obj.h"
-#include "display/lv_objx/lv_label.h"
+#include "chassis.hpp"
+#include "mobileGoal.hpp"
+#include "odometry.hpp"
+#include "main.h"
+#include <sstream>
+
 
 static Autonomous Auton;
+static Chassis Chassis;
+static MobileGoal MobileGoal;
+static Odometry Odom;
 
 bool Display::isRunning = false, Display::isInitalized = false;
 
@@ -19,15 +26,23 @@ static lv_obj_t *tab;
 static lv_obj_t *autonName;
 static lv_obj_t *autonGraphic;
 
+static lv_obj_t *odomVals;
+
 static lv_res_t btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
-  //TODO: RESET BUTTONS
-  switch (id) {
-  case 1:
+  switch (id) { // Controls both tab 2 + 3.
+  case 1: // Tab 2 control
+    pros::delay(3000);
+    Auton.runAuton();
     break;
-  case 2:
+  case 2: // Tab 3 control
+    Chassis.reset();
     break;
   case 3:
+    Odom.reset();
+    break;
+  case 4:
+    MobileGoal.reset();
     break;
   default:
     break;
@@ -140,12 +155,17 @@ void Display::tabAuton(lv_obj_t *parent) {
   lv_img_set_src(autonGraphic, &noAuton_IMG);
 }
 
-void Display::tabDebug(lv_obj_t *parent) { }
+void Display::tabDebug(lv_obj_t *parent) {
+  lv_obj_t *startAuton = createButton(1, 0, 20, 200, 40, "Start Auton", parent, btn_click_action, &style_btn, &style_btn_released);
+  
+  odomVals = createLabel(10, 70, "Robot Pos = (0,0) ", parent);
+  lv_label_set_style(odomVals, &style_btn);
+ }
 
 void Display::tabSettings(lv_obj_t *parent) {
-  lv_obj_t *resetIMU = createButton(1, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *resetOdom = createButton(2, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *resetLift = createButton(3, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *resetIMU = createButton(2, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *resetOdom = createButton(3, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *resetLift = createButton(4, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
 }
 void Display::start(void *ignore) {
   pros::delay(500);
@@ -169,6 +189,12 @@ void Display::run() {
     std::string temp = "Auton Selected: " + Auton.getAuton();
     lv_label_set_text(autonName, temp.c_str());
 
+    std::ostringstream odomx, odomy;
+    odomx << Odom.getX();
+    odomy << Odom.getY();
+    std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
+    lv_label_set_text(odomVals, odomTemp.c_str());
+    
     pros::delay(10);
   }
 }
