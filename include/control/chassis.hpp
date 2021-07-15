@@ -31,6 +31,11 @@ class Chassis {
     void setBrakeType(pros::motor_brake_mode_e_t state);
 
     /*
+    return current chassis state.
+    */
+    ChassisState getState();
+
+    /*
     Delays thread until action is completed.
     */
     void waitUntilSettled();

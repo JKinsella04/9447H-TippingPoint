@@ -24,6 +24,9 @@ void Chassis::setState(ChassisState s){
   chassis_mode = s;
 }
 
+ChassisState Chassis::getState(){
+  return chassis_mode;
+}
 void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
   LF.set_brake_mode(state);
   // LM.set_brake_mode(state);
@@ -125,7 +128,6 @@ void Chassis::run() {
 
     case ChassisState::TURN: {
       current = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() )/3;
-      
       output = turn_PID.calculate(theta, current);
       
       //Find quickest turn.

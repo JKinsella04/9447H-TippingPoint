@@ -6,7 +6,6 @@
 #include "main.h"
 #include <sstream>
 
-
 static Autonomous Auton;
 static Chassis Chassis;
 static MobileGoal MobileGoal;
@@ -27,6 +26,7 @@ static lv_obj_t *autonName;
 static lv_obj_t *autonGraphic;
 
 static lv_obj_t *odomVals;
+static lv_obj_t *chassisVals;
 
 static lv_res_t btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
@@ -160,6 +160,9 @@ void Display::tabDebug(lv_obj_t *parent) {
   
   odomVals = createLabel(10, 70, "Robot Pos = (0,0) ", parent);
   lv_label_set_style(odomVals, &style_btn);
+
+  chassisVals = createLabel(10, 90, "Chassis State: ", parent);
+  lv_label_set_style(chassisVals, &style_btn);
  }
 
 void Display::tabSettings(lv_obj_t *parent) {
@@ -194,6 +197,15 @@ void Display::run() {
     odomy << Odom.getY();
     std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
     lv_label_set_text(odomVals, odomTemp.c_str());
+
+    std::string cstate;
+    switch(Chassis.getState()){
+      case ChassisState::DRIVE:{ cstate = "Chassis State: DRIVE"; break; }
+      case ChassisState::TURN:{ cstate = "Chassis State: TURN"; break; }     
+      case ChassisState::IDLE:{ cstate = "Chassis State: IDLE"; break; }
+      case ChassisState::OPCONTROL:{ cstate = "Chassis State: OPCONTROL"; break; }
+    }
+    lv_label_set_text(chassisVals, cstate.c_str());
     
     pros::delay(10);
   }
