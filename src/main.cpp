@@ -2,8 +2,6 @@
 
 #include "control/misc.hpp"
 #include "control/chassis.hpp"
-#include "control/mobileGoal.hpp"
-#include "control/intake.hpp"
 #include "control/gui.hpp"
 #include "control/auton.hpp"
 #include "control/odometry.hpp"

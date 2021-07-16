@@ -48,8 +48,12 @@ class Chassis {
     /*
     Sets PID constants for both Chassis::drive() and Chassis::turn().
     */
-    Chassis& withGains(double kP_, double kD_ = 0, double kI_ = 0);
+    Chassis& withGains(double kP_, double kI_ = 0, double kD_ = 0);
 
+    /*
+    Sets PID turn constants.
+    */
+    Chassis& withTurnGains(double kP_, double kI_ = 0, double kD_ = 0);
     /*
     Sets the tolerance range for both Chassis::drive() and Chassis::turn().
     */
@@ -69,10 +73,12 @@ class Chassis {
 
     void run();
 
+    void stop();
+
     private:
     static bool isSettled;
     static bool isRunning;
 
     static int tol;
-    static double target, theta, current, output;
+    static double target, theta, current, output, turn_output;
 };

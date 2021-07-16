@@ -1,14 +1,14 @@
-#include "control/gui.hpp"
-#include "control/auton.hpp"
-#include "chassis.hpp"
-#include "mobileGoal.hpp"
-#include "odometry.hpp"
 #include "main.h"
+
+#include "gui.hpp"
+#include "auton.hpp"
+#include "chassis.hpp"
+#include "odometry.hpp"
+#include "misc.hpp"
 #include <sstream>
 
 static Autonomous Auton;
 static Chassis Chassis;
-static MobileGoal MobileGoal;
 static Odometry Odom;
 
 bool Display::isRunning = false, Display::isInitalized = false;
@@ -42,7 +42,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     Odom.reset();
     break;
   case 4:
-    MobileGoal.reset();
+    mobileGoal::tare(MG);
     break;
   default:
     break;
@@ -170,6 +170,7 @@ void Display::tabSettings(lv_obj_t *parent) {
   lv_obj_t *resetOdom = createButton(3, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetLift = createButton(4, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
 }
+
 void Display::start(void *ignore) {
   pros::delay(500);
   Display *that = static_cast<Display *>(ignore);

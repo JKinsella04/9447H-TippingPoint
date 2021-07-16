@@ -1,5 +1,30 @@
 #include "control/misc.hpp"
 
+namespace intake{
+    void spin(double speed){
+        Intake.move(speed);
+    }
+
+    void spin(double target, double speed){
+        Intake.move_relative(target, speed);
+    }
+}
+
+namespace mobileGoal{
+    void pos1(pros::Motor m){
+        m.move_absolute(0, 127);
+    }
+
+    void pos2(pros::Motor m){
+        m.move_absolute(0, 127);
+    }
+
+    void tare(pros::Motor m){
+        m.tare_position();
+    }
+
+}
+
 namespace macro {
 
 Slew::Slew(double accel_) : accel(accel_), decel(0) { noDecel = true; }

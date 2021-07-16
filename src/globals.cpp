@@ -5,7 +5,10 @@ pros::Controller master(CONTROLLER_MASTER);
 
 //Motor Definitions
 
-//Intakes
+// Intake
+pros::Motor Intake(1, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS); //1
+
+//Mobile goal
 pros::Motor MG(4, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS); //1
 
 //Drive Base

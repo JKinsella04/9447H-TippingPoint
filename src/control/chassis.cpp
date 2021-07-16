@@ -1,20 +1,26 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
+#include "display/lv_draw/lv_draw.h"
 #include "pros/misc.hpp"
 #include "pros/motors.h"
 
+// PID Init
 macro::PID drive_PID;
 macro::PID turn_PID;
 
+// Slew Init
 macro::Slew left(900, 900, true);
 macro::Slew right(900, 900, true);
 
+// State Machine Init
 ChassisState chassis_mode = ChassisState::IDLE;
 
-bool Chassis::isRunning = false;
-bool Chassis::isSettled = true;
+bool Chassis::isRunning = false, Chassis::isSettled = true;
+
 int Chassis::tol = 0;
-double Chassis::target = 0, Chassis::theta = 0, Chassis::current = 0, Chassis::output = 0;
+
+double Chassis::target = 0, Chassis::theta = 0, Chassis::current = 0,
+       Chassis::output = 0, Chassis::turn_output = 0;
 
 Chassis::Chassis() { }
 
@@ -49,18 +55,12 @@ void Chassis::reset(){
 }
 
 Chassis &Chassis::withGains(double kP_, double kI_, double kD_) {
-  switch (chassis_mode) {
-  case ChassisState::DRIVE:
-    drive_PID.set(kP_, kI_, kD_);
-    break;
+  drive_PID.set(kP_, kI_, kD_);
+  return *this;
+}
 
-  case ChassisState::TURN:
-    turn_PID.set(kP_, kI_, kD_);
-    break;
-  
-  default:
-    break;
-  }
+Chassis &Chassis::withTurnGains(double kP_, double kI_, double kD_){
+  turn_PID.set(kP_, kI_, kD_);
   return *this;
 }
 
@@ -100,17 +100,22 @@ void Chassis::run() {
 
     switch (chassis_mode) {
     case ChassisState::DRIVE: {
+      // Drive PID calc
       current = ( LOdometer.get_position() + ROdometer.get_position() ) /2.0;
       output = drive_PID.calculate(target, current);
 
+      // Turn PID calc
+      current = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() )/3;
+      turn_output = turn_PID.calculate(theta, current);
+
       std::cout << "Error:" << drive_PID.getError() <<std::endl; //Debug
 
-      LF.move_voltage(output);
+      LF.move_voltage(output - turn_output);
       // LM.move_voltage(output);
-      LB.move_voltage(output);
-      RF.move_voltage(output);
+      LB.move_voltage(output - turn_output);
+      RF.move_voltage(output + turn_output);
       // RM.move_voltage(output);
-      RB.move_voltage(output);
+      RB.move_voltage(output + turn_output);
 
       if(fabs(drive_PID.getError()) < tol){
         LF.move(0);
@@ -195,6 +200,8 @@ void Chassis::run() {
     // std::cout << "Error: " << std::endl;
 
     end:
-    pros::delay(2);
+    pros::delay(10);
   }
 }
+
+void Chassis::stop() { isRunning = false; }

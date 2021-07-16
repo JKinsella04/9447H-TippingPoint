@@ -1,8 +1,35 @@
 #pragma once
 #include "main.h"
+#include "globals.hpp"
 
 #define ACCEL 1
 #define DECCEL 2
+
+namespace intake{
+    /*
+    Set speed for intakes.
+    */
+    void spin(double speed);
+    
+    /*
+    Set target and speed for intakes.
+    */
+    void spin(double target, double speed);
+
+}
+
+namespace mobileGoal{
+    /*
+    Moves mobile Goal to stated position.
+    */
+    void pos1(pros::Motor m);
+    void pos2(pros::Motor m);
+
+    /*
+    Tares Mobile Goal.
+    */
+    void tare(pros::Motor m);   
+};
 
 namespace macro {
     class Slew{
