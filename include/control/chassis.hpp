@@ -65,6 +65,11 @@ class Chassis {
     Chassis& drive(double target);
 
     /*
+    Updates ChassisState and sets target position.
+    */
+    Chassis& drive(double target, double theta_);
+
+    /*
     Updates ChassisState and sets target theta.
     */
     Chassis& turn(double theta_);

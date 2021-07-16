@@ -76,6 +76,14 @@ Chassis &Chassis::drive(double target_) {
   return *this;
 }
 
+Chassis &Chassis::drive(double target_, double theta_) {
+  isSettled = false;
+  target = target_ * CONVERSION;
+  theta  = theta_;
+  chassis_mode = ChassisState::DRIVE;
+  return *this;
+}
+
 Chassis &Chassis::turn(double theta_) {
   isSettled = false;
   theta = theta_;
@@ -101,14 +109,20 @@ void Chassis::run() {
     switch (chassis_mode) {
     case ChassisState::DRIVE: {
       // Drive PID calc
-      current = ( LOdometer.get_position() + ROdometer.get_position() ) /2.0;
+      current = (LOdometer.get_position() + ROdometer.get_position()) / 2.0;
       output = drive_PID.calculate(target, current);
 
       // Turn PID calc
-      current = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() )/3;
+      current = (L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw()) / 3;
       turn_output = turn_PID.calculate(theta, current);
 
-      std::cout << "Error:" << drive_PID.getError() <<std::endl; //Debug
+      // Find quickest turn.
+      if (fabs(turn_PID.getError()) > 180) {
+        turn_PID.setError(turn_PID.getError() - 360);
+        output = turn_PID.calculate(); // recalculate output
+      }
+
+      std::cout << "Error:" << drive_PID.getError() << std::endl; // Debug
 
       LF.move_voltage(output - turn_output);
       // LM.move_voltage(output);
@@ -117,7 +131,7 @@ void Chassis::run() {
       // RM.move_voltage(output);
       RB.move_voltage(output + turn_output);
 
-      if(fabs(drive_PID.getError()) < tol){
+      if (fabs(drive_PID.getError()) < tol) {
         LF.move(0);
         // LM.move(0);
         LB.move(0);
