@@ -120,6 +120,16 @@ Chassis &Chassis::turn(double theta, double rate, double speed) {
   return *this;
 }
 
+Chassis &Chassis::balance(double rate, double speed){
+  if(target.size() != 1) target.resize(1);
+  target[0].rateDrive = rate;
+  target[0].speedDrive = speed;
+  reset();
+  isSettled = false;
+  mode = ChassisState::BALANCE;
+  return *this;
+}
+
 void Chassis::start(void* ignore) {
   if(!isRunning) {
     pros::delay(500);
@@ -220,6 +230,26 @@ void Chassis::run() {
       left(leftOutput);
       right(rightOutput);
       break;
+    }
+
+    case ChassisState::BALANCE: {
+      current = (L_IMU.get_pitch() + M_IMU.get_pitch() + R_IMU.get_pitch()) / 3;
+      output = drive_PID.calculate(0, current);
+
+      LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
+      RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
+
+      left(output);
+      right(output);
+
+      if (fabs(drive_PID.getError()) < tol) {
+        left(0);
+        right(0);
+        reset();
+        isSettled = true;
+        mode = ChassisState::IDLE;
+        goto end;
+      }
     }
 
     case ChassisState::IDLE: {

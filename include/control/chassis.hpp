@@ -19,7 +19,7 @@ struct ChassisTarget {
 };
 
 enum class ChassisState { 
-    DRIVE, TURN, OPCONTROL, IDLE
+    DRIVE, TURN, OPCONTROL, BALANCE, IDLE
 }; 
 
 class Chassis {
@@ -63,7 +63,7 @@ class Chassis {
     /*
     Sets turn PID constants.
     */
-    Chassis& withTurnGains(double kP_, double kI_ = 0, double kD_ = 0);
+    Chassis& withTurnGains(double kP_ = 133, double kI_ = 0, double kD_ = 66);
     /*
     Sets the tolerance range for both Chassis::drive() and Chassis::turn().
     */
@@ -83,6 +83,11 @@ class Chassis {
     Updates ChassisState and sets target theta.
     */
     Chassis& turn(double theta, double rate, double speed);
+
+    /*
+    Updates ChassisState to start balancing the bridge.
+    */
+    Chassis& balance(double rate, double speed);
 
     static void start(void* ignore);
 
