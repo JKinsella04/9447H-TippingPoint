@@ -239,8 +239,8 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
       RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
 
-      left(output);
-      right(output);
+      left(LslewOutput);
+      right(RslewOutput);
 
       if (fabs(drive_PID.getError()) < tol) {
         left(0);
