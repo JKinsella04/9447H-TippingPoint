@@ -51,17 +51,17 @@ class Chassis {
     void waitUntilSettled();
 
     /*
-    stops motors and resets relative variables.
+    stops motors and resets variables.
     */
     void reset();
 
     /*
-    Sets PID constants for both Chassis::drive() and Chassis::turn().
+    Sets drive PID constants.
     */
     Chassis& withGains(double kP_, double kI_ = 0, double kD_ = 0);
 
     /*
-    Sets PID turn constants.
+    Sets turn PID constants.
     */
     Chassis& withTurnGains(double kP_, double kI_ = 0, double kD_ = 0);
     /*
@@ -88,6 +88,10 @@ class Chassis {
 
     void run();
 
+    void left(double input);
+
+    void right(double input);
+
     void stop();
 
     private:
@@ -98,5 +102,6 @@ class Chassis {
     // static int currTarget;
 
     static int tol;
-    static double current, output, turn_output;
+    static double current, output, turn_output, LslewOutput, RslewOutput, TslewOutput;
+    static bool adjustAngle;
 };
