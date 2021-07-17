@@ -38,6 +38,13 @@ Slew::Slew(double accel_, double decel_, bool reversible_)
   noDecel = false;
 }
 
+Slew &Slew::withGains(double accel_, double decel_, bool reversible_){
+  accel = accel_;
+  decel = decel_;
+  isReversible = reversible_;
+  return *this;
+}
+
 Slew &Slew::withLimit(double limit_) {
   isLimited = true;
   limit = limit_;
@@ -121,6 +128,8 @@ void Slew::reset(){
     input = output = 0;
 }
 
+PID::PID(double kP_, double kI_, double kD_) : kP(kP_), kI(kI_), kD(kD_) {}
+
 PID &PID::set(double kP_, double kI_, double kD_) {
   kP = kP_;
   kI = kI_;
@@ -154,4 +163,8 @@ double PID::calculate(double target, double current) {
 void PID::setError(double error_) { error = error_; }
 
 double PID::getError() { return prevError; }
+
+void PID::reset(){ output = target = current = error = integral = derivative = prevError = 0;
+}
+
 } // namespace macro

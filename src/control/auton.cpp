@@ -3,8 +3,8 @@
 #include "purePursuit.hpp"
 
 // Class Init
-Chassis Chassis;
-PurePursuit PurePursuit;
+Chassis chassis;
+PurePursuit purePursuit;
 
 // struct setAuton runningAuton;
 std::string Autonomous::name;
@@ -56,15 +56,14 @@ void Autonomous::runAuton() {
 
 // Match Autons
 void homeRow() {
-//   PurePursuit.goToPoint(1000, 1000, 200);
-
-  //   Chassis.drive(20).withGains(.3, 0.01,
-  //   .15).withTol(100).waitUntilSettled(); Chassis.turn(90).withGains(133,
-  //   0.01, 66).withTol(1).waitUntilSettled();
+  chassis.drive(20, 900, 9000).withGains(.5,0.01,0.15).withAngle(-90, 900, 12000).withTurnGains(133, 0, 66).withTol(1000).waitUntilSettled();
 }
 
 void oneGoal() {
-  Chassis.turn(-90).withGains(133, 0.01, 66).withTol(5).waitUntilSettled();
+  chassis.turn(-90, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
+  chassis.turn(0, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
+  chassis.turn(90, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
+  
 }
 
 void twoGoal() {}

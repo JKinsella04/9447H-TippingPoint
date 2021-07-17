@@ -7,9 +7,9 @@
 #include "misc.hpp"
 #include <sstream>
 
-static Autonomous Auton;
-static Chassis Chassis;
-static Odometry Odom;
+static Autonomous auton;
+static Chassis chassis;
+static Odometry odom;
 
 bool Display::isRunning = false, Display::isInitalized = false;
 
@@ -33,13 +33,13 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
   switch (id) { // Controls both tab 2 + 3.
   case 1: // Tab 2 control
     pros::delay(3000);
-    Auton.runAuton();
+    auton.runAuton();
     break;
   case 2: // Tab 3 control
-    Chassis.reset();
+    chassis.reset();
     break;
   case 3:
-    Odom.reset();
+    odom.reset();
     break;
   case 4:
     mobileGoal::tare(MG);
@@ -52,7 +52,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
 
 static lv_res_t btn_auton_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
-  Auton.setId(id);
+  auton.setId(id);
 
   switch (id) {
   case 1: lv_img_set_src(autonGraphic, &homeRow_IMG); break;
@@ -190,17 +190,17 @@ void Display::run() {
 
   while (isRunning) {
     // Current Auton Label
-    std::string temp = "Auton Selected: " + Auton.getAuton();
+    std::string temp = "Auton Selected: " + auton.getAuton();
     lv_label_set_text(autonName, temp.c_str());
 
     std::ostringstream odomx, odomy;
-    odomx << Odom.getX();
-    odomy << Odom.getY();
+    odomx << odom.getX();
+    odomy << odom.getY();
     std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
     lv_label_set_text(odomVals, odomTemp.c_str());
 
     std::string cstate;
-    switch(Chassis.getState()){
+    switch(chassis.getState()){
       case ChassisState::DRIVE:{ cstate = "Chassis State: DRIVE"; break; }
       case ChassisState::TURN:{ cstate = "Chassis State: TURN"; break; }     
       case ChassisState::IDLE:{ cstate = "Chassis State: IDLE"; break; }

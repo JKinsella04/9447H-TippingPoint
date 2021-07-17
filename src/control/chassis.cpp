@@ -1,37 +1,41 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
-#include "display/lv_draw/lv_draw.h"
-#include "pros/misc.hpp"
-#include "pros/motors.h"
 
 // PID Init
 macro::PID drive_PID;
-macro::PID turn_PID;
+macro::PID turn_PID(133,0,66);
 
 // Slew Init
-macro::Slew left(900, 900, true);
-macro::Slew right(900, 900, true);
+macro::Slew leftSlew(900, 900, true);
+macro::Slew rightSlew(900, 900, true);
+macro::Slew turnSlew(900, 900, true);
+
+// Vector of Struct Init
+std::vector<ChassisTarget> Chassis::target;
+// int Chassis::;
 
 // State Machine Init
-ChassisState chassis_mode = ChassisState::IDLE;
+ChassisState mode = ChassisState::IDLE;
 
 bool Chassis::isRunning = false, Chassis::isSettled = true;
 
 int Chassis::tol = 0;
 
-double Chassis::target = 0, Chassis::theta = 0, Chassis::current = 0,
+double Chassis::current = 0,
        Chassis::output = 0, Chassis::turn_output = 0;
 
 Chassis::Chassis() { }
 
-Chassis::~Chassis() { }
+Chassis::~Chassis() {
+  reset();
+ }
 
 void Chassis::setState(ChassisState s){
-  chassis_mode = s;
+  mode = s;
 }
 
 ChassisState Chassis::getState(){
-  return chassis_mode;
+  return mode;
 }
 void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
   LF.set_brake_mode(state);
@@ -46,6 +50,16 @@ void Chassis::waitUntilSettled() {
 }
 
 void Chassis::reset(){
+  // PID values reset
+  drive_PID.reset();
+  turn_PID.reset();
+  // Slew values reset
+  leftSlew.reset();
+  rightSlew.reset();
+
+  mode = ChassisState::IDLE;
+
+  // Motor values reset
   LF.tare_position();
   // LM.tare_position();
   LB.tare_position();
@@ -69,25 +83,33 @@ Chassis &Chassis::withTol(int tol_) {
   return *this;
 }
 
-Chassis &Chassis::drive(double target_) {
-  isSettled = false;
-  target = target_ * CONVERSION;
-  chassis_mode = ChassisState::DRIVE;
+Chassis &Chassis::withAngle(double theta, double rate, double speed){
+  if(target.size() != 1) target.resize(1);
+  target[0].theta = theta;
+  target[0].rateTurn = rate;
+  target[0].speedTurn = speed;
   return *this;
 }
 
-Chassis &Chassis::drive(double target_, double theta_) {
+Chassis &Chassis::drive(double target_, double rate, double speed) {
+  if(target.size() != 1) target.resize(1);
+  target[0].x = target_ * CONVERSION;
+  target[0].rateDrive = rate;
+  target[0].speedDrive = speed;
+  reset();
   isSettled = false;
-  target = target_ * CONVERSION;
-  theta  = theta_;
-  chassis_mode = ChassisState::DRIVE;
+  mode = ChassisState::DRIVE;
   return *this;
 }
 
-Chassis &Chassis::turn(double theta_) {
+Chassis &Chassis::turn(double theta, double rate, double speed) {
+  if(target.size() != 1) target.resize(1);
+  target[0].theta = theta;
+  target[0].rateTurn = rate;
+  target[0].speedTurn = speed;
+  reset();
   isSettled = false;
-  theta = theta_;
-  chassis_mode = ChassisState::TURN;
+  mode = ChassisState::TURN;
   return *this;
 }
 
@@ -106,30 +128,35 @@ void Chassis::run() {
 
     if(pros::competition::is_disabled()) goto end;
 
-    switch (chassis_mode) {
+    switch (mode) {
     case ChassisState::DRIVE: {
       // Drive PID calc
-      current = (LOdometer.get_position() + ROdometer.get_position()) / 2.0;
-      output = drive_PID.calculate(target, current);
+      current = (LOdometer.get_position()); // + ROdometer.get_position()) / 2.0;
+      output = drive_PID.calculate(target[0].x, current);
 
       // Turn PID calc
       current = (L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw()) / 3;
-      turn_output = turn_PID.calculate(theta, current);
+      turn_output = turn_PID.calculate(target[0].theta, current);
 
       // Find quickest turn.
       if (fabs(turn_PID.getError()) > 180) {
         turn_PID.setError(turn_PID.getError() - 360);
-        output = turn_PID.calculate(); // recalculate output
+        turn_output = turn_PID.calculate(); // recalculate output
       }
 
-      std::cout << "Error:" << drive_PID.getError() << std::endl; // Debug
+      double turnSlewOutput = turnSlew.withGains(target[0].rateTurn, target[0].rateTurn, true).withLimit(target[0].speedTurn).calculate(turn_output);
 
-      LF.move_voltage(output - turn_output);
+      double LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
+      double RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
+
+      std::cout << "Output:" << LslewOutput << std::endl; // Debug
+
+      LF.move_voltage(LslewOutput + turnSlewOutput);
       // LM.move_voltage(output);
-      LB.move_voltage(output - turn_output);
-      RF.move_voltage(output + turn_output);
+      LB.move_voltage(LslewOutput + turnSlewOutput);
+      RF.move_voltage(RslewOutput - turnSlewOutput);
       // RM.move_voltage(output);
-      RB.move_voltage(output + turn_output);
+      RB.move_voltage(RslewOutput - turnSlewOutput);
 
       if (fabs(drive_PID.getError()) < tol) {
         LF.move(0);
@@ -139,30 +166,33 @@ void Chassis::run() {
         // RM.move(0);
         RB.move(0);
         isSettled = true;
-        chassis_mode = ChassisState::IDLE;
+        mode = ChassisState::IDLE;
         goto end;
       }
       break;
     }
 
     case ChassisState::TURN: {
-      current = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() )/3;
-      output = turn_PID.calculate(theta, current);
-      
-      //Find quickest turn.
-      if (fabs(turn_PID.getError()) > 180) { 
-        turn_PID.setError( turn_PID.getError() - 360); 
-        output = turn_PID.calculate(); //recalculate output
+      // Turn PID calc
+      current = (L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw()) / 3;
+      turn_output = turn_PID.calculate(target[0].theta, current);
+
+      // Find quickest turn.
+      if (fabs(turn_PID.getError()) > 180) {
+        turn_PID.setError(turn_PID.getError() - 360);
+        turn_output = turn_PID.calculate(); // recalculate output
       }
+
+      double turnSlewOutput = turnSlew.withGains(target[0].rateTurn, target[0].rateTurn, true).withLimit(target[0].speedTurn).calculate(turn_output);
     
       std::cout << "Error:" << turn_PID.getError() << std::endl; //Debug
 
-      LF.move_voltage(output);
+      LF.move_voltage(turnSlewOutput);
       // LM.move_voltage(output);
-      LB.move_voltage(output);
-      RF.move_voltage(-output);
+      LB.move_voltage(turnSlewOutput);
+      RF.move_voltage(-turnSlewOutput);
       // RM.move_voltage(output);
-      RB.move_voltage(-output);
+      RB.move_voltage(-turnSlewOutput);
 
       if(fabs(turn_PID.getError()) < tol){
         LF.move(0);
@@ -172,7 +202,7 @@ void Chassis::run() {
         // RM.move(0);
         RB.move(0);
         isSettled = true;
-        chassis_mode = ChassisState::IDLE;
+        mode = ChassisState::IDLE;
         goto end;
       }
 
@@ -183,8 +213,8 @@ void Chassis::run() {
       double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
       
-      double leftOutput = left.calculate(leftJoystick);
-      double rightOutput = right.calculate(rightJoystick);
+      double leftOutput = leftSlew.calculate(leftJoystick);
+      double rightOutput = rightSlew.calculate(rightJoystick);
 
       LF.move_voltage(leftOutput);
       // LM.move_voltage(leftOutput);

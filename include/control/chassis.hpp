@@ -8,6 +8,16 @@
 #define BRAKE pros::E_MOTOR_BRAKE_BRAKE
 #define COAST pros::E_MOTOR_BRAKE_COAST
 
+struct ChassisTarget {
+    double x;
+    double y;
+    double theta;
+    double speedDrive;
+    double speedTurn;
+    double rateDrive;
+    double rateTurn;
+};
+
 enum class ChassisState { 
     DRIVE, TURN, OPCONTROL, IDLE
 }; 
@@ -60,19 +70,19 @@ class Chassis {
     Chassis& withTol(int tol_);
 
     /*
-    Updates ChassisState and sets target position.
+    Sets Target angle to reach while driving.
     */
-    Chassis& drive(double target);
+    Chassis& withAngle(double theta, double rate, double speed);
 
     /*
-    Updates ChassisState and sets target position.
+    Updates ChassisState and sets target position in inches.
     */
-    Chassis& drive(double target, double theta_);
+    Chassis& drive(double target_, double rate, double speed);
 
     /*
     Updates ChassisState and sets target theta.
     */
-    Chassis& turn(double theta_);
+    Chassis& turn(double theta, double rate, double speed);
 
     static void start(void* ignore);
 
@@ -84,6 +94,9 @@ class Chassis {
     static bool isSettled;
     static bool isRunning;
 
+    static std::vector<ChassisTarget> target;
+    // static int currTarget;
+
     static int tol;
-    static double target, theta, current, output, turn_output;
+    static double current, output, turn_output;
 };

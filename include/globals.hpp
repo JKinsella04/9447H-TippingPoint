@@ -17,6 +17,6 @@ extern pros::Motor LF, /*LM,*/ LB, RF, /*RM,*/ RB;
 
 extern pros::Imu M_IMU, L_IMU, R_IMU;
 
-// //Motor Encoders
+//Motor Encoders
 extern pros::Rotation LOdometer, ROdometer;
 

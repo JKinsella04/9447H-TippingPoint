@@ -1,18 +1,18 @@
 #include "control/purePursuit.hpp"
 #include "odometry.hpp"
 
-static Odometry Odom;
+static Odometry odom;
 
 double PurePursuit::distToTarget, PurePursuit::absAngleToTarget, PurePursuit::relAngleToTarget; 
 double PurePursuit::relXToPoint, PurePursuit::relYToPoint;
 double PurePursuit::mvmtXPower, PurePursuit::mvmtYPower; 
 
 void PurePursuit::goToPoint(double target_x, double target_y, double speed){
-    distToTarget = hypot(target_x - Odom.getX(), target_y- Odom.getX());
+    distToTarget = hypot(target_x - odom.getX(), target_y- odom.getX());
 
-    absAngleToTarget = atan2(target_y-Odom.getY(), target_x-Odom.getX());
+    absAngleToTarget = atan2(target_y-odom.getY(), target_x-odom.getX());
 
-    relAngleToTarget = absAngleToTarget - Odom.getThetaRad();
+    relAngleToTarget = absAngleToTarget - odom.getThetaRad();
 
     relXToPoint = cos(relAngleToTarget) * distToTarget;
     relYToPoint = sin(relAngleToTarget) * distToTarget;
