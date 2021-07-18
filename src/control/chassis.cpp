@@ -2,7 +2,7 @@
 #include "control/misc.hpp"
 
 // PID Init
-macro::PID drive_PID;
+macro::PID drive_PID(0.5, 0.01, 0.25);
 macro::PID turn_PID(133,0,66);
 
 // Slew Init
@@ -12,22 +12,30 @@ macro::Slew turnSlew(900, 900, true);
 
 // Vector of Struct Init
 std::vector<ChassisTarget> Chassis::target;
-// int Chassis::;
 
 // State Machine Init
 ChassisState mode = ChassisState::IDLE;
 
 bool Chassis::isRunning = false, Chassis::isSettled = true;
 
+double Chassis::odomSide = 0, Chassis::theta, Chassis::posX, Chassis::posY;
+
 int Chassis::tol = 0;
 
-double Chassis::current = 0,
-       Chassis::output = 0, Chassis::turn_output = 0,
-       Chassis::LslewOutput = 0, RslewOutput = 0, TslewOutput = 0;
+double Chassis::current = 0, Chassis::drive_output = 0,
+       Chassis::turn_output = 0, Chassis::LslewOutput = 0,
+       Chassis::RslewOutput = 0, Chassis::TslewOutput = 0;
 
 bool Chassis::adjustAngle = false;
 
 Chassis::Chassis() { }
+
+Chassis::Chassis(double posX_, double posY_){
+  odomSide = LOdometer.get_position();
+  theta = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
+  posX = posX_;
+  posY = posY_;
+}
 
 Chassis::~Chassis() {
   reset();
@@ -59,6 +67,8 @@ void Chassis::reset(){
   // Slew values reset
   leftSlew.reset();
   rightSlew.reset();
+
+  adjustAngle = false;
 
   mode = ChassisState::IDLE;
 
@@ -147,15 +157,13 @@ void Chassis::run() {
 
     switch (mode) {
     case ChassisState::DRIVE: {
-      // Drive PID calc
-      current = (LOdometer.get_position()); // + ROdometer.get_position()) / 2.0;
-      output = drive_PID.calculate(target[0].x, current);
+      // Drive PID calc.
+      drive_output = drive_PID.calculate(target[0].x, odomSide);
 
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 
-      // Turn PID calc
-      current = (L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw()) / 3;
-      turn_output = turn_PID.calculate(target[0].theta, current);
+      // Turn PID calc.
+      turn_output = turn_PID.calculate(target[0].theta, theta);
 
       // Find quickest turn.
       if (fabs(turn_PID.getError()) > 180) {
@@ -163,12 +171,14 @@ void Chassis::run() {
         turn_output = turn_PID.calculate(); // recalculate output
       }
 
+      // Turn slew calc.
       TslewOutput = turnSlew.withGains(target[0].rateTurn, target[0].rateTurn, true).withLimit(target[0].speedTurn).calculate(turn_output);
       
       skip:
 
-      LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
-      RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
+      // Drive slew calc.
+      LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
 
       std::cout << "Output:" << LslewOutput << std::endl; // Debug
 
@@ -183,6 +193,7 @@ void Chassis::run() {
       if (fabs(drive_PID.getError()) < tol) {
         left(0);
         right(0);
+        withGains().withTurnGains().withTol();
         reset();
         isSettled = true;
         mode = ChassisState::IDLE;
@@ -191,10 +202,13 @@ void Chassis::run() {
       break;
     }
 
+    case ChassisState::MOTIONPROFILE: {
+      
+    }
+
     case ChassisState::TURN: {
       // Turn PID calc
-      current = (L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw()) / 3;
-      turn_output = turn_PID.calculate(target[0].theta, current);
+      turn_output = turn_PID.calculate(target[0].theta, theta);
 
       // Find quickest turn.
       if (fabs(turn_PID.getError()) > 180) {
@@ -202,7 +216,7 @@ void Chassis::run() {
         turn_output = turn_PID.calculate(); // recalculate output
       }
 
-      double TslewOutput = turnSlew.withGains(target[0].rateTurn, target[0].rateTurn, true).withLimit(target[0].speedTurn).calculate(turn_output);
+      TslewOutput = turnSlew.withGains(target[0].rateTurn, target[0].rateTurn, true).withLimit(target[0].speedTurn).calculate(turn_output);
     
       std::cout << "Error:" << turn_PID.getError() << std::endl; //Debug
 
@@ -212,6 +226,8 @@ void Chassis::run() {
       if (fabs(turn_PID.getError()) < tol) {
         left(0);
         right(0);
+        withTurnGains().withTol();
+        reset();
         isSettled = true;
         mode = ChassisState::IDLE;
         goto end;
@@ -234,10 +250,10 @@ void Chassis::run() {
 
     case ChassisState::BALANCE: {
       current = (L_IMU.get_pitch() + M_IMU.get_pitch() + R_IMU.get_pitch()) / 3;
-      output = drive_PID.calculate(0, current);
+      drive_output = drive_PID.calculate(0, current);
 
-      LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
-      RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(output);
+      LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
 
       left(LslewOutput);
       right(RslewOutput);
@@ -245,6 +261,7 @@ void Chassis::run() {
       if (fabs(drive_PID.getError()) < tol) {
         left(0);
         right(0);
+        withGains().withTol();
         reset();
         isSettled = true;
         mode = ChassisState::IDLE;

@@ -1,12 +1,12 @@
 #include "auton.hpp"
 #include "chassis.hpp"
 #include "purePursuit.hpp"
+#include "misc.hpp"
 
 // Class Init
 Chassis chassis;
 PurePursuit purePursuit;
 
-// struct setAuton runningAuton;
 std::string Autonomous::name;
 
 int Autonomous::id;

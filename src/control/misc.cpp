@@ -51,7 +51,7 @@ Slew &Slew::withLimit(double limit_) {
   return *this;
 }
 
-double Slew::calculate(int input) { //Straight from 7k Tower Takeover.
+double Slew::calculate(int input) { //From 7k Tower Takeover.
   if (!noDecel) {
 
     if (!isReversible) {
@@ -164,7 +164,6 @@ void PID::setError(double error_) { error = error_; }
 
 double PID::getError() { return prevError; }
 
-void PID::reset(){ output = target = current = error = integral = derivative = prevError = 0;
-}
+void PID::reset(){ output = target = current = error = integral = derivative = prevError = 0; }
 
 } // namespace macro

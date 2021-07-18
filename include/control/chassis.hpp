@@ -18,8 +18,12 @@ struct ChassisTarget {
     double rateTurn;
 };
 
+// TODO: Motion Profiling
+// TODO: Pure Pursuit
+// TODO: 
+
 enum class ChassisState { 
-    DRIVE, TURN, OPCONTROL, BALANCE, IDLE
+    DRIVE, MOTIONPROFILE, TURN, OPCONTROL, BALANCE, IDLE
 }; 
 
 class Chassis {
@@ -29,6 +33,7 @@ class Chassis {
     Constructor.
     */
     Chassis();
+    Chassis(double posX_, double posY_);
 
     ~Chassis();
     /*
@@ -58,7 +63,7 @@ class Chassis {
     /*
     Sets drive PID constants.
     */
-    Chassis& withGains(double kP_, double kI_ = 0, double kD_ = 0);
+    Chassis& withGains(double kP_ = 0.5, double kI_ = 0.01, double kD_ = 0.25);
 
     /*
     Sets turn PID constants.
@@ -67,7 +72,7 @@ class Chassis {
     /*
     Sets the tolerance range for both Chassis::drive() and Chassis::turn().
     */
-    Chassis& withTol(int tol_);
+    Chassis& withTol(int tol_ = 1000);
 
     /*
     Sets Target angle to reach while driving.
@@ -104,9 +109,9 @@ class Chassis {
     static bool isRunning;
 
     static std::vector<ChassisTarget> target;
-    // static int currTarget;
-
+    
+    static double odomSide, theta, posX, posY;
     static int tol;
-    static double current, output, turn_output, LslewOutput, RslewOutput, TslewOutput;
+    static double current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle;
 };
