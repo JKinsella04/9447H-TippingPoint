@@ -2,8 +2,8 @@
 #include "main.h"
 #include "globals.hpp"
 
-#define ACCEL 1
-#define DECCEL 2
+#define GOAL_OUT 1000
+#define GOAL_IN  0
 
 namespace intake{
     /*
@@ -20,15 +20,14 @@ namespace intake{
 
 namespace mobileGoal{
     /*
-    Moves mobile Goal to stated position.
+    Moves mobile Goal to target position.
     */
-    void pos1(pros::Motor m);
-    void pos2(pros::Motor m);
+    void move(pros::Motor m, int target);
 
     /*
     Tares Mobile Goal.
     */
-    void tare(pros::Motor m);   
+    void reset(pros::Motor m);   
 };
 
 namespace macro {

@@ -30,11 +30,14 @@ class Chassis {
     public:
     
     /*
-    Constructor.
+    Constructors.
     */
     Chassis();
     Chassis(double posX_, double posY_);
-
+    
+    /*
+    Destructor.
+    */
     ~Chassis();
     /*
     Sets state for Chassis state machine.

@@ -14,8 +14,8 @@ Odometry::Odometry() { }
 void Odometry::calibrateGyro(){
   L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
   while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
-  LOdometer.reset();
-  ROdometer.reset();
+  OdomL.reset();
+  OdomS.reset();
 }
 
 double Odometry::getX(){
@@ -107,8 +107,8 @@ void Odometry::track(){
     thetaNew = degToRad(thetaFiltered);
     deltaTheta = thetaNew - angle;
 
-    curSide = ( ROdometer.get_position() * M_PI/360) /100;
-    curBack = ( LOdometer.get_position() * M_PI/360) /100;
+    curSide = ( OdomS.get_position() * M_PI/360);
+    curBack = ( OdomL.get_position() * M_PI/360);
     deltaSide = (curSide - lastSide)*(wheelDiameter);
     deltaBack = (curBack - lastBack)*(trackingDiameter);
     lastSide = curSide;
@@ -129,9 +129,6 @@ void Odometry::track(){
     y += sideChord * cos(thetaAvg);
     x += backChord * -cos(thetaAvg);
     y += backChord *  sin(thetaAvg);
-
-    // x /= 100;
-    // y /= 100;
     
     angle += deltaTheta;
     

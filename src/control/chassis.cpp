@@ -3,7 +3,7 @@
 
 // PID Init
 macro::PID drive_PID(0.5, 0.01, 0.25);
-macro::PID turn_PID(133,0,66);
+macro::PID turn_PID(133, 0, 66);
 
 // Slew Init
 macro::Slew leftSlew(900, 900, true);
@@ -16,6 +16,8 @@ std::vector<ChassisTarget> Chassis::target;
 // State Machine Init
 ChassisState mode = ChassisState::IDLE;
 
+
+// Variable Init
 bool Chassis::isRunning = false, Chassis::isSettled = true;
 
 double Chassis::odomSide = 0, Chassis::theta, Chassis::posX, Chassis::posY;
@@ -31,7 +33,7 @@ bool Chassis::adjustAngle = false;
 Chassis::Chassis() { }
 
 Chassis::Chassis(double posX_, double posY_){
-  odomSide = LOdometer.get_position();
+  odomSide = OdomL.get_position();
   theta = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
   posX = posX_;
   posY = posY_;
@@ -45,9 +47,6 @@ void Chassis::setState(ChassisState s){
   mode = s;
 }
 
-ChassisState Chassis::getState(){
-  return mode;
-}
 void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
   LF.set_brake_mode(state);
   // LM.set_brake_mode(state);
@@ -56,6 +55,11 @@ void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
   // RM.set_brake_mode(state);
   RB.set_brake_mode(state);
 }
+
+ChassisState Chassis::getState(){
+  return mode;
+}
+
 void Chassis::waitUntilSettled() {
   while(!isSettled) pros::delay(20);
 }
@@ -203,7 +207,7 @@ void Chassis::run() {
     }
 
     case ChassisState::MOTIONPROFILE: {
-      
+      break;
     }
 
     case ChassisState::TURN: {

@@ -8,15 +8,16 @@
 #include "control/purePursuit.hpp"
 
 void initialize() {
+	// Class Init
 	Odometry odom;
 	Chassis chassis;
  	Display display;
 
 	// Sensor Init
 	L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
-  	while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
+  while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
 
-    // Threads
+  // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");
 
 	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");
@@ -37,7 +38,7 @@ void autonomous() {
 
 void opcontrol() {
   Chassis chassis;
-  chassis.setState(ChassisState::OPCONTROL);
+  chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control 
   chassis.setBrakeType(COAST);
 
   while (true) {

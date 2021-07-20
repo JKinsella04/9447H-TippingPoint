@@ -42,7 +42,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     odom.reset();
     break;
   case 4:
-    mobileGoal::tare(MG);
+    // mobileGoal::reset(MG);
     break;
   default:
     break;
@@ -172,9 +172,11 @@ void Display::tabSettings(lv_obj_t *parent) {
 }
 
 void Display::start(void *ignore) {
-  pros::delay(500);
-  Display *that = static_cast<Display *>(ignore);
-  that->run();
+  if(!isRunning) {
+    pros::delay(500);
+    Display *that = static_cast<Display *>(ignore);
+    that->run();
+  }
 }
 
 void Display::run() {
@@ -202,7 +204,9 @@ void Display::run() {
     std::string cstate;
     switch(chassis.getState()){
       case ChassisState::DRIVE:{ cstate = "Chassis State: DRIVE"; break; }
+      case ChassisState::MOTIONPROFILE:{ cstate = "Chassis State: MOTION PROFILE"; break; }
       case ChassisState::TURN:{ cstate = "Chassis State: TURN"; break; }     
+      case ChassisState::BALANCE:{ cstate = "Chassis State: BALANCE"; break; }      
       case ChassisState::IDLE:{ cstate = "Chassis State: IDLE"; break; }
       case ChassisState::OPCONTROL:{ cstate = "Chassis State: OPCONTROL"; break; }
     }

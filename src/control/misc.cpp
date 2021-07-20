@@ -1,29 +1,16 @@
 #include "control/misc.hpp"
 
-namespace intake{
-    void spin(double speed){
-        Intake.move(speed);
-    }
+namespace intake {
+void spin(double speed) { Intake.move(speed); }
 
-    void spin(double target, double speed){
-        Intake.move_relative(target, speed);
-    }
-}
+void spin(double target, double speed) { Intake.move_relative(target, speed); }
+} // namespace intake
 
-namespace mobileGoal{
-    void pos1(pros::Motor m){
-        m.move_absolute(0, 127);
-    }
+namespace mobileGoal {
+void move(pros::Motor m, int target) { m.move_absolute(target, 127); }
 
-    void pos2(pros::Motor m){
-        m.move_absolute(0, 127);
-    }
-
-    void tare(pros::Motor m){
-        m.tare_position();
-    }
-
-}
+void reset(pros::Motor m) { m.tare_position(); }
+} // namespace mobileGoal
 
 namespace macro {
 
