@@ -23,7 +23,7 @@ struct ChassisTarget {
 // TODO: 
 
 enum class ChassisState { 
-    DRIVE, MOTIONPROFILE, TURN, OPCONTROL, BALANCE, IDLE
+    DRIVE, POINT, TURN, OPCONTROL, BALANCE, IDLE
 }; 
 
 class Chassis {
@@ -33,7 +33,7 @@ class Chassis {
     Constructors.
     */
     Chassis();
-    Chassis(double posX_, double posY_);
+    Chassis(double *posX_, double *posY_);
     
     /*
     Destructor.
@@ -72,6 +72,7 @@ class Chassis {
     Sets turn PID constants.
     */
     Chassis& withTurnGains(double kP_ = 133, double kI_ = 0, double kD_ = 66);
+
     /*
     Sets the tolerance range for both Chassis::drive() and Chassis::turn().
     */
@@ -86,6 +87,11 @@ class Chassis {
     Updates ChassisState and sets target position in inches.
     */
     Chassis& drive(double target_, double rate, double speed);
+
+    /*
+    Updates ChassisState and sets target position from given (x,y) coords.
+    */
+    Chassis& drive(double x, double y, double driveRate, double driveSpeed, double turnRate, double turnSpeed);
 
     /*
     Updates ChassisState and sets target theta.
@@ -113,8 +119,12 @@ class Chassis {
 
     static std::vector<ChassisTarget> target;
     
-    static double odomSide, theta, posX, posY;
+    static double *odomSide, *theta, *posX, *posY;
     static int tol;
     static double current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle;
+
+    static double distToTarget, absAngleToTarget, relAngleToTarget;
+    static double relXToPoint, relYToPoint;
+    static double mvmtXPower, mvmtYPower;
 };

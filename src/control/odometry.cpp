@@ -16,14 +16,15 @@ void Odometry::calibrateGyro(){
   while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
   OdomL.reset();
   OdomS.reset();
+  OdomL.set_reversed(true);
 }
 
-double Odometry::getX(){
-  return x;
+double * Odometry::getX(){
+  return &x;
 }
 
-double Odometry::getY(){
-  return y;
+double * Odometry::getY(){
+  return &y;
 }
 
 double Odometry::getThetaDeg(){

@@ -5,12 +5,11 @@
 #include "control/gui.hpp"
 #include "control/auton.hpp"
 #include "control/odometry.hpp"
-#include "control/purePursuit.hpp"
 
 void initialize() {
 	// Class Init
 	Odometry odom;
-	Chassis chassis;
+	Chassis chassis(odom.getX(), odom.getY());
  	Display display;
 
 	// Sensor Init
@@ -40,7 +39,7 @@ void opcontrol() {
   Chassis chassis;
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control 
   chassis.setBrakeType(COAST);
-
+	
   while (true) {
     pros::delay(5);
 	}

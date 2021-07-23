@@ -11,9 +11,9 @@ class Odometry{
 
     void calibrateGyro();
 
-    double getX();
+    double * getX();
 
-    double getY();
+    double * getY();
 
     double getThetaRad();
 

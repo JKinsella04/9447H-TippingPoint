@@ -14,4 +14,3 @@ extern pros::Imu M_IMU, L_IMU, R_IMU;
 
 //Tracking Wheel Declarations
 extern pros::Rotation OdomL, OdomS;
-

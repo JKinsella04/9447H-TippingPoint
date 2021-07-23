@@ -42,7 +42,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     odom.reset();
     break;
   case 4:
-    // mobileGoal::reset(MG);
+    mobileGoal::reset(MG);
     break;
   default:
     break;
@@ -204,7 +204,7 @@ void Display::run() {
     std::string cstate;
     switch(chassis.getState()){
       case ChassisState::DRIVE:{ cstate = "Chassis State: DRIVE"; break; }
-      case ChassisState::MOTIONPROFILE:{ cstate = "Chassis State: MOTION PROFILE"; break; }
+      case ChassisState::POINT:{ cstate = "Chassis State: POINT"; break; }
       case ChassisState::TURN:{ cstate = "Chassis State: TURN"; break; }     
       case ChassisState::BALANCE:{ cstate = "Chassis State: BALANCE"; break; }      
       case ChassisState::IDLE:{ cstate = "Chassis State: IDLE"; break; }

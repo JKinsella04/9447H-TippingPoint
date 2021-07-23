@@ -20,7 +20,7 @@ ChassisState mode = ChassisState::IDLE;
 // Variable Init
 bool Chassis::isRunning = false, Chassis::isSettled = true;
 
-double Chassis::odomSide = 0, Chassis::theta, Chassis::posX, Chassis::posY;
+double *Chassis::odomSide = 0, *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
 int Chassis::tol = 0;
 
@@ -30,11 +30,18 @@ double Chassis::current = 0, Chassis::drive_output = 0,
 
 bool Chassis::adjustAngle = false;
 
+double Chassis::distToTarget, Chassis::absAngleToTarget, Chassis::relAngleToTarget; 
+double Chassis::relXToPoint, Chassis::relYToPoint;
+double Chassis::mvmtXPower, Chassis::mvmtYPower; 
+
 Chassis::Chassis() { }
 
-Chassis::Chassis(double posX_, double posY_){
-  odomSide = OdomL.get_position();
-  theta = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
+Chassis::Chassis(double *posX_, double *posY_){
+  double odomSideTemp = OdomL.get_position();
+  double thetaTemp = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
+
+  odomSide = &odomSideTemp;
+  theta = &thetaTemp;
   posX = posX_;
   posY = posY_;
 }
@@ -123,6 +130,20 @@ Chassis &Chassis::drive(double target_, double rate, double speed) {
   return *this;
 }
 
+Chassis &Chassis::drive(double x, double y, double driveRate, double driveSpeed, double turnRate, double turnSpeed){
+  if(target.size() != 1) target.resize(1);
+  target[0].x = x;
+  target[0].y = y;
+  target[0].rateDrive = driveRate;
+  target[0].speedDrive = driveSpeed;
+  target[0].rateTurn = turnRate;
+  target[0].speedTurn = turnSpeed;
+  reset();
+  isSettled = false;
+  mode = ChassisState::POINT;
+  return *this;
+}
+
 Chassis &Chassis::turn(double theta, double rate, double speed) {
   if(target.size() != 1) target.resize(1);
   target[0].theta = theta;
@@ -162,12 +183,12 @@ void Chassis::run() {
     switch (mode) {
     case ChassisState::DRIVE: {
       // Drive PID calc.
-      drive_output = drive_PID.calculate(target[0].x, odomSide);
+      drive_output = drive_PID.calculate(target[0].x, *odomSide);
 
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 
       // Turn PID calc.
-      turn_output = turn_PID.calculate(target[0].theta, theta);
+      turn_output = turn_PID.calculate(target[0].theta, *theta);
 
       // Find quickest turn.
       if (fabs(turn_PID.getError()) > 180) {
@@ -206,13 +227,64 @@ void Chassis::run() {
       break;
     }
 
-    case ChassisState::MOTIONPROFILE: {
+    case ChassisState::POINT: {
+      distToTarget = hypot(target[0].x - *posX, target[0].y - *posY);
+
+      absAngleToTarget = atan2(target[0].y - *posY, target[0].x - *posX);
+
+      double thetaRad = *theta * PI / 180;
+
+      relAngleToTarget = absAngleToTarget - thetaRad;
+
+      double relAngleDeg = relAngleToTarget * 180 / PI;
+
+      // Drive PID calc
+      drive_output = drive_PID.calculate(distToTarget, *posX);
+
+      // Turn PID calc.
+      turn_output = turn_PID.calculate(relAngleToTarget, *theta);
+
+      // Find quickest turn.
+      if (fabs(turn_PID.getError()) > 180) {
+        turn_PID.setError(turn_PID.getError() - 360);
+        turn_output = turn_PID.calculate(); // recalculate output
+      }
+      
+      // Slew Calcs.
+      TslewOutput = turnSlew.withGains(target[0].rateTurn, target[0].rateTurn, true).withLimit(target[0].speedTurn).calculate(turn_output);
+      LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
+
+      // relXToPoint = cos(relAngleToTarget) * distToTarget;
+      // relYToPoint = sin(relAngleToTarget) * distToTarget;
+
+      // mvmtXPower = relXToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
+      // mvmtYPower = relYToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
+
+      // double leftPower = mvmtYPower + mvmtXPower;
+      // double rightPower = mvmtYPower - mvmtXPower;
+
+      std::cout << "Drive:" << drive_output << "Turn:" << turn_output << std::endl;
+
+      // left(LslewOutput + TslewOutput);
+      // right(RslewOutput - TslewOutput);
+
+      if(fabs(drive_PID.getError()) <= tol){
+        left(0);
+        right(0);
+        withGains().withTurnGains().withTol();
+        reset();
+        isSettled = true;
+        mode = ChassisState::IDLE;
+        goto end;
+      }
+
       break;
     }
 
     case ChassisState::TURN: {
       // Turn PID calc
-      turn_output = turn_PID.calculate(target[0].theta, theta);
+      turn_output = turn_PID.calculate(target[0].theta, *theta);
 
       // Find quickest turn.
       if (fabs(turn_PID.getError()) > 180) {
