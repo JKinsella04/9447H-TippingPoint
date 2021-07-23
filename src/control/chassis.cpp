@@ -255,19 +255,10 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target[0].rateDrive, target[0].rateDrive, true).withLimit(target[0].speedDrive).calculate(drive_output);
 
-      // relXToPoint = cos(relAngleToTarget) * distToTarget;
-      // relYToPoint = sin(relAngleToTarget) * distToTarget;
-
-      // mvmtXPower = relXToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
-      // mvmtYPower = relYToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
-
-      // double leftPower = mvmtYPower + mvmtXPower;
-      // double rightPower = mvmtYPower - mvmtXPower;
-
       std::cout << "Drive:" << drive_output << "Turn:" << turn_output << std::endl;
 
-      // left(LslewOutput + TslewOutput);
-      // right(RslewOutput - TslewOutput);
+      left(LslewOutput + TslewOutput);
+      right(RslewOutput - TslewOutput);
 
       if(fabs(drive_PID.getError()) <= tol){
         left(0);
