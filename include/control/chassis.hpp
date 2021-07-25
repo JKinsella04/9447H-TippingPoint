@@ -18,8 +18,8 @@ struct ChassisTarget {
     double rateTurn;
 };
 
-// TODO: Motion Profiling
-// TODO: Pure Pursuit
+// TODO: Fix *theta
+// TODO: Fix turn, Point, 
 // TODO: 
 
 enum class ChassisState { 
@@ -33,7 +33,7 @@ class Chassis {
     Constructors.
     */
     Chassis();
-    Chassis(double *posX_, double *posY_);
+    Chassis(double *odomSide_, double *theta_, double *posX_, double *posY_);
     
     /*
     Destructor.

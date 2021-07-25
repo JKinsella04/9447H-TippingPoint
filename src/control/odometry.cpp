@@ -7,16 +7,16 @@ double  Odometry::sideDistance = -3,  // Distance in inches from tracking center
         Odometry::sideDiameter = 2.75,   // Side tracker diameter in inches
         Odometry::backDiameter = 2.75;   // Back tracker diameter in inches
 
-double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0;
+double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0, Odometry::thetaDeg = 0, Odometry::odomL = 0;
 
 Odometry::Odometry() { }
 
 void Odometry::calibrateGyro(){
   L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
   while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
-  OdomL.reset();
-  OdomS.reset();
-  OdomL.set_reversed(true);
+  OdomL.reset_position();
+  OdomS.reset_position();
+  
 }
 
 double * Odometry::getX(){
@@ -27,12 +27,24 @@ double * Odometry::getY(){
   return &y;
 }
 
-double Odometry::getThetaDeg(){
-  return radToDeg(angle);
+double * Odometry::getL(){
+  return &odomL;
 }
 
-double Odometry::getThetaRad(){
-  return angle;
+double * Odometry::getThetaDeg(){
+  return &thetaDeg;
+}
+
+double * Odometry::getThetaRad(){
+  return &angle;
+}
+
+double Odometry::returnX(){
+  return x;
+}
+
+double Odometry::returnY(){
+  return y;
 }
 
 //Math
@@ -62,10 +74,7 @@ void Odometry::start(void* ignore) {
 }
 
 void Odometry::reset(){
-  x = 0;
-  y = 0;
-  angle = 0;
-  diff = 0;
+  x = y = angle = diff = 0;
 }
 
 //Tracking
@@ -73,7 +82,7 @@ void Odometry::track(){
 
   isRunning = true;
 
-  calibrateGyro();
+  reset();
 
   float Ss = sideDistance,
         Sb = backDistance,
@@ -132,6 +141,10 @@ void Odometry::track(){
     y += backChord *  sin(thetaAvg);
     
     angle += deltaTheta;
+
+    odomL = OdomL.get_position();
+    thetaDeg = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
+
     
     // std::cout << "(" << x << "," << y << ")" << std::endl;
 

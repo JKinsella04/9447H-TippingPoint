@@ -54,14 +54,16 @@ void Autonomous::runAuton() {
 
 // Match Autons
 void homeRow() {
-  chassis.drive(1000, 0, 900, 9000, 900, 12000).withTol(40).waitUntilSettled();
+  chassis.drive(1000, 0, 900, 9000, 900, 12000).withGains(9,0,0).withTol(10).waitUntilSettled();
+  chassis.drive(0, 0, 900, 9000, 900, 12000).withTol(10).waitUntilSettled();
+
   // chassis.drive(20, 900, 9000).withGains(.5,0.01,0.15).withAngle(-90, 900, 12000).withTurnGains(133, 0, 66).withTol(1000).waitUntilSettled();
 }
 
 void oneGoal() {
   chassis.turn(-90, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
-  chassis.turn(0, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
-  chassis.turn(90, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
+  // chassis.turn(0, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
+  // chassis.turn(90, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
   
 }
 

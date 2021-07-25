@@ -1,7 +1,6 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
-#include "odometry.hpp"
 
 // Odom calculations and conversion functions from Jay Katyan of 2602H. 
 class Odometry{
@@ -15,9 +14,15 @@ class Odometry{
 
     double * getY();
 
-    double getThetaRad();
+    double * getThetaRad();
 
-    double getThetaDeg();
+    double * getThetaDeg();
+
+    double * getL();
+
+    double returnX();
+     
+    double returnY();
 
     double radToDeg(double rad);
 
@@ -34,6 +39,6 @@ class Odometry{
     void stopTracking();
   private:
     static bool isRunning;
-    static double x, y, angle, diff;
+    static double x, y, angle, diff, thetaDeg, odomL;
     static double sideDistance, backDistance, sideDiameter, backDiameter;
 };

@@ -8,11 +8,14 @@
 
 void initialize() {
 	// Class Init
-	Odometry odom;
-	Chassis chassis(odom.getX(), odom.getY());
+	Odometry odom;	 
+	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY());
  	Display display;
 
 	// Sensor Init
+	OdomL.reset_position();
+	OdomS.reset_position();
+	OdomL.set_reversed(true);
 	L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
   while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
 

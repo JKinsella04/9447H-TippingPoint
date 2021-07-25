@@ -33,7 +33,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
   switch (id) { // Controls both tab 2 + 3.
   case 1: // Tab 2 control
     pros::delay(3000);
-    auton.runAuton();
+    autonomous();
     break;
   case 2: // Tab 3 control
     chassis.reset();
@@ -196,8 +196,8 @@ void Display::run() {
     lv_label_set_text(autonName, temp.c_str());
 
     std::ostringstream odomx, odomy;
-    odomx << odom.getX();
-    odomy << odom.getY();
+    odomx << odom.returnX();
+    odomy << odom.returnY();
     std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
     lv_label_set_text(odomVals, odomTemp.c_str());
 
