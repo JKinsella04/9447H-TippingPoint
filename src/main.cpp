@@ -15,7 +15,7 @@ void initialize() {
 	// Sensor Init
 	OdomL.reset_position();
 	OdomS.reset_position();
-	OdomL.set_reversed(true);
+	OdomL.set_reversed(false);
 	L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
   while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
 

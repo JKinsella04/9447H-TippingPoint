@@ -2,8 +2,8 @@
 #include "main.h"
 #include "globals.hpp"
 
-#define CONVERSION 4169.079328314997
-#define DRIVE_CONVERSION 94.48818897637795
+#define CONVERSION 4169.079328314997 // Convert 2.75in Wheels to Inches with V5 rotation Sensor.
+#define DRIVE_CONVERSION 94.48818897637795 // Convert joystick input to scale for voltage.
 #define HOLD pros::E_MOTOR_BRAKE_HOLD
 #define BRAKE pros::E_MOTOR_BRAKE_BRAKE
 #define COAST pros::E_MOTOR_BRAKE_COAST
@@ -17,10 +17,6 @@ struct ChassisTarget {
     double rateDrive;
     double rateTurn;
 };
-
-// TODO: Fix *theta
-// TODO: Fix turn, Point, 
-// TODO: 
 
 enum class ChassisState { 
     DRIVE, POINT, TURN, OPCONTROL, BALANCE, IDLE
@@ -81,27 +77,27 @@ class Chassis {
     /*
     Sets Target angle to reach while driving.
     */
-    Chassis& withAngle(double theta, double rate, double speed);
+    Chassis& withAngle(double theta, double rate = 900, double speed = 9000);
 
     /*
     Updates ChassisState and sets target position in inches.
     */
-    Chassis& drive(double target_, double rate, double speed);
+    Chassis& drive(double target_, double rate = 900, double speed = 9000);
 
     /*
     Updates ChassisState and sets target position from given (x,y) coords.
     */
-    Chassis& drive(double x, double y, double driveRate, double driveSpeed, double turnRate, double turnSpeed);
+    Chassis& drive(double x, double y, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);
 
     /*
     Updates ChassisState and sets target theta.
     */
-    Chassis& turn(double theta, double rate, double speed);
+    Chassis& turn(double theta, double rate = 900, double speed = 9000);
 
     /*
     Updates ChassisState to start balancing the bridge.
     */
-    Chassis& balance(double rate, double speed);
+    Chassis& balance(double rate = 900, double speed = 9000);
 
     static void start(void* ignore);
 
@@ -111,13 +107,13 @@ class Chassis {
 
     void right(double input);
 
+    void calcDir();
+
     void stop();
 
     private:
     static bool isSettled;
     static bool isRunning;
-
-    static std::vector<ChassisTarget> target;
     
     static double *odomSide, *theta, *posX, *posY;
     static int tol;
