@@ -5,14 +5,18 @@
 #include "control/gui.hpp"
 #include "control/auton.hpp"
 #include "control/odometry.hpp"
+#include "control/lift.hpp"
+#include "pros/adi.hpp"
 
 void initialize() {
 	// Class Init
 	Odometry odom;	 
 	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY());
  	Display display;
+	Lift lift;
 
 	// Sensor Init
+	liftPos.calibrate();
 	OdomL.reset_position();
 	OdomS.reset_position();
 	OdomL.set_reversed(false);
@@ -24,6 +28,8 @@ void initialize() {
 
 	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");
 	chassis.setBrakeType(HOLD);
+
+	pros::Task LiftController(lift.start, NULL, "Lift Controller");
 
 	pros::Task DisplayController(display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);

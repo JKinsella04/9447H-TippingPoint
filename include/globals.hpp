@@ -1,5 +1,6 @@
 #pragma once
 #include "main.h"
+#include "pros/adi.hpp"
 
 //Controller Declaration
 extern pros::Controller master;
@@ -14,3 +15,5 @@ extern pros::Imu M_IMU, L_IMU, R_IMU;
 
 //Tracking Wheel Declarations
 extern pros::Rotation OdomL, OdomS;
+
+extern pros::ADIPotentiometer liftPos;

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/adi.hpp"
 
 //Controller Definition
 pros::Controller master(CONTROLLER_MASTER);
@@ -29,4 +30,6 @@ Tracking Wheels Definitions
 */
 pros::Rotation OdomL(12),
                OdomS(14);
+
+pros::ADIPotentiometer liftPos('A');
 
