@@ -6,7 +6,6 @@
 #include "control/auton.hpp"
 #include "control/odometry.hpp"
 #include "control/lift.hpp"
-#include "pros/adi.hpp"
 
 void initialize() {
 	// Class Init

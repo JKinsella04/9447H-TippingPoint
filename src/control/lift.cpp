@@ -3,7 +3,7 @@
 
 LiftState liftMode = LiftState::IDLE;
 
-macro::PID lift_PID;
+macro::PID lift_PID(0.1, 0.01, 0.05);
 macro::Slew lift_Slew(900, 900, true);
 
 double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 10;

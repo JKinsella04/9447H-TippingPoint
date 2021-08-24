@@ -20,8 +20,7 @@ Slew::Slew(double accel_, double decel_) : accel(accel_), decel(decel_) {
   noDecel = false;
 }
 
-Slew::Slew(double accel_, double decel_, bool reversible_)
-    : accel(accel_), decel(decel_), isReversible(reversible_) {
+Slew::Slew(double accel_, double decel_, bool reversible_) : accel(accel_), decel(decel_), isReversible(reversible_) {
   noDecel = false;
 }
 
