@@ -1,4 +1,5 @@
 #include "control/misc.hpp"
+#include "pros/adi.hpp"
 
 namespace intake {
 void spin(double speed) { Intake.move(speed); }
@@ -6,10 +7,13 @@ void spin(double speed) { Intake.move(speed); }
 void spin(double target, double speed) { Intake.move_relative(target, speed); }
 } // namespace intake
 
+//TODO: Stop mobile goal before hitting wheels! (Potentiometer??)
 namespace mobileGoal {
 void move(pros::Motor m, int target) { m.move_absolute(target, 127); }
 
 void reset(pros::Motor m) { m.tare_position(); }
+
+void setPiston(pros::ADIDigitalOut p, bool state) { p.set_value(state); }
 } // namespace mobileGoal
 
 namespace macro {

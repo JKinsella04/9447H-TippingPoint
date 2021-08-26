@@ -1,6 +1,8 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
+#include "pros/adi.hpp"
+#include "pros/imu.h"
 
 #define GOAL_OUT 1000
 #define GOAL_IN  0
@@ -28,6 +30,11 @@ namespace mobileGoal{
     Tares Mobile Goal.
     */
     void reset(pros::Motor m);   
+
+    /*
+    Sets state of given piston.
+    */
+    void setPiston(pros::ADIDigitalOut p, bool state);
 };
 
 namespace macro {

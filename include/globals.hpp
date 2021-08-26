@@ -17,3 +17,5 @@ extern pros::Imu M_IMU, L_IMU, R_IMU;
 extern pros::Rotation OdomL, OdomS;
 
 extern pros::ADIPotentiometer liftPos;
+
+extern pros::ADIDigitalOut piston;

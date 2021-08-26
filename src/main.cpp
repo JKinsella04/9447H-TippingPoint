@@ -5,22 +5,22 @@
 #include "control/gui.hpp"
 #include "control/auton.hpp"
 #include "control/odometry.hpp"
-#include "control/lift.hpp"
+// #include "control/lift.hpp"
 
 void initialize() {
 	// Class Init
 	Odometry odom;	 
 	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY());
  	Display display;
-	Lift lift;
+	// Lift lift;
 
 	// Sensor Init
-	liftPos.calibrate();
+	// liftPos.calibrate();
 	OdomL.reset_position();
 	OdomS.reset_position();
 	OdomL.set_reversed(false);
 	L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
-  while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
+  while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); } // Comment out if no IMUs on robot! Will block rest of code!
 
   // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");
@@ -28,7 +28,7 @@ void initialize() {
 	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");
 	chassis.setBrakeType(HOLD);
 
-	pros::Task LiftController(lift.start, NULL, "Lift Controller");
+	// pros::Task LiftController(lift.start, NULL, "Lift Controller");
 
 	pros::Task DisplayController(display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);
@@ -50,5 +50,5 @@ void opcontrol() {
 	
   while (true) {
     pros::delay(5);
-	}
+ 	}
 }

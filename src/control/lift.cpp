@@ -8,6 +8,8 @@ macro::Slew lift_Slew(900, 900, true);
 
 double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 10;
 
+bool Lift::isRunning = false, Lift::isSettled = true;
+
 LiftState Lift::getState(){
   return liftMode;
 }
