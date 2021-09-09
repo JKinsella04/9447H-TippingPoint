@@ -77,6 +77,11 @@ void Chassis::reset(){
   leftSlew.reset();
   rightSlew.reset();
 
+  LF.tare_position();
+  LB.tare_position();
+  RF.tare_position();
+  RB.tare_position();
+
   adjustAngle = false;
 
   mode = ChassisState::IDLE;
@@ -108,6 +113,17 @@ Chassis &Chassis::withAngle(double theta, double rate, double speed){
 Chassis &Chassis::drive(double target_, double rate, double speed) {
   
   target.x = target_ * CONVERSION;
+  target.rateDrive = rate;
+  target.speedDrive = speed;
+  reset();
+  isSettled = false;
+  mode = ChassisState::DRIVE;
+  return *this;
+}
+
+Chassis &Chassis::eDrive(double e_target_, double rate, double speed) {
+  
+  target.x = e_target_ * BASE_CONVERSION;
   target.rateDrive = rate;
   target.speedDrive = speed;
   reset();
@@ -168,8 +184,10 @@ void Chassis::run() {
 
     switch (mode) {
     case ChassisState::DRIVE: {
+      double avgPos = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position()) /4;
+
       // Drive PID calc.
-      drive_output = drive_PID.calculate(target.x, *odomSide);
+      drive_output = ( drive_PID.calculate(target.x, avgPos) ) * 20;
 
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 

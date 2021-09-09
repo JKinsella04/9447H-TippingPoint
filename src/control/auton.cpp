@@ -57,7 +57,7 @@ void homeRow() {
   // chassis.drive(1000, 0, 900, 9000, 900, 12000).withGains(9,0,0).withTol(10).waitUntilSettled();
   // chassis.drive(0, 0, 900, 9000, 900, 12000).withTol(10).waitUntilSettled();
 
-  chassis.drive(20).withAngle(-90).withTol(1000).waitUntilSettled();
+  chassis.eDrive(50).withAngle(90).withTol(40).waitUntilSettled();
 }
 
 void oneGoal() {

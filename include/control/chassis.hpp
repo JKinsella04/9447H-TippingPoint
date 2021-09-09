@@ -3,6 +3,7 @@
 #include "globals.hpp"
 
 #define CONVERSION 4169.079328314997 // Convert 2.75in Wheels to Inches with V5 rotation Sensor.
+#define BASE_CONVERSION 35.2589412388 // Convert 3.25 to Inches with Motor Encoders.
 #define DRIVE_CONVERSION 94.48818897637795 // Convert joystick input to scale for voltage.
 #define HOLD pros::E_MOTOR_BRAKE_HOLD
 #define BRAKE pros::E_MOTOR_BRAKE_BRAKE
@@ -83,6 +84,11 @@ class Chassis {
     Updates ChassisState and sets target position in inches.
     */
     Chassis& drive(double target_, double rate = 900, double speed = 9000);
+
+    /*
+    Updates ChassisState and uses motor encoders.
+    */
+    Chassis& eDrive(double e_target_, double rate = 900, double speed = 9000);
 
     /*
     Updates ChassisState and sets target position from given (x,y) coords.

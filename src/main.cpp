@@ -6,6 +6,7 @@
 #include "control/auton.hpp"
 #include "control/odometry.hpp"
 // #include "control/lift.hpp"
+#include <stdint.h>
 
 void initialize() {
 	// Class Init
@@ -19,8 +20,11 @@ void initialize() {
 	OdomL.reset_position();
 	OdomS.reset_position();
 	OdomL.set_reversed(false);
-	L_IMU.reset(); M_IMU.reset(); R_IMU.reset();
-  while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); } // Comment out if no IMUs on robot! Will block rest of code!
+
+	// L_IMU.reset();
+	M_IMU.reset(); 
+	// R_IMU.reset();	
+  	// while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); } // Comment out if no IMUs on robot! Will block rest of code!
 
   // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");
@@ -47,8 +51,29 @@ void opcontrol() {
   Chassis chassis;
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control 
   chassis.setBrakeType(COAST);
-	
+
+	double lastAccel = 0;
+	double lastTime = pros::c::millis();
+	double lastVelocity = 0;
+	double lastPosition = 0;
+	double velocity = 0;
+	double position = 0;
+
+
   while (true) {
+	pros::c::imu_accel_s_t accel = M_IMU.get_accel();
+
+
+	if(accel.x >= 0.02){
+	velocity = (lastVelocity + ( ( lastAccel + accel.x) /2 ) *(lastTime - pros::c::millis()));
+	position = (lastPosition + ( ( lastVelocity + velocity) /2 ) *(lastTime - pros::c::millis()));
+	lastPosition = position;
+	lastAccel = accel.x;
+	lastTime = pros::c::millis();
+	lastVelocity = velocity;
+	}
+	// if(accel.y <= 0.05) accel.y = 0;
+	std::cout << "Pos:" << position << std::endl;
     pros::delay(5);
  	}
 }
