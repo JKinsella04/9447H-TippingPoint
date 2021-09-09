@@ -43,16 +43,8 @@ void Lift::run() {
       move(0);
       break;
     }
-    case LiftState::SMALL: {
+    case LiftState::UP: {
       move(100);
-      break;
-    }
-    case LiftState::MIDDLE: {
-      move(180);
-      break;
-    }
-    case LiftState::TALL: {
-      move(270);
       break;
     }
     case LiftState::IDLE: {

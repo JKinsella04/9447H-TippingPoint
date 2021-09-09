@@ -22,19 +22,24 @@ namespace intake{
 
 namespace mobileGoal{
     /*
+    Sets state of given piston.
+    */
+    void setPiston(pros::ADIDigitalOut p, bool state);
+
+    /*
     Moves mobile Goal to target position.
     */
     void move(pros::Motor m, int target);
 
     /*
+    Calls both move & setPiston.
+    */
+    void move(pros::Motor m, int target, pros::ADIDigitalOut p, bool state);
+
+    /*
     Tares Mobile Goal.
     */
     void reset(pros::Motor m);   
-
-    /*
-    Sets state of given piston.
-    */
-    void setPiston(pros::ADIDigitalOut p, bool state);
 };
 
 namespace macro {
