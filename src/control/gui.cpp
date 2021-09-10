@@ -50,24 +50,14 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
   case 4:
     mobileGoal::reset(MG);
     break;
-  case 5: {
-    if (!clampIsToggled) {
-      clamp.set_value(true);
-      clampIsToggled = true;
-    } else {
-      clamp.set_value(false);
-      clampIsToggled = false;
-    }
+  case 5:{
+    clampIsToggled = !clampIsToggled;
+    clamp.set_value(clampIsToggled);
     break;
   }
   case 6: {
-    if (!draggerIsToggled) {
-      dragger.set_value(true);
-      draggerIsToggled = true;
-    } else {
-      dragger.set_value(false);
-      draggerIsToggled = false;
-    }
+    draggerIsToggled = !draggerIsToggled;
+    clamp.set_value(draggerIsToggled);
     break;
   }
   case 7:{
