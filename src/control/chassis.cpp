@@ -184,10 +184,8 @@ void Chassis::run() {
 
     switch (mode) {
     case ChassisState::DRIVE: {
-      double avgPos = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position()) /4;
-
       // Drive PID calc.
-      drive_output = ( drive_PID.calculate(target.x, avgPos) ) * 20;
+      drive_output = ( drive_PID.calculate(target.x, *odomSide) ) * 20;
 
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 

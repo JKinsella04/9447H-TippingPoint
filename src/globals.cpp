@@ -33,4 +33,5 @@ pros::Rotation OdomL(12),
 
 pros::ADIPotentiometer liftPos('A');
 
-pros::ADIDigitalOut piston ('B');
+pros::ADIDigitalOut clamp ('B'),
+                    dragger('D');

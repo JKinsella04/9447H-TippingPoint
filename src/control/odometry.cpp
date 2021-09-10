@@ -7,7 +7,7 @@ double  Odometry::sideDistance = -3,  // Distance in inches from tracking center
         Odometry::sideDiameter = 2.75,   // Side tracker diameter in inches
         Odometry::backDiameter = 2.75;   // Back tracker diameter in inches
 
-double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0, Odometry::thetaDeg = 0, Odometry::odomL = 0;
+double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0, Odometry::thetaDeg = 0, Odometry::odomL = 0, Odometry::encoderCount = 0;
 
 Odometry::Odometry() { }
 
@@ -29,6 +29,10 @@ double * Odometry::getY(){
 
 double * Odometry::getL(){
   return &odomL;
+}
+
+double * Odometry::getEncoderCount(){
+  return &encoderCount;
 }
 
 double * Odometry::getThetaDeg(){
@@ -142,11 +146,10 @@ void Odometry::track(){
     
     angle += deltaTheta;
 
+    // Chassis Sensor Readings
     odomL = OdomL.get_position();
     thetaDeg = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
-
-    
-    // std::cout << "(" << x << "," << y << ")" << std::endl;
+    encoderCount = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position()) /4;
 
     pros::delay(10);
   }

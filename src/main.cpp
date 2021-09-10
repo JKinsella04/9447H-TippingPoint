@@ -11,7 +11,7 @@
 void initialize() {
 	// Class Init
 	Odometry odom;	 
-	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY());
+	Chassis chassis(odom.getEncoderCount(), odom.getThetaDeg(), odom.getX(), odom.getY()); // Replace odom.getEncoderCount() with odom.getL() to use rotaiton sensor.
  	Display display;
 	// Lift lift;
 
@@ -21,10 +21,10 @@ void initialize() {
 	OdomS.reset_position();
 	OdomL.set_reversed(false);
 
-	// L_IMU.reset();
+	L_IMU.reset();
 	M_IMU.reset(); 
-	// R_IMU.reset();	
-  	// while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); } // Comment out if no IMUs on robot! Will block rest of code!
+	R_IMU.reset();	
+  while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
 
   // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");

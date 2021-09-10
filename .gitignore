@@ -16,4 +16,4 @@ temp.errors
 .d/
 
 # VSCODE
-.cache
+.cache/

@@ -18,4 +18,4 @@ extern pros::Rotation OdomL, OdomS;
 
 extern pros::ADIPotentiometer liftPos;
 
-extern pros::ADIDigitalOut piston;
+extern pros::ADIDigitalOut clamp, dragger;

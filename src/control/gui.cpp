@@ -1,3 +1,4 @@
+#include "display/lv_objx/lv_label.h"
 #include "main.h"
 
 #include "gui.hpp"
@@ -27,11 +28,16 @@ static lv_obj_t *autonGraphic;
 
 static lv_obj_t *odomVals;
 static lv_obj_t *chassisVals;
+static lv_obj_t *printValue;
+
+bool clampIsToggled = false, draggerIsToggled = false;
+
+int chassisSpeed = 0;
 
 static lv_res_t btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
   switch (id) { // Controls both tab 2 + 3.
-  case 1: // Tab 2 control
+  case 1:       // Tab 2 control
     pros::delay(3000);
     autonomous();
     break;
@@ -44,6 +50,33 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
   case 4:
     mobileGoal::reset(MG);
     break;
+  case 5: {
+    if (!clampIsToggled) {
+      clamp.set_value(true);
+      clampIsToggled = true;
+    } else {
+      clamp.set_value(false);
+      clampIsToggled = false;
+    }
+    break;
+  }
+  case 6: {
+    if (!draggerIsToggled) {
+      dragger.set_value(true);
+      draggerIsToggled = true;
+    } else {
+      dragger.set_value(false);
+      draggerIsToggled = false;
+    }
+    break;
+  }
+  case 7:{
+    chassisSpeed += 3000;
+    if(chassisSpeed > 12000) chassisSpeed = 0;
+    chassis.left(chassisSpeed);
+    chassis.right(chassisSpeed);
+    break;
+  }
   default:
     break;
   }
@@ -163,12 +196,18 @@ void Display::tabDebug(lv_obj_t *parent) {
 
   chassisVals = createLabel(10, 90, "Chassis State: ", parent);
   lv_label_set_style(chassisVals, &style_btn);
+
+  printValue = createLabel(10, 120, "Value: NONE", parent);
+  lv_label_set_style(printValue, &style_btn);
  }
 
 void Display::tabSettings(lv_obj_t *parent) {
   lv_obj_t *resetIMU = createButton(2, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetOdom = createButton(3, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetLift = createButton(4, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *toggleClamp = createButton(5, 100, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *toggleDragger = createButton(6, 100, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *spinChassis = createButton(7, 100, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
 }
 
 void Display::start(void *ignore) {
@@ -200,6 +239,12 @@ void Display::run() {
     odomy << odom.returnY();
     std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
     lv_label_set_text(odomVals, odomTemp.c_str());
+
+    // Placeholder for quickly adding a sensor value to screen.
+    // std::ostringstream yaw;
+    // yaw << L_IMU.get_yaw();
+    // std::string tempValue = "Value: " + yaw.str();
+    // lv_label_set_text(printValue, tempValue.c_str());
 
     std::string cstate;
     switch(chassis.getState()){
