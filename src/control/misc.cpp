@@ -2,11 +2,11 @@
 #include "pros/adi.hpp"
 #include "pros/motors.hpp"
 
-namespace intake {
-void spin(double speed) { Intake.move(speed); }
+// namespace intake {
+// void spin(double speed) { Intake.move(speed); }
 
-void spin(double target, double speed) { Intake.move_relative(target, speed); }
-} // namespace intake
+// void spin(double target, double speed) { Intake.move_relative(target, speed); }
+// } // namespace intake
 
 //TODO: Stop mobile goal before hitting wheels! (Potentiometer??)
 namespace mobileGoal {

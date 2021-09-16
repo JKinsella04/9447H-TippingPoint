@@ -7,18 +7,18 @@
 #define GOAL_OUT 1000
 #define GOAL_IN  0
 
-namespace intake{
-    /*
-    Set speed for intakes.
-    */
-    void spin(double speed);
+// namespace intake{
+//     /*
+//     Set speed for intakes.
+//     */
+//     void spin(double speed);
     
-    /*
-    Set target and speed for intakes.
-    */
-    void spin(double target, double speed);
+//     /*
+//     Set target and speed for intakes.
+//     */
+//     void spin(double target, double speed);
 
-}
+// }
 
 namespace mobileGoal{
     /*

@@ -7,7 +7,8 @@ double  Odometry::sideDistance = -3,  // Distance in inches from tracking center
         Odometry::sideDiameter = 2.75,   // Side tracker diameter in inches
         Odometry::backDiameter = 2.75;   // Back tracker diameter in inches
 
-double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0, Odometry::thetaDeg = 0, Odometry::odomL = 0, Odometry::encoderCount = 0;
+double Odometry::x, Odometry::y, Odometry::angle, Odometry::diff = 0, Odometry::thetaDeg = 0, Odometry::odomL = 0, Odometry::encoderCount = 0,
+       Odometry::global_x, Odometry::global_y;
 
 Odometry::Odometry() { }
 
@@ -20,11 +21,11 @@ void Odometry::calibrateGyro(){
 }
 
 double * Odometry::getX(){
-  return &x;
+  return &global_x;
 }
 
 double * Odometry::getY(){
-  return &y;
+  return &global_y;
 }
 
 double * Odometry::getL(){
@@ -44,11 +45,11 @@ double * Odometry::getThetaRad(){
 }
 
 double Odometry::returnX(){
-  return x;
+  return global_x;
 }
 
 double Odometry::returnY(){
-  return y;
+  return global_y;
 }
 
 //Math
@@ -150,6 +151,15 @@ void Odometry::track(){
     odomL = OdomL.get_position();
     thetaDeg = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
     encoderCount = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position()) /4;
+
+    /*
+    GPS Sensor
+    Struct for GPS coord values.
+    */
+    pros::c::gps_status_s_t gpsData;
+
+    global_x = gpsData.x;
+    global_y = gpsData.y;
 
     pros::delay(10);
   }

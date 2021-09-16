@@ -1,9 +1,10 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
+#include "pros/motors.h"
 
 enum class LiftState { 
-    ZERO, UP, IDLE
+    ZERO, UP, OPCONTROL,IDLE
 }; 
 
 class Lift{
@@ -11,6 +12,8 @@ class Lift{
   LiftState getState();  
   
   Lift& setState(LiftState s);
+
+  void setBrakeType(pros::motor_brake_mode_e_t state);
 
   void waitUntilSettled();
 

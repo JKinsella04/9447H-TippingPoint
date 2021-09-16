@@ -19,6 +19,11 @@ Lift& Lift::setState(LiftState s){
   return *this;
 }
 
+void Lift::setBrakeType(pros::motor_brake_mode_e_t state){
+  leftArm.set_brake_mode(state);
+  rightArm.set_brake_mode(state);
+}
+
 void Lift::waitUntilSettled(){
   while(!isSettled){ pros::delay(20);}
 }
@@ -47,11 +52,24 @@ void Lift::run() {
       move(100);
       break;
     }
+    case LiftState::OPCONTROL: {
+      if (master.get_digital(DIGITAL_L1)) {
+        leftArm.move(127);
+        rightArm.move(127);
+      } else if (master.get_digital(DIGITAL_L2)) {
+        leftArm.move(-127);
+        rightArm.move(-127);
+      } else {
+        leftArm.move(0);
+        rightArm.move(0);
+      }
+      break;
+    }
     case LiftState::IDLE: {
       // Lift motor to zero;
     }
     }
-    
+
     end:
 
     pros::delay(10);

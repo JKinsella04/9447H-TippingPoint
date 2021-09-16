@@ -60,4 +60,6 @@ class Odometry{
     static bool isRunning;
     static double x, y, angle, diff, thetaDeg, odomL, encoderCount;
     static double sideDistance, backDistance, sideDiameter, backDiameter;
+
+    static double global_x, global_y;
 };
