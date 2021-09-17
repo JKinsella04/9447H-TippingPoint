@@ -8,7 +8,15 @@ macro::Slew lift_Slew(900, 900, true);
 
 double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 10;
 
+double *Lift::liftPos;
+
 bool Lift::isRunning = false, Lift::isSettled = true;
+
+Lift::Lift(){ }
+
+Lift::Lift(double liftPos_){
+  liftPos = &liftPos_;
+}
 
 LiftState Lift::getState(){
   return liftMode;
@@ -90,9 +98,7 @@ void Lift::run() {
 }
 
 void Lift::move(double target){
-  current = liftPos.get_value();
-
-  output = lift_PID.calculate(target, current);
+  output = lift_PID.calculate(target, *liftPos);
 
   lift_Slew.calculate(output);
 

@@ -48,7 +48,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     odom.reset();
     break;
   case 4:
-    mobileGoal::reset(MG);
+    // mobileGoal::reset(MG);
     break;
   case 5:{
     clampIsToggled = !clampIsToggled;
@@ -189,15 +189,16 @@ void Display::tabDebug(lv_obj_t *parent) {
 
   printValue = createLabel(10, 120, "Value: NONE", parent);
   lv_label_set_style(printValue, &style_btn);
+
+  lv_obj_t *toggleClamp = createButton(5, 100, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *toggleDragger = createButton(6, 100, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *spinChassis = createButton(7, 100, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
  }
 
 void Display::tabSettings(lv_obj_t *parent) {
   lv_obj_t *resetIMU = createButton(2, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetOdom = createButton(3, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetLift = createButton(4, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *toggleClamp = createButton(5, 100, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *toggleDragger = createButton(6, 100, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *spinChassis = createButton(7, 100, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
 }
 
 void Display::start(void *ignore) {

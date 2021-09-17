@@ -1,4 +1,4 @@
-#include "MobileGoal.hpp"
+#include "mobileGoal.hpp"
 #include "misc.hpp"
 
 MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
@@ -8,7 +8,15 @@ macro::Slew MobileGoal_Slew(900, 900, true);
 
 double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 10;
 
+double *MobileGoal::mg_pos;
+
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
+
+MobileGoal::MobileGoal(){ }
+
+MobileGoal::MobileGoal(double mg_pos_){
+  mg_pos = &mg_pos_;
+}
 
 MobileGoalState MobileGoal::getState(){
   return MobileGoalMode;
@@ -77,9 +85,7 @@ void MobileGoal::run() {
 }
 
 void MobileGoal::move(double target){
-  current = mobileGoalPos.get_value();
-
-  output = MobileGoal_PID.calculate(target, current);
+  output = MobileGoal_PID.calculate(target, *mg_pos);
 
   MobileGoal_Slew.calculate(output);
 

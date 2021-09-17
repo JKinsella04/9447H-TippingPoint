@@ -8,6 +8,12 @@ enum class LiftState {
 
 class Lift{
   public:
+  /*
+  Constructors
+  */
+  Lift();
+  Lift(double liftPos_);
+
   LiftState getState();  
   
   /*
@@ -42,6 +48,8 @@ class Lift{
   static bool isSettled;
 
   static double output, target, current, tol;
+
+  static double *liftPos;
 
   void move(double target);
 
