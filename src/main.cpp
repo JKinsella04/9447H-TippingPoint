@@ -4,10 +4,12 @@
 #include "control/chassis.hpp"
 #include "control/gui.hpp"
 #include "control/auton.hpp"
+#include "control/mobileGoal.hpp"
 #include "control/odometry.hpp"
 #include "control/lift.hpp"
+#include "control/mobileGoal.hpp"
 #include "globals.hpp"
-#include <stdint.h>
+
 
 void initialize() {
 	// Class Init
@@ -15,17 +17,24 @@ void initialize() {
 	Chassis chassis(odom.getEncoderCount(), odom.getThetaDeg(), odom.getX(), odom.getY()); // Replace odom.getEncoderCount() with odom.getL() to use rotaiton sensor.
  	Display display;
 	Lift lift;
+	MobileGoal mobileGoal;
 
 	// Sensor Init
-	// liftPos.calibrate();
+	
+	// Potentiometer calibration
+	liftPos.calibrate();
+	mobileGoalPos.calibrate();
+	
+	// Rotation Sensor calibration
 	OdomL.reset_position();
 	OdomS.reset_position();
 	OdomL.set_reversed(false);
 
+	// IMU calibration
 	// L_IMU.reset();
 	// M_IMU.reset(); 
 	// R_IMU.reset();	
-  while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
+  // while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
 
   // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");
@@ -35,6 +44,9 @@ void initialize() {
 
 	pros::Task LiftController(lift.start, NULL, "Lift Controller");
 	lift.setBrakeType(HOLD);
+	
+	pros::Task MobileGoalController(mobileGoal.start, NULL, "MobileGoal Controller");
+	mobileGoal.setBrakeType(HOLD);
 
 	pros::Task DisplayController(display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);
@@ -51,37 +63,22 @@ void autonomous() {
 
 void opcontrol() {
   Chassis chassis;
-  chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control 
+  chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
 
 	Lift lift;
-	lift.setState(LiftState::OPCONTROL);
+	lift.setState(LiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
-	double lastAccel = 0;
-	double lastTime = pros::c::millis();
-	double lastVelocity = 0;
-	double lastPosition = 0;
-	double velocity = 0;
-	double position = 0;
+	MobileGoal mobileGoal;
+	mobileGoal.setState(MobileGoalState::OPCONTROL); // Controls MobileGoal grabber.
 
 
   while (true) {
+		
+		// Controls Draggers.
+		if(master.get_digital(DIGITAL_UP)) { draggers::setState(BOTH, true); }
+		else if(master.get_digital(DIGITAL_RIGHT)) { draggers::setState(BOTH, false); }
 
-		if(master.get_digital(DIGITAL_R1)) { clamp.set_value(true); }
-		else if(master.get_digital(DIGITAL_R2)) { clamp.set_value(false); } 
-	/*
-	pros::c::imu_accel_s_t accel = M_IMU.get_accel();
-	if(accel.x >= 0.02){
-	velocity = (lastVelocity + ( ( lastAccel + accel.x) /2 ) *(lastTime - pros::c::millis()));
-	position = (lastPosition + ( ( lastVelocity + velocity) /2 ) *(lastTime - pros::c::millis()));
-	lastPosition = position;
-	lastAccel = accel.x;
-	lastTime = pros::c::millis();
-	lastVelocity = velocity;
-	}
-	// if(accel.y <= 0.05) accel.y = 0;
-	std::cout << "Pos:" << position << std::endl;
-  */
 	  pros::delay(5);
  	}
 }

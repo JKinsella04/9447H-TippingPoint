@@ -19,6 +19,11 @@ Lift& Lift::setState(LiftState s){
   return *this;
 }
 
+Lift& Lift::setClamp(bool state_){
+  clamp.set_value(state_);
+  return *this;
+}
+
 void Lift::setBrakeType(pros::motor_brake_mode_e_t state){
   leftArm.set_brake_mode(state);
   rightArm.set_brake_mode(state);
@@ -53,19 +58,27 @@ void Lift::run() {
       break;
     }
     case LiftState::OPCONTROL: {
+      // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        leftArm.move(127);
-        rightArm.move(127);
+        move(2000);
       } else if (master.get_digital(DIGITAL_L2)) {
-        leftArm.move(-127);
-        rightArm.move(-127);
+        move(0);
       } else {
         leftArm.move(0);
         rightArm.move(0);
       }
+
+      // Clamp Control
+      if (master.get_digital(DIGITAL_R1)) {
+        setClamp(true);
+      } else if (master.get_digital(DIGITAL_R2)) {
+        setClamp(false);
+      }
       break;
     }
     case LiftState::IDLE: {
+      leftArm.move(0);
+      rightArm.move(0);
       // Lift motor to zero;
     }
     }
@@ -77,13 +90,14 @@ void Lift::run() {
 }
 
 void Lift::move(double target){
-  current = liftPos.get_value_calibrated();
+  current = liftPos.get_value();
 
   output = lift_PID.calculate(target, current);
 
   lift_Slew.calculate(output);
 
-  // lift.move_voltage(output);
+  leftArm.move_voltage(output);
+  rightArm.move_voltage(output);
 
   if(fabs(lift_PID.getError()) < tol){ 
     liftMode = LiftState::IDLE;

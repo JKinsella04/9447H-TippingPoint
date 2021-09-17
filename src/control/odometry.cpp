@@ -157,9 +157,29 @@ void Odometry::track(){
     Struct for GPS coord values.
     */
     pros::c::gps_status_s_t gpsData;
-
+    
     global_x = gpsData.x;
     global_y = gpsData.y;
+
+  /*  IMU POSITION Tracking
+  double lastAccel = 0;
+	double lastTime = pros::c::millis();
+	double lastVelocity = 0;
+	double lastPosition = 0;
+	double velocity = 0;
+	double position = 0;
+	pros::c::imu_accel_s_t accel = M_IMU.get_accel();
+	if(accel.x >= 0.02){
+	velocity = (lastVelocity + ( ( lastAccel + accel.x) /2 ) *(lastTime - pros::c::millis()));
+	position = (lastPosition + ( ( lastVelocity + velocity) /2 ) *(lastTime - pros::c::millis()));
+	lastPosition = position;
+	lastAccel = accel.x;
+	lastTime = pros::c::millis();
+	lastVelocity = velocity;
+	}
+	// if(accel.y <= 0.05) accel.y = 0;
+	std::cout << "Pos:" << position << std::endl;
+  */
 
     pros::delay(10);
   }

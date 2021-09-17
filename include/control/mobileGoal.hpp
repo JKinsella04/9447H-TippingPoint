@@ -2,28 +2,22 @@
 #include "main.h"
 #include "globals.hpp"
 
-enum class LiftState { 
+enum class MobileGoalState { 
     ZERO, UP, OPCONTROL,IDLE
 }; 
 
-class Lift{
+class MobileGoal{
   public:
-  LiftState getState();  
+  MobileGoalState getState();  
   
   /*
-  Updates LiftState to either ZERO, UP, OPCONTROL, IDLE.
-  @param LiftState s wanted state.
+  Updates MobileGoalState to either ZERO, UP, OPCONTROL, IDLE.
+  @param MobileGoalState s wanted state.
   */
-  Lift& setState(LiftState s);
+  MobileGoal& setState(MobileGoalState s);
 
   /*
-  Sets the lift's clamp.
-  @param bool clamp_ True for clamped False for released.
-  */
-  Lift& setClamp(bool state_);
-
-  /*
-  Sets lift motor brake type.
+  Sets mobileGoal motor brake type.
   @param pros::motor_brake_mode_e_t brake type.
   */
   void setBrakeType(pros::motor_brake_mode_e_t state);

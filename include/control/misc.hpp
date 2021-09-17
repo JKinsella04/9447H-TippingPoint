@@ -7,6 +7,10 @@
 #define GOAL_OUT 1000
 #define GOAL_IN  0
 
+#define BOTH 0
+#define LEFT 1
+#define RIGHT 2
+
 // namespace intake{
 //     /*
 //     Set speed for intakes.
@@ -20,27 +24,15 @@
 
 // }
 
-namespace mobileGoal{
-    /*
-    Sets state of given piston.
-    */
-    void setPiston(pros::ADIDigitalOut p, bool state);
+namespace draggers {
+  /*
+  Sets the dragger's state.
+  @param int which_ Either both or just one of the draggers.
+  @param bool dragger_ True for extended False for retracted.
+  */
+  void setState(int which_ = BOTH, bool state_ = false);
 
-    /*
-    Moves mobile Goal to target position.
-    */
-    void move(pros::Motor m, int target);
-
-    /*
-    Calls both move & setPiston.
-    */
-    void move(pros::Motor m, int target, pros::ADIDigitalOut p, bool state);
-
-    /*
-    Tares Mobile Goal.
-    */
-    void reset(pros::Motor m);   
-};
+} // namespace draggers
 
 namespace macro {
 class Slew {

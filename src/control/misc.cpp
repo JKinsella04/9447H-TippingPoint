@@ -9,18 +9,29 @@
 // } // namespace intake
 
 //TODO: Stop mobile goal before hitting wheels! (Potentiometer??)
-namespace mobileGoal {
-void move(pros::Motor m, int target) { m.move_absolute(target, 127); }
 
-void move(pros::Motor m, int target, pros::ADIDigitalOut p, bool state) { 
-  move(m, target);
-  setPiston(p, state);
+namespace draggers {
+void setState(int draggers, bool state_) {
+  switch (draggers) {
+  case 0: {
+    leftDragger.set_value(state_);
+    rightDragger.set_value(state_);
+    break;
+  }
+  case 1: {
+    leftDragger.set_value(state_);
+    break;
+  }
+  case 2: {
+    rightDragger.set_value(state_);
+    break;
+  }
+  default: {
+    break;
+  }
+  }
 }
-
-void reset(pros::Motor m) { m.tare_position(); }
-
-void setPiston(pros::ADIDigitalOut p, bool state) { p.set_value(state); }
-} // namespace mobileGoal
+} // namespace draggers
 
 namespace macro {
 
