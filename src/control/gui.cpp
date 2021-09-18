@@ -10,7 +10,7 @@
 
 static Autonomous auton;
 static Chassis chassis;
-static Odometry odom;
+static Odom odom;
 
 bool Display::isRunning = false, Display::isInitalized = false;
 
@@ -45,7 +45,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     chassis.reset();
     break;
   case 3:
-    odom.reset();
+    odom.zero();
     break;
   case 4:
     // mobileGoal::reset(MG);
@@ -226,8 +226,8 @@ void Display::run() {
     lv_label_set_text(autonName, temp.c_str());
 
     std::ostringstream odomx, odomy;
-    odomx << odom.returnX();
-    odomy << odom.returnY();
+    odomx << odom.getX();
+    odomy << odom.getY();
     std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
     lv_label_set_text(odomVals, odomTemp.c_str());
 

@@ -13,8 +13,8 @@
 
 void initialize() {
 	// Class Init
-	Odometry odom;	 
-	Chassis chassis(odom.getEncoderCount(), odom.getThetaDeg(), odom.getX(), odom.getY()); // Replace odom.getEncoderCount() with odom.getL() to use rotaiton sensor.
+	Odom odom;	 
+	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY()); // Replace odom.getEncoderCount() with odom.getL() to use rotaiton sensor.
  	Display display;
 	Lift lift( liftPos.get_value() );
 	MobileGoal mobileGoal( mobileGoalPos.get_value() );

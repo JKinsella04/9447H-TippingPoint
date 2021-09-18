@@ -20,7 +20,9 @@ ChassisState mode = ChassisState::IDLE;
 // Variable Init
 bool Chassis::isRunning = false, Chassis::isSettled = true;
 
-double *Chassis::odomSide = 0, *Chassis::theta, *Chassis::posX, *Chassis::posY;
+double *Chassis::theta, *Chassis::posX, *Chassis::posY;
+
+int *Chassis::odomSide = 0;
 
 int Chassis::tol = 0;
 
@@ -36,7 +38,7 @@ double Chassis::mvmtXPower, Chassis::mvmtYPower;
 
 Chassis::Chassis() { }
 
-Chassis::Chassis(double *odomSide_, double *theta_, double *posX_, double *posY_){
+Chassis::Chassis(int *odomSide_, double *theta_, double *posX_, double *posY_){
   odomSide = odomSide_;
   theta = theta_;
   posX = posX_;

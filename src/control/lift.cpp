@@ -68,9 +68,15 @@ void Lift::run() {
     case LiftState::OPCONTROL: {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        move(2000);
+        double output = lift_Slew.calculate(12000);
+        leftArm.move_voltage(output);
+        rightArm.move_voltage(output);
+        
       } else if (master.get_digital(DIGITAL_L2)) {
-        move(0);
+        double output = lift_Slew.calculate(-12000);
+        leftArm.move_voltage(output);
+        rightArm.move_voltage(output);
+
       } else {
         leftArm.move(0);
         rightArm.move(0);
