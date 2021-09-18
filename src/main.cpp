@@ -22,19 +22,20 @@ void initialize() {
 	// Sensor Init
 	
 	// Potentiometer calibration
-	liftPos.calibrate();
-	mobileGoalPos.calibrate();
+	// liftPos.calibrate();
+	// mobileGoalPos.calibrate();
 	
 	// Rotation Sensor calibration
-	OdomL.reset_position();
-	OdomS.reset_position();
-	OdomL.set_reversed(false);
+	// OdomL.reset_position();
+	// OdomS.reset_position();
+	// OdomL.set_reversed(false);
+
+	//Motor encoder calibration
+	chassis.reset();
 
 	// IMU calibration
-	// L_IMU.reset();
-	// M_IMU.reset(); 
-	// R_IMU.reset();	
-  // while(L_IMU.is_calibrating() || M_IMU.is_calibrating() || R_IMU.is_calibrating()){ pros::delay(20); }
+	odom.calibrateGyro();
+	odom.zero();
 
   // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");

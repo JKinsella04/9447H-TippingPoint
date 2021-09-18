@@ -42,6 +42,14 @@ double * Odom::getY() {
   return &posY;
 }
 
+double Odom::returnX() {
+  return posX;
+}
+
+double Odom::returnY(){
+  return posY;
+}
+
 Odom& Odom::calibrateGyro() {
   M_IMU.reset();
   L_IMU.reset();

@@ -190,9 +190,9 @@ void Display::tabDebug(lv_obj_t *parent) {
   printValue = createLabel(10, 120, "Value: NONE", parent);
   lv_label_set_style(printValue, &style_btn);
 
-  lv_obj_t *toggleClamp = createButton(5, 100, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *toggleDragger = createButton(6, 100, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *spinChassis = createButton(7, 100, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *toggleClamp = createButton(5, 250, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *toggleDragger = createButton(6, 250, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *spinChassis = createButton(7, 250, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
  }
 
 void Display::tabSettings(lv_obj_t *parent) {
@@ -226,8 +226,8 @@ void Display::run() {
     lv_label_set_text(autonName, temp.c_str());
 
     std::ostringstream odomx, odomy;
-    odomx << odom.getX();
-    odomy << odom.getY();
+    odomx << odom.returnX();
+    odomy << odom.returnY();
     std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
     lv_label_set_text(odomVals, odomTemp.c_str());
 

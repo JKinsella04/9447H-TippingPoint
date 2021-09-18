@@ -16,6 +16,9 @@ class Odom {
     double * getX();
     double * getY();
 
+    double returnX();
+    double returnY();
+
     Odom& calibrateGyro();
     Odom& zero();
     Odom& reset();

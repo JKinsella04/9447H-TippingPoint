@@ -4,7 +4,7 @@
 LiftState liftMode = LiftState::IDLE;
 
 macro::PID lift_PID(0.1, 0.01, 0.05);
-macro::Slew lift_Slew(900, 900, true);
+macro::Slew lift_Slew(600);
 
 double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 10;
 
@@ -69,15 +69,18 @@ void Lift::run() {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
         double output = lift_Slew.calculate(12000);
+        std::cout << "UP: " << lift_Slew.getOutput() << std::endl;
         leftArm.move_voltage(output);
         rightArm.move_voltage(output);
         
       } else if (master.get_digital(DIGITAL_L2)) {
         double output = lift_Slew.calculate(-12000);
+        std::cout << "DOWN: " << lift_Slew.getOutput() << std::endl;
         leftArm.move_voltage(output);
         rightArm.move_voltage(output);
 
       } else {
+        lift_Slew.reset();
         leftArm.move(0);
         rightArm.move(0);
       }
