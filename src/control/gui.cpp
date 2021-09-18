@@ -57,7 +57,8 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
   }
   case 6: {
     draggerIsToggled = !draggerIsToggled;
-    clamp.set_value(draggerIsToggled);
+    leftDragger.set_value(draggerIsToggled);
+    rightDragger.set_value(draggerIsToggled);
     break;
   }
   case 7:{
