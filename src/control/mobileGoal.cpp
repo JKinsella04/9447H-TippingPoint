@@ -4,19 +4,11 @@
 MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 
 macro::PID MobileGoal_PID(0.1, 0.01, 0.05);
-macro::Slew MobileGoal_Slew(900, 900, true);
+macro::Slew MobileGoal_Slew(600);
 
 double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 10;
 
-double *MobileGoal::mg_pos;
-
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
-
-MobileGoal::MobileGoal(){ }
-
-MobileGoal::MobileGoal(double mg_pos_){
-  mg_pos = &mg_pos_;
-}
 
 MobileGoalState MobileGoal::getState(){
   return MobileGoalMode;
@@ -53,18 +45,19 @@ void MobileGoal::run() {
 
     switch (MobileGoalMode) {
     case MobileGoalState::ZERO: {
-      move(0);
+      move(2120);
       break;
     }
     case MobileGoalState::UP: {
-      move(100);
+      move(3230);
       break;
     }
     case MobileGoalState::OPCONTROL: {
-      if (master.get_digital(DIGITAL_A)) {
-        move(2000);
-      } else if (master.get_digital(DIGITAL_B)) {
-        move(0);
+      if (master.get_digital(DIGITAL_UP)) {
+        std::cout << mobileGoalPos.get_value() << std::endl;
+        move(3230);
+      } else if (master.get_digital(DIGITAL_X)) {
+        move(2120);
       } else {
         leftMobileGoal.move(0);
         rightMobileGoal.move(0);
@@ -85,12 +78,14 @@ void MobileGoal::run() {
 }
 
 void MobileGoal::move(double target){
-  output = MobileGoal_PID.calculate(target, *mg_pos);
+  double current = mobileGoalPos.get_value();
+  
+  output = MobileGoal_PID.calculate(target, current);
 
-  MobileGoal_Slew.calculate(output);
+  double mg_slew = MobileGoal_Slew.calculate(output);
 
-  leftMobileGoal.move_voltage(output);
-  rightMobileGoal.move_voltage(output);
+  leftMobileGoal.move_voltage(mg_slew);
+  rightMobileGoal.move_voltage(mg_slew);
 
   if(fabs(MobileGoal_PID.getError()) < tol){ 
     MobileGoalMode = MobileGoalState::IDLE;

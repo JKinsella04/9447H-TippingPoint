@@ -13,8 +13,8 @@ pros::Motor leftArm(17, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS), //
             rightArm(14, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS); //1
 
 //Mobile goal Definition
-pros::Motor leftMobileGoal(4, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            rightMobileGoal(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS); //1
+pros::Motor leftMobileGoal(3, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+            rightMobileGoal(8, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS); //1
 
 //Drive Base Definitions
 pros::Motor LF(20, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS), //19,9,13,
@@ -25,7 +25,7 @@ pros::Motor LF(20, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS), //19,9,13,
 /*
 Inertial sensor Definitions
 */
-pros::Imu M_IMU(13), L_IMU(7), R_IMU(5);
+pros::Imu lf_Imu(16), lb_Imu(9), rf_Imu(19), rb_Imu(8);
 
 /*
 Tracking Wheels Definitions
@@ -33,12 +33,10 @@ Tracking Wheels Definitions
 pros::Rotation OdomL(12),
                OdomS(14);
 
-pros::ADIPotentiometer liftPos('A'),
-                        mobileGoalPos('F');
+pros::ADIPotentiometer liftPos('C'),
+                        mobileGoalPos('E');
 
 pros::ADIDigitalOut clamp ('H'),
-                    leftDragger('D'),
-                    rightDragger('C');
-
+                    dragger('D');
 
 pros::Gps gps(5, 15, 15, 0); //port, X offset, Y offset, heading offset

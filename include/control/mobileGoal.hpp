@@ -8,11 +8,6 @@ enum class MobileGoalState {
 
 class MobileGoal{
   public:
-  /*
-  Constructors
-  */
-  MobileGoal();
-  MobileGoal(double mg_pos_);
 
   MobileGoalState getState();  
   
@@ -42,7 +37,6 @@ class MobileGoal{
   static bool isSettled;
 
   static double output, target, current, tol;
-  static double *mg_pos;
 
   void move(double target);
 

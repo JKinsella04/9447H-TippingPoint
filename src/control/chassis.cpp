@@ -311,7 +311,7 @@ void Chassis::run() {
     }
 
     case ChassisState::BALANCE: {
-      current = (L_IMU.get_pitch() + M_IMU.get_pitch() + R_IMU.get_pitch()) / 3;
+      current = (lf_Imu.get_pitch() + lb_Imu.get_pitch() + rf_Imu.get_pitch() + rb_Imu.get_pitch()) / 4;
       drive_output = drive_PID.calculate(0, current);
 
       LslewOutput = leftSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);

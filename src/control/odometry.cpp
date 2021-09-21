@@ -51,18 +51,19 @@ double Odom::returnY(){
 }
 
 Odom& Odom::calibrateGyro() {
-  M_IMU.reset();
-  L_IMU.reset();
-  R_IMU.reset();
+  lf_Imu.reset();
+  lb_Imu.reset();
+  rf_Imu.reset();
+  rb_Imu.reset();
 
-  while( M_IMU.is_calibrating() || L_IMU.is_calibrating() || R_IMU.is_calibrating() ) { pros::delay(20); }
+  // while( lf_Imu.is_calibrating() || lb_Imu.is_calibrating() || rf_Imu.is_calibrating() ) { pros::delay(20); }
   // io::master.rumble(" . .");
   return *this;
 }
 
 Odom& Odom::zero() {
-  float left = abs( L_IMU.get_heading() - 360 ) * PI / 180;
-  float right = abs( R_IMU.get_heading() - 360 ) * PI / 180;
+  float left = abs( lb_Imu.get_heading() - 360 ) * PI / 180;
+  float right = abs( rf_Imu.get_heading() - 360 ) * PI / 180;
 
   float x = ( cos( left + PI ) + cos( right + PI ) ) / 2;
   float y = ( sin( left + PI ) + sin( right + PI ) ) / 2;
@@ -88,8 +89,8 @@ void Odom::run() {
   isRunning = true;
 
   while(isRunning) {
-    inertL = abs( L_IMU.get_heading() - 360 ) * PI / 180;
-    inertR = abs( R_IMU.get_heading() - 360 ) * PI / 180;
+    inertL = abs( lb_Imu.get_heading() - 360 ) * PI / 180;
+    inertR = abs( rf_Imu.get_heading() - 360 ) * PI / 180;
 
     float x = ( cos( inertL - offset + PI ) + cos( inertR - offset + PI ) ) / 2;
     float y = ( sin( inertL - offset + PI ) + sin( inertR - offset + PI ) ) / 2;
@@ -120,7 +121,7 @@ void Odom::stop() {
 /*
     // Chassis Sensor Readings
     odomL = OdomL.get_position();
-    thetaDeg = ( L_IMU.get_yaw() + M_IMU.get_yaw() + R_IMU.get_yaw() ) / 3;
+    thetaDeg = ( lb_Imu.get_yaw() + lf_Imu.get_yaw() + rf_Imu.get_yaw() ) / 3;
     encoderCount = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position()) /4;
 
     GPS Sensor
@@ -138,7 +139,7 @@ void Odom::stop() {
 	double lastPosition = 0;
 	double velocity = 0;
 	double position = 0;
-	pros::c::imu_accel_s_t accel = M_IMU.get_accel();
+	pros::c::imu_accel_s_t accel = lf_Imu.get_accel();
 	if(accel.x >= 0.02){
 	velocity = (lastVelocity + ( ( lastAccel + accel.x) /2 ) *(lastTime - pros::c::millis()));
 	position = (lastPosition + ( ( lastVelocity + velocity) /2 ) *(lastTime - pros::c::millis()));

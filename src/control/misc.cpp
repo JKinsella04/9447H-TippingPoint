@@ -10,27 +10,10 @@
 
 //TODO: Stop mobile goal before hitting wheels! (Potentiometer??)
 
-namespace draggers {
-void setState(int draggers, bool state_) {
-  switch (draggers) {
-  case 0: {
-    leftDragger.set_value(state_);
-    rightDragger.set_value(state_);
-    break;
+namespace Dragger {
+void setState(bool state_) {
+    dragger.set_value(state_);
   }
-  case 1: {
-    leftDragger.set_value(state_);
-    break;
-  }
-  case 2: {
-    rightDragger.set_value(state_);
-    break;
-  }
-  default: {
-    break;
-  }
-  }
-}
 } // namespace draggers
 
 namespace macro {

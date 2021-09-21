@@ -24,13 +24,13 @@
 
 // }
 
-namespace draggers {
+namespace Dragger {
   /*
   Sets the dragger's state.
   @param int which_ Either both or just one of the draggers.
   @param bool dragger_ True for extended False for retracted.
   */
-  void setState(int which_ = BOTH, bool state_ = false);
+  void setState( bool state_ = false);
 
 } // namespace draggers
 

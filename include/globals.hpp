@@ -16,13 +16,13 @@ extern pros::Motor leftMobileGoal, rightMobileGoal;
 extern pros::Motor LF, /*LM,*/ LB, RF, /*RM,*/ RB;
 
 //Inertial Declarations
-extern pros::Imu M_IMU, L_IMU, R_IMU;
+extern pros::Imu lf_Imu, lb_Imu, rf_Imu, rb_Imu;
 
 //Tracking Wheel Declarations
 extern pros::Rotation OdomL, OdomS;
 
 extern pros::ADIPotentiometer liftPos, mobileGoalPos;
 
-extern pros::ADIDigitalOut clamp, leftDragger, rightDragger;
+extern pros::ADIDigitalOut clamp, dragger;
 
 extern pros::Gps gps;

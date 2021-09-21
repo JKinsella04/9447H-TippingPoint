@@ -8,15 +8,9 @@ macro::Slew lift_Slew(600);
 
 double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 10;
 
-double *Lift::liftPos;
+double tempLiftPos;
 
 bool Lift::isRunning = false, Lift::isSettled = true;
-
-Lift::Lift(){ }
-
-Lift::Lift(double liftPos_){
-  liftPos = &liftPos_;
-}
 
 LiftState Lift::getState(){
   return liftMode;
@@ -58,23 +52,26 @@ void Lift::run() {
 
     switch (liftMode) {
     case LiftState::ZERO: {
-      move(0);
+      move(3358);
       break;
     }
     case LiftState::UP: {
-      move(100);
+      move(3810);
       break;
     }
     case LiftState::OPCONTROL: {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        double output = lift_Slew.calculate(12000);
-        std::cout << "UP: " << lift_Slew.getOutput() << std::endl;
-        leftArm.move_voltage(output);
-        rightArm.move_voltage(output);
+        std::cout << liftPos.get_value() << std::endl;
+        move(3810);
+        // double output = lift_Slew.calculate(12000);
+        // std::cout << "UP: " << lift_Slew.getOutput() << std::endl;
+        // leftArm.move_voltage(output);
+        // rightArm.move_voltage(output);
         
       } else if (master.get_digital(DIGITAL_L2)) {
-        double output = lift_Slew.calculate(-12000);
+        move(3358);
+        // double output = lift_Slew.calculate(-12000);
         std::cout << "DOWN: " << lift_Slew.getOutput() << std::endl;
         leftArm.move_voltage(output);
         rightArm.move_voltage(output);
@@ -107,12 +104,15 @@ void Lift::run() {
 }
 
 void Lift::move(double target){
-  output = lift_PID.calculate(target, *liftPos);
 
-  lift_Slew.calculate(output);
+  double current = liftPos.get_value();
 
-  leftArm.move_voltage(output);
-  rightArm.move_voltage(output);
+  output = lift_PID.calculate(target, current);
+
+  double lift_output = lift_Slew.calculate(output);
+
+  leftArm.move_voltage(lift_output);
+  rightArm.move_voltage(lift_output);
 
   if(fabs(lift_PID.getError()) < tol){ 
     liftMode = LiftState::IDLE;

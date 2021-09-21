@@ -13,18 +13,16 @@
 
 void initialize() {
 	// Class Init
+ 	Display display;
 	Odom odom;	 
 	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY()); // Replace odom.getEncoderCount() with odom.getL() to use rotaiton sensor.
- 	Display display;
-	Lift lift( liftPos.get_value() );
-	MobileGoal mobileGoal( mobileGoalPos.get_value() );
+	Lift lift;
+	MobileGoal mobileGoal;
 
 	// Sensor Init
 	
 	// Potentiometer calibration
-	// liftPos.calibrate();
-	// mobileGoalPos.calibrate();
-	
+		
 	// Rotation Sensor calibration
 	// OdomL.reset_position();
 	// OdomS.reset_position();
@@ -77,8 +75,8 @@ void opcontrol() {
   while (true) {
 		
 		// Controls Draggers.
-		if(master.get_digital(DIGITAL_UP)) { draggers::setState(BOTH, true); }
-		else if(master.get_digital(DIGITAL_RIGHT)) { draggers::setState(BOTH, false); }
+		// if(master.get_digital()) { Dragger::setState(true); }
+		// else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
 
 	  pros::delay(5);
  	}
