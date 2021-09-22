@@ -64,7 +64,6 @@ Odom& Odom::calibrateGyro() {
   rb_Imu.reset();
 
   while( lf_Imu.is_calibrating() || lb_Imu.is_calibrating() || rf_Imu.is_calibrating() || rb_Imu.is_calibrating()) { pros::delay(20); }
-  // io::master.rumble(" . .");
   return *this;
 }
 

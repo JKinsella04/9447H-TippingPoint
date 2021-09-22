@@ -3,7 +3,7 @@
 #include "globals.hpp"
 
 #define CONVERSION 4169.079328314997 // Convert 2.75in Wheels to Inches with V5 rotation Sensor.
-#define BASE_CONVERSION 35.2589412388 // Convert 3.25 to Inches with Motor Encoders.
+#define BASE_CONVERSION 705.178824776 // Convert 3.25 to Inches with Motor Encoders.
 #define DRIVE_CONVERSION 94.48818897637795 // Convert joystick input to scale for voltage.
 
 struct ChassisTarget {
