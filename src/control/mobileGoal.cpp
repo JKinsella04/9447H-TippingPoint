@@ -3,10 +3,10 @@
 
 MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 
-macro::PID MobileGoal_PID(5, 0, 0);
+macro::PID MobileGoal_PID(5, 0, 2.5);
 macro::Slew MobileGoal_Slew(600);
 
-double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 10, MobileGoal::slewOutput = 0;
+double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0;
 
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
 
@@ -57,7 +57,7 @@ void MobileGoal::run() {
         std::cout << mobileGoalPos.get_value() << std::endl;
         move(100);
       } else if (master.get_digital(DIGITAL_X)) {
-        move(2120);
+        move(3200);
       } else {
         leftMobileGoal.move(0);
         rightMobileGoal.move(0);

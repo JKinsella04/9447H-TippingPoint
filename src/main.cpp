@@ -9,6 +9,7 @@
 #include "control/lift.hpp"
 #include "control/mobileGoal.hpp"
 #include "globals.hpp"
+#include "pros/misc.h"
 
 
 void initialize() {
@@ -73,8 +74,8 @@ void opcontrol() {
   while (true) {
 		
 		// Controls Draggers.
-		// if(master.get_digital()) { Dragger::setState(true); }
-		// else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
+		if(master.get_digital(DIGITAL_LEFT)) { Dragger::setState(true); }
+		else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
 
 	  pros::delay(5);
  	}
