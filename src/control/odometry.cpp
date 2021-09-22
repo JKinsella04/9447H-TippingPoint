@@ -5,6 +5,8 @@ bool Odom::isRunning = false;
 int Odom::currentL = 0, Odom::currentR = 0;
 int Odom::deltaL = 0, Odom::deltaR = 0, Odom::lastDeltaL = 0, Odom::lastDeltaR = 0;
 
+double Odom::yaw = 0;
+
 double Odom::inertL = 0, Odom::inertR = 0, Odom::inertT = 0;
 double Odom::thetaRad = 0, Odom::thetaDeg = 0, Odom::offset = 0, Odom::posX = 0, Odom::posY = 0;
 
@@ -34,6 +36,10 @@ double * Odom::getThetaDeg() {
   return &thetaDeg;
 }
 
+double * Odom::getYaw(){
+  return &yaw;
+}
+
 double * Odom::getX() {
   return &posX;
 }
@@ -50,19 +56,20 @@ double Odom::returnY(){
   return posY;
 }
 
+
 Odom& Odom::calibrateGyro() {
   lf_Imu.reset();
   lb_Imu.reset();
   rf_Imu.reset();
   rb_Imu.reset();
 
-  // while( lf_Imu.is_calibrating() || lb_Imu.is_calibrating() || rf_Imu.is_calibrating() ) { pros::delay(20); }
+  while( lf_Imu.is_calibrating() || lb_Imu.is_calibrating() || rf_Imu.is_calibrating() || rb_Imu.is_calibrating()) { pros::delay(20); }
   // io::master.rumble(" . .");
   return *this;
 }
 
 Odom& Odom::zero() {
-  float left = abs( lb_Imu.get_heading() - 360 ) * PI / 180;
+  float left = abs( lf_Imu.get_heading() - 360 ) * PI / 180;
   float right = abs( rf_Imu.get_heading() - 360 ) * PI / 180;
 
   float x = ( cos( left + PI ) + cos( right + PI ) ) / 2;
@@ -97,6 +104,7 @@ void Odom::run() {
 
     thetaRad = abs( atan2f(y, x) + PI );
     thetaDeg = thetaRad * 180 / PI;
+    yaw = ( lf_Imu.get_yaw() + lb_Imu.get_yaw() + rf_Imu.get_yaw() + rb_Imu.get_yaw()) / 4;
 
     currentL = ( LF.get_position() + LB.get_position() )/2;
     currentR = ( RF.get_position() + RB.get_position() )/2;

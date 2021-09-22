@@ -34,6 +34,11 @@ class Lift{
   */
   void waitUntilSettled();
 
+  /*
+  tares position of lift motors.
+  */
+  void reset();
+
   static void start(void * ignore);
 
   void run();
@@ -42,7 +47,7 @@ class Lift{
   static bool isRunning;
   static bool isSettled;
 
-  static double output, target, current, tol;
+  static double output, target, current, tol, slewOutput;
 
 
   void move(double target);

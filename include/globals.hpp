@@ -21,7 +21,7 @@ extern pros::Imu lf_Imu, lb_Imu, rf_Imu, rb_Imu;
 //Tracking Wheel Declarations
 extern pros::Rotation OdomL, OdomS;
 
-extern pros::ADIPotentiometer liftPos, mobileGoalPos;
+extern pros::ADIPotentiometer mobileGoalPos;
 
 extern pros::ADIDigitalOut clamp, dragger;
 

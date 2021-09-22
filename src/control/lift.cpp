@@ -1,12 +1,13 @@
 #include "lift.hpp"
 #include "misc.hpp"
+#include "pros/misc.hpp"
 
 LiftState liftMode = LiftState::IDLE;
 
-macro::PID lift_PID(0.1, 0.01, 0.05);
+macro::PID lift_PID(10, 0.01, 3);
 macro::Slew lift_Slew(600);
 
-double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 10;
+double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 40, Lift::slewOutput = 0;
 
 double tempLiftPos;
 
@@ -35,6 +36,11 @@ void Lift::waitUntilSettled(){
   while(!isSettled){ pros::delay(20);}
 }
 
+void Lift::reset(){
+  leftArm.tare_position();
+  rightArm.tare_position();
+}
+
 void Lift::start(void * ignore) {
   if (!isRunning) {
     pros::delay(500);
@@ -52,30 +58,19 @@ void Lift::run() {
 
     switch (liftMode) {
     case LiftState::ZERO: {
-      move(3358);
+      move(0);
       break;
     }
     case LiftState::UP: {
-      move(3810);
+      move(1990);
       break;
     }
     case LiftState::OPCONTROL: {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        std::cout << liftPos.get_value() << std::endl;
-        move(3810);
-        // double output = lift_Slew.calculate(12000);
-        // std::cout << "UP: " << lift_Slew.getOutput() << std::endl;
-        // leftArm.move_voltage(output);
-        // rightArm.move_voltage(output);
-        
+        move(1990);
       } else if (master.get_digital(DIGITAL_L2)) {
-        move(3358);
-        // double output = lift_Slew.calculate(-12000);
-        std::cout << "DOWN: " << lift_Slew.getOutput() << std::endl;
-        leftArm.move_voltage(output);
-        rightArm.move_voltage(output);
-
+        move(0);
       } else {
         lift_Slew.reset();
         leftArm.move(0);
@@ -104,18 +99,21 @@ void Lift::run() {
 }
 
 void Lift::move(double target){
-
-  double current = liftPos.get_value();
+  current = ( leftArm.get_position() + rightArm.get_position() )/2;
 
   output = lift_PID.calculate(target, current);
 
-  double lift_output = lift_Slew.calculate(output);
+  slewOutput = lift_Slew.calculate(output);
 
-  leftArm.move_voltage(lift_output);
-  rightArm.move_voltage(lift_output);
+  leftArm.move_voltage(slewOutput);
+  rightArm.move_voltage(slewOutput);
 
-  if(fabs(lift_PID.getError()) < tol){ 
-    liftMode = LiftState::IDLE;
+  if (fabs(lift_PID.getError()) < tol) {
+    if (!pros::competition::is_autonomous()) {
+      liftMode = LiftState::OPCONTROL;
+    } else {
+      liftMode = LiftState::IDLE;
+    }
     isSettled = true;
   }
 }

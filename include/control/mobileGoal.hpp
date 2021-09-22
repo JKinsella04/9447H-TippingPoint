@@ -36,7 +36,7 @@ class MobileGoal{
   static bool isRunning;
   static bool isSettled;
 
-  static double output, target, current, tol;
+  static double output, target, current, tol, slewOutput;
 
   void move(double target);
 

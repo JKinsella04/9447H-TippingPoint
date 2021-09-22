@@ -30,11 +30,11 @@ pros::Imu lf_Imu(16), lb_Imu(9), rf_Imu(19), rb_Imu(8);
 /*
 Tracking Wheels Definitions
 */
-pros::Rotation OdomL(12),
-               OdomS(14);
+// pros::Rotation OdomL(12),
+              //  OdomS(14),
+              // liftPos(14);
 
-pros::ADIPotentiometer liftPos('C'),
-                        mobileGoalPos('E');
+pros::ADIAnalogIn mobileGoalPos('E');
 
 pros::ADIDigitalOut clamp ('H'),
                     dragger('D');

@@ -13,6 +13,7 @@ class Odom {
 
     double * getThetaDeg();
     double * getThetaRad();
+    double * getYaw();
     double * getX();
     double * getY();
 
@@ -30,6 +31,8 @@ class Odom {
   private:
     static bool isRunning;
 
+    static double yaw;
+    
     static int currentL, currentR;
     static int deltaL, deltaR, lastDeltaL, lastDeltaR;
 
