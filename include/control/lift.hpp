@@ -47,7 +47,7 @@ class Lift{
   static bool isRunning;
   static bool isSettled;
 
-  static double output, target, current, tol, slewOutput;
+  static double output, target, current, tol, slewOutput, lastTarget;
 
 
   void move(double target);

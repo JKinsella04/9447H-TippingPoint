@@ -23,6 +23,8 @@ class MobileGoal{
   */
   void setBrakeType(pros::motor_brake_mode_e_t state);
 
+  void reset();
+
   /*
   Delay thread until settled.
   */
@@ -36,7 +38,7 @@ class MobileGoal{
   static bool isRunning;
   static bool isSettled;
 
-  static double output, target, current, tol, slewOutput;
+  static double output, target, current, tol, slewOutput, lastTarget;
 
   void move(double target);
 

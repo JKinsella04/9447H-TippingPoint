@@ -14,7 +14,7 @@ pros::Motor leftArm(17, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS), //
 
 //Mobile goal Definition
 pros::Motor leftMobileGoal(3, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            rightMobileGoal(8, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS); //1
+            rightMobileGoal(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS); //1
 
 //Drive Base Definitions
 pros::Motor LF(20, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS), //19,9,13,

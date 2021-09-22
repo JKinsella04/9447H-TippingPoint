@@ -28,11 +28,12 @@ void initialize() {
 
 	//Motor encoder calibration
 	chassis.reset();
-	lift.reset();		
+	lift.reset();	
+	mobileGoal.reset();	
 
 	// IMU calibration
-	odom.calibrateGyro();
-	odom.zero();
+	// odom.calibrateGyro();
+	// odom.zero();
 
   // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");
@@ -44,7 +45,7 @@ void initialize() {
 	lift.setBrakeType(HOLD);
 	
 	pros::Task MobileGoalController(mobileGoal.start, NULL, "MobileGoal Controller");
-	mobileGoal.setBrakeType(HOLD);
+	// mobileGoal.setBrakeType(HOLD);
 
 	pros::Task DisplayController(display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);
@@ -74,8 +75,8 @@ void opcontrol() {
   while (true) {
 		
 		// Controls Draggers.
-		if(master.get_digital(DIGITAL_LEFT)) { Dragger::setState(true); }
-		else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
+		// if(master.get_digital(DIGITAL_LEFT)) { Dragger::setState(true); }
+		// else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
 
 	  pros::delay(5);
  	}

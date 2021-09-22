@@ -7,7 +7,7 @@ LiftState liftMode = LiftState::IDLE;
 macro::PID lift_PID(10, 0.01, 5);
 macro::Slew lift_Slew(600);
 
-double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 40, Lift::slewOutput = 0;
+double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 40, Lift::slewOutput = 0, Lift::lastTarget =0;
 
 double tempLiftPos;
 
@@ -68,20 +68,17 @@ void Lift::run() {
     case LiftState::OPCONTROL: {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        move(1990);
+        lastTarget = 1800;
       } else if (master.get_digital(DIGITAL_L2)) {
-        move(0);
-      } else {
-        lift_Slew.reset();
-        leftArm.move(0);
-        rightArm.move(0);
+        lastTarget = 0;
       }
+      move(lastTarget);
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {
-        setClamp(true);
-      } else if (master.get_digital(DIGITAL_R2)) {
         setClamp(false);
+      } else if (master.get_digital(DIGITAL_R2)) {
+        setClamp(true);
       }
       break;
     }

@@ -6,7 +6,7 @@ MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 macro::PID MobileGoal_PID(5, 0, 2.5);
 macro::Slew MobileGoal_Slew(600);
 
-double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0;
+double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0, MobileGoal::lastTarget = 0;
 
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
 
@@ -22,6 +22,11 @@ MobileGoal& MobileGoal::setState(MobileGoalState s){
 void MobileGoal::setBrakeType(pros::motor_brake_mode_e_t state){
   leftMobileGoal.set_brake_mode(state);
   rightMobileGoal.set_brake_mode(state);
+}
+
+void MobileGoal::reset(){
+  leftMobileGoal.tare_position();
+  rightMobileGoal.tare_position();
 }
 
 void MobileGoal::waitUntilSettled(){
@@ -53,15 +58,17 @@ void MobileGoal::run() {
       break;
     }
     case MobileGoalState::OPCONTROL: {
-      if (master.get_digital(DIGITAL_UP)) {
-        std::cout << mobileGoalPos.get_value() << std::endl;
-        move(100);
-      } else if (master.get_digital(DIGITAL_X)) {
-        move(3200);
-      } else {
-        leftMobileGoal.move(0);
-        rightMobileGoal.move(0);
+      if (master.get_digital(DIGITAL_UP))
+      {
+        double temp = (leftMobileGoal.get_position() + rightMobileGoal.get_position())/2;
+        std::cout << temp << std::endl;
+        lastTarget = -750;
       }
+      else if (master.get_digital(DIGITAL_X))
+      {
+        lastTarget = -1520;
+      }
+      move(lastTarget);
       break;
     }
     case MobileGoalState::IDLE: {
@@ -78,14 +85,15 @@ void MobileGoal::run() {
 }
 
 void MobileGoal::move(double target){
-  current = mobileGoalPos.get_value();
-  
+  // current = mobileGoalPos.get_value();
+  current = ( leftMobileGoal.get_position() + rightMobileGoal.get_position() )/2;
+
   output = MobileGoal_PID.calculate(target, current);
 
   slewOutput = MobileGoal_Slew.calculate(output);
 
-  leftMobileGoal.move_voltage(-slewOutput);
-  rightMobileGoal.move_voltage(-slewOutput);
+  leftMobileGoal.move_voltage(slewOutput);
+  rightMobileGoal.move_voltage(slewOutput);
 
   if(fabs(MobileGoal_PID.getError()) < tol){ 
     if (!pros::competition::is_autonomous()) {
