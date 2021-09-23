@@ -32,8 +32,8 @@ void initialize() {
 	mobileGoal.reset();	
 
 	// IMU calibration
-	// odom.calibrateGyro();
-	// odom.zero();
+	odom.calibrateGyro();
+	odom.zero();
 
   // Threads
 	pros::Task OdometryController(odom.start, NULL, "Odom Controller");
@@ -69,8 +69,8 @@ void opcontrol() {
 	lift.setState(LiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
 	MobileGoal mobileGoal;
+	mobileGoal.setup();
 	mobileGoal.setState(MobileGoalState::OPCONTROL); // Controls MobileGoal grabber.
-
 
   while (true) {
 		

@@ -31,7 +31,7 @@ class Autonomous{
   AUTON DECLARATIONS
 ===========================================*/
 
-void homeRow();
+void awp();
 void oneGoal();
 void twoGoal();
 

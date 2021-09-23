@@ -17,7 +17,7 @@ void Autonomous::setId(int id_) {
   id = id_;
   switch (id) {
   case 1:
-    name = "Home Row";
+    name = "AWP";
     break;
   case 2:
     name = "One Goal";
@@ -34,7 +34,7 @@ void Autonomous::setId(int id_) {
 void Autonomous::runAuton() {
   switch (id) {
   case 1: {
-    homeRow();
+    awp();
     break;
   }
   case 2: {
@@ -53,7 +53,7 @@ void Autonomous::runAuton() {
 }
 
 // Match Autons
-void homeRow() {
+void awp() {
   // chassis.drive(1000, 0, 900, 9000, 900, 12000).withGains(9,0,0).withTol(10).waitUntilSettled();
   // chassis.drive(0, 0, 900, 9000, 900, 12000).withTol(10).waitUntilSettled();
 

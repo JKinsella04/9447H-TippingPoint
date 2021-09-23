@@ -3,10 +3,10 @@
 
 MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 
-macro::PID MobileGoal_PID(5, 0, 2.5);
+macro::PID MobileGoal_PID(5, 0.01, 3.75);
 macro::Slew MobileGoal_Slew(600);
 
-double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0, MobileGoal::lastTarget = 0;
+double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0, MobileGoal::lastTarget = 3100;
 
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
 
@@ -25,8 +25,14 @@ void MobileGoal::setBrakeType(pros::motor_brake_mode_e_t state){
 }
 
 void MobileGoal::reset(){
-  leftMobileGoal.tare_position();
+  // leftMobileGoal.tare_position();
   rightMobileGoal.tare_position();
+}
+
+void MobileGoal::setup(){
+  // leftMobileGoal.move_absolute(-800, 127);
+  rightMobileGoal.move_absolute(-800, 127);
+  pros::delay(2000);
 }
 
 void MobileGoal::waitUntilSettled(){
@@ -60,13 +66,11 @@ void MobileGoal::run() {
     case MobileGoalState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP))
       {
-        double temp = (leftMobileGoal.get_position() + rightMobileGoal.get_position())/2;
-        std::cout << temp << std::endl;
-        lastTarget = -750;
+        lastTarget = 100;
       }
       else if (master.get_digital(DIGITAL_X))
       {
-        lastTarget = -1520;
+        lastTarget = 3100;
       }
       move(lastTarget);
       break;
@@ -85,15 +89,14 @@ void MobileGoal::run() {
 }
 
 void MobileGoal::move(double target){
-  // current = mobileGoalPos.get_value();
-  current = ( leftMobileGoal.get_position() + rightMobileGoal.get_position() )/2;
+  current = mobileGoalPos.get_value();
 
   output = MobileGoal_PID.calculate(target, current);
 
   slewOutput = MobileGoal_Slew.calculate(output);
 
-  leftMobileGoal.move_voltage(slewOutput);
-  rightMobileGoal.move_voltage(slewOutput);
+  leftMobileGoal.move_voltage(-slewOutput);
+  rightMobileGoal.move_voltage(-slewOutput);
 
   if(fabs(MobileGoal_PID.getError()) < tol){ 
     if (!pros::competition::is_autonomous()) {

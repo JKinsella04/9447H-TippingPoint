@@ -76,9 +76,9 @@ void Lift::run() {
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {
-        setClamp(false);
-      } else if (master.get_digital(DIGITAL_R2)) {
         setClamp(true);
+      } else if (master.get_digital(DIGITAL_R2)) {
+        setClamp(false);
       }
       break;
     }

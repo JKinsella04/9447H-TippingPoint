@@ -23,7 +23,15 @@ class MobileGoal{
   */
   void setBrakeType(pros::motor_brake_mode_e_t state);
 
+  /*
+  Tares Position of mobile Goal motors.
+  */
   void reset();
+  
+  /*
+  Needs to run before Mobile Goal moves to either other state.
+  */
+  void setup();
 
   /*
   Delay thread until settled.
