@@ -1,9 +1,13 @@
 #include "auton.hpp"
 #include "chassis.hpp"
+#include "mobileGoal.hpp"
+#include "lift.hpp"
 #include "misc.hpp"
 
 // Class Init
 static Chassis chassis;
+static MobileGoal mobileGoal;
+static Lift lift;
 
 std::string Autonomous::name;
 
@@ -54,10 +58,15 @@ void Autonomous::runAuton() {
 
 // Match Autons
 void awp() {
-  // chassis.drive(1000, 0, 900, 9000, 900, 12000).withGains(9,0,0).withTol(10).waitUntilSettled();
-  // chassis.drive(0, 0, 900, 9000, 900, 12000).withTol(10).waitUntilSettled();
-
-  chassis.eDrive(50).withGains(20, 0, 0).withAngle(90).withTol(40).waitUntilSettled();
+  mobileGoal.setup();
+  mobileGoal.setState(MobileGoalState::DOWN);
+  chassis.eDrive(-10).withGains(20, 0, 0).withTol(40).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::DOWN);
+  chassis.eDrive(20).withGains(20, 0, 0).withAngle(15).withTol(40).waitUntilSettled();
+  chassis.eDrive(-100).withGains(20,0,0).withAngle(0, 1800, 12000).withTol(40).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP);
+  chassis.eDrive(20).withGains(20,0,0).withAngle(-15).withTol(40).waitUntilSettled();
 }
 
 void oneGoal() {

@@ -55,8 +55,8 @@ void MobileGoal::run() {
     if(pros::competition::is_disabled()) goto end;
 
     switch (MobileGoalMode) {
-    case MobileGoalState::ZERO: {
-      move(2120);
+    case MobileGoalState::DOWN: {
+      move(3100);
       break;
     }
     case MobileGoalState::UP: {
