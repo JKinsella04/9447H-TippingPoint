@@ -242,9 +242,10 @@ void Display::run() {
       case ChassisState::DRIVE:{ cstate = "Chassis State: DRIVE"; break; }
       case ChassisState::POINT:{ cstate = "Chassis State: POINT"; break; }
       case ChassisState::TURN:{ cstate = "Chassis State: TURN"; break; }     
-      case ChassisState::BALANCE:{ cstate = "Chassis State: BALANCE"; break; }      
-      case ChassisState::IDLE:{ cstate = "Chassis State: IDLE"; break; }
       case ChassisState::OPCONTROL:{ cstate = "Chassis State: OPCONTROL"; break; }
+      case ChassisState::BALANCE:{ cstate = "Chassis State: BALANCE"; break; } 
+      case ChassisState::DEBUG: { cstate = "Chassis State: DEBUG"; break; }     
+      case ChassisState::IDLE:{ cstate = "Chassis State: IDLE"; break; }
     }
     lv_label_set_text(chassisVals, cstate.c_str());
     
