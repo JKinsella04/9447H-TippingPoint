@@ -25,12 +25,12 @@ void MobileGoal::setBrakeType(pros::motor_brake_mode_e_t state){
 }
 
 void MobileGoal::reset(){
-  // leftMobileGoal.tare_position();
+  leftMobileGoal.tare_position();
   rightMobileGoal.tare_position();
 }
 
 void MobileGoal::setup(){
-  // leftMobileGoal.move_absolute(-800, 127);
+  leftMobileGoal.move_absolute(-800, 127);
   rightMobileGoal.move_absolute(-800, 127);
   pros::delay(2000);
 }

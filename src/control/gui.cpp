@@ -32,7 +32,7 @@ static lv_obj_t *printValue;
 
 bool clampIsToggled = false, draggerIsToggled = false;
 
-int chassisSpeed = 0;
+double chassisSpeed = 0;
 
 static lv_res_t btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
@@ -61,10 +61,10 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     break;
   }
   case 7:{
-    chassisSpeed += 3000;
-    if(chassisSpeed > 12000) chassisSpeed = 0;
-    chassis.left(chassisSpeed);
-    chassis.right(chassisSpeed);
+    if (chassis.getState() == ChassisState::IDLE)
+      chassis.setState(ChassisState::DEBUG);
+    else
+      chassis.setState(ChassisState::IDLE);
     break;
   }
   default:

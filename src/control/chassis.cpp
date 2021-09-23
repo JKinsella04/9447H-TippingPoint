@@ -1,5 +1,6 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
+#include "pros/rtos.hpp"
 
 // PID Init
 macro::PID drive_PID(0.5, 0.01, 0.25);
@@ -35,6 +36,8 @@ bool Chassis::adjustAngle = false;
 double Chassis::distToTarget, Chassis::absAngleToTarget, Chassis::relAngleToTarget; 
 double Chassis::relXToPoint, Chassis::relYToPoint;
 double Chassis::mvmtXPower, Chassis::mvmtYPower; 
+
+double debugSpeed = 3000;
 
 Chassis::Chassis() { }
 
@@ -329,6 +332,16 @@ void Chassis::run() {
         mode = ChassisState::IDLE;
         goto end;
       }
+    }
+
+    case ChassisState::DEBUG: {
+      debugSpeed += 3000;
+      if (debugSpeed > 12000)
+        debugSpeed = 0;
+      left(debugSpeed);
+      right(debugSpeed);
+      pros::delay(2000);
+      break;
     }
 
     case ChassisState::IDLE: {

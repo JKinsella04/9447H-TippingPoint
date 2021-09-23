@@ -17,7 +17,7 @@ struct ChassisTarget {
 };
 
 enum class ChassisState { 
-    DRIVE, POINT, TURN, OPCONTROL, BALANCE, IDLE
+    DRIVE, POINT, TURN, OPCONTROL, BALANCE, DEBUG, IDLE 
 }; 
 
 class Chassis {
