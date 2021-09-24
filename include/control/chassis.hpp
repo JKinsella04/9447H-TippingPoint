@@ -70,7 +70,7 @@ class Chassis {
     /*
     Sets the tolerance range for both Chassis::drive() and Chassis::turn().
     */
-    Chassis& withTol(int tol_ = 1000);
+    Chassis& withTol(double tol_ = 1000);
 
     /*
     Sets Target angle to reach while driving.
@@ -90,7 +90,7 @@ class Chassis {
     /*
     Updates ChassisState and sets target position from given (x,y) coords.
     */
-    Chassis& drive(double x, double y, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);
+    Chassis& drive(double x, double y, double theta, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);
 
     /*
     Updates ChassisState and sets target theta.
@@ -119,8 +119,8 @@ class Chassis {
     static bool isRunning;
     
     static double *theta, *posX, *posY;
-    static int tol, *odomSide;
-    static double current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
+    static int *odomSide;
+    static double tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle;
 
     static double distToTarget, absAngleToTarget, relAngleToTarget;

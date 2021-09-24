@@ -38,8 +38,9 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
   switch (id) { // Controls both tab 2 + 3.
   case 1:       // Tab 2 control
-    pros::delay(3000);
-    autonomous();
+    std::cout << "X: " << odom.returnX() << " Y: " << odom.returnY() << std::endl;
+    // pros::delay(3000);
+    // autonomous();
     break;
   case 2: // Tab 3 control
     chassis.reset();

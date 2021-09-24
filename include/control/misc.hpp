@@ -35,6 +35,25 @@ namespace Dragger {
 } // namespace draggers
 
 namespace macro {
+  
+/**
+ * Makes sure an angle is within the range -180 to 180 degrees.
+ * @param rad angle in radians
+ */
+double angleWrap(double rad);
+/**
+takes a value and clips it between a lower and upper limit.
+*/
+double clip(double n, double lower, double upper);
+/**
+convert given degree to readians.
+*/
+double toRad(double degree);
+/**
+convert given radian to degree.
+*/
+double toDeg(double radian);
+
 class Slew {
 public:
   Slew(double accel_);

@@ -51,6 +51,7 @@ void Autonomous::runAuton() {
   }
 
   default: {
+    oneGoal();
     break;
   }
   }
@@ -70,10 +71,10 @@ void awp() {
 }
 
 void oneGoal() {
-  chassis.turn(-90, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
-  // chassis.turn(0, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
-  // chassis.turn(90, 900, 9000).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
-  
+  chassis.setBrakeType(COAST);
+  chassis.drive(1000, 250, 345, 900, 9000, 900, 9000).withGains(10,0,5).withTurnGains(10,0,5).withTol(50).waitUntilSettled(); // 
+  // chassis.drive(0, 0, 900, 9000, 900, 9000).withGains(20,0,10).withTurnGains(10,0,5).withTol(20).waitUntilSettled();
+  // chassis.drive(1000, 250, 900, 9000, 900, 9000).withGains(20,0,10).withTurnGains(10,0,5).withTol(20).waitUntilSettled();
 }
 
 void twoGoal() {}

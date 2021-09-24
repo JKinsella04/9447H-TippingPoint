@@ -16,7 +16,7 @@ void initialize() {
 
 	// Class Init
 	Odom odom;	 
-	Chassis chassis(odom.getL(), odom.getYaw(), odom.getX(), odom.getY()); // Replace odom.getEncoderCount() with odom.getL() to use rotaiton sensor.
+	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY()); // Replace odom.getEncoderCount() with odom.getL() to use rotaiton sensor.
  	Display display;
 	Lift lift;
 	MobileGoal mobileGoal;
@@ -27,7 +27,12 @@ void initialize() {
 	// OdomL.set_reversed(false);
 
 	//Motor encoder calibration
-	chassis.reset();
+	LF.tare_position();
+	LB.tare_position();
+	RF.tare_position();
+	RB.tare_position();
+
+	// chassis.reset();
 	lift.reset();	
 	mobileGoal.reset();	
 

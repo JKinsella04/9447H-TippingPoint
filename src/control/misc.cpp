@@ -17,6 +17,29 @@ void setState(bool state_) {
 } // namespace draggers
 
 namespace macro {
+double angleWrap(double rad){
+  while(rad < -PI){
+    rad += 2 * PI;
+  }
+  while(rad > PI){
+    rad -= 2 * PI;
+  }
+  return rad;
+}
+
+double clip(double n, double lower, double upper) {
+  return std::max(lower, std::min(n, upper));
+}
+
+double toRad(double degree){
+  return degree * PI/180;
+}
+
+double toDeg(double radian){
+  return radian * 180/PI;
+}
+
+
 
 Slew::Slew(double accel_) : accel(accel_), decel(0) { noDecel = true; }
 

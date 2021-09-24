@@ -1,6 +1,8 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
-#include "pros/rtos.hpp"
+#include "odometry.hpp"
+
+static Odom odom;
 
 // PID Init
 macro::PID drive_PID(0.5, 0.01, 0.25);
@@ -25,7 +27,7 @@ double *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
 int *Chassis::odomSide = 0;
 
-int Chassis::tol = 0;
+double Chassis::tol = 0;
 
 double Chassis::current = 0, Chassis::drive_output = 0,
        Chassis::turn_output = 0, Chassis::LslewOutput = 0,
@@ -82,10 +84,10 @@ void Chassis::reset(){
   leftSlew.reset();
   rightSlew.reset();
 
-  LF.tare_position();
-  LB.tare_position();
-  RF.tare_position();
-  RB.tare_position();
+  // LF.tare_position();
+  // LB.tare_position();
+  // RF.tare_position();
+  // RB.tare_position();
 
   adjustAngle = false;
 
@@ -102,7 +104,7 @@ Chassis &Chassis::withTurnGains(double kP_, double kI_, double kD_){
   return *this;
 }
 
-Chassis &Chassis::withTol(int tol_) {
+Chassis &Chassis::withTol(double tol_) {
   tol = tol_;
   return *this;
 }
@@ -137,10 +139,11 @@ Chassis &Chassis::eDrive(double e_target_, double rate, double speed) {
   return *this;
 }
 
-Chassis &Chassis::drive(double x, double y, double driveRate, double driveSpeed, double turnRate, double turnSpeed){
+Chassis &Chassis::drive(double x, double y, double theta, double driveRate, double driveSpeed, double turnRate, double turnSpeed){
   
   target.x = x;
   target.y = y;
+  target.theta = theta;
   target.rateDrive = driveRate;
   target.speedDrive = driveSpeed;
   target.rateTurn = turnRate;
@@ -236,32 +239,48 @@ void Chassis::run() {
 
       absAngleToTarget = atan2(target.y - *posY, target.x - *posX);
 
-      double thetaRad = *theta * PI / 180;
+      double thetaRad = macro::toRad(*theta);
 
-      relAngleToTarget = absAngleToTarget - thetaRad;
+      relAngleToTarget = macro::angleWrap(absAngleToTarget - (thetaRad - macro::toRad(90)));
 
-      double relAngleDeg = relAngleToTarget * 180 / PI;
+      double relAngleDeg = macro::toDeg(relAngleToTarget);
+
+      relXToPoint = sin(relAngleToTarget) * distToTarget;
+      relYToPoint = cos(relAngleToTarget) * distToTarget;
+
+      double xPower = relXToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
+      double yPower = relYToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
 
       // Drive PID calc
-      drive_output = drive_PID.calculate(distToTarget, *posX);
-
+      drive_PID.setError(relXToPoint);
+      drive_output = drive_PID.calculate();
+  
       // Turn PID calc.
-      turn_output = turn_PID.calculate(relAngleDeg, *theta);
+      turn_PID.setError(relYToPoint);
+      turn_output = turn_PID.calculate();
 
       // Find quickest turn.
-      calcDir();
+      // calcDir();
       
       // Slew Calcs.
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
       LslewOutput = leftSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
 
-      std::cout << "Angle:" << drive_output << "AngleDeg:" << turn_output << std::endl;
+      // std::cout << "Angle:" << drive_PID.getError() << std::endl; //<< "AngleDeg:" << turn_output << std::endl;
+      std::cout << "relX: " << relXToPoint << " relY: " << relYToPoint << std::endl;
+      // std::cout << "xPower: " << xPower << " yPower: " << yPower << std::endl; 
+      // std::cout << "Drive: " << drive_output << " Turn: " << turn_output << std::endl;
 
-      left(LslewOutput + TslewOutput);
+      left(LslewOutput + TslewOutput );
       right(RslewOutput - TslewOutput);
 
-      if(fabs(drive_PID.getError()) <= tol){
+      // double relTurnAngle = relAngleToTarget - macro::toRad(180) + target.theta;
+      // double turnPower = macro::clip(relTurnAngle/macro::toRad(30), -1, 1); 
+
+      // std::cout << "turn: " << turnPower << " rel:" << relTurnAngle << std::endl;
+
+      if(fabs(drive_PID.getError()) <= tol && fabs(turn_PID.getError()) <= 0.75){
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
