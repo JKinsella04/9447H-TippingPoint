@@ -27,13 +27,13 @@ double *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
 int *Chassis::odomSide = 0;
 
-double Chassis::tol = 0;
+double Chassis::drive_tol = 0, Chassis::turn_tol = 0;
 
 double Chassis::current = 0, Chassis::drive_output = 0,
        Chassis::turn_output = 0, Chassis::LslewOutput = 0,
        Chassis::RslewOutput = 0, Chassis::TslewOutput = 0;
 
-bool Chassis::adjustAngle = false;
+bool Chassis::adjustAngle = false, Chassis::turnComplete = false;
 
 double Chassis::distToTarget, Chassis::absAngleToTarget, Chassis::relAngleToTarget; 
 double Chassis::relXToPoint, Chassis::relYToPoint;
@@ -84,12 +84,14 @@ void Chassis::reset(){
   leftSlew.reset();
   rightSlew.reset();
 
-  // LF.tare_position();
-  // LB.tare_position();
-  // RF.tare_position();
-  // RB.tare_position();
+  LF.tare_position();
+  LB.tare_position();
+  RF.tare_position();
+  RB.tare_position();
 
   adjustAngle = false;
+  turnComplete = false;
+  target.thetaTwo = nullptr;
 
   mode = ChassisState::IDLE;
 }
@@ -104,14 +106,24 @@ Chassis &Chassis::withTurnGains(double kP_, double kI_, double kD_){
   return *this;
 }
 
-Chassis &Chassis::withTol(double tol_) {
-  tol = tol_;
+Chassis &Chassis::withTol(double drive_tol_, double turn_tol_) {
+  drive_tol = drive_tol_;
+  turn_tol = turn_tol_;
   return *this;
 }
 
 Chassis &Chassis::withAngle(double theta, double rate, double speed){
   adjustAngle = true;
   target.theta = theta;
+  target.rateTurn = rate;
+  target.speedTurn = speed;
+  return *this;
+}
+
+Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double speed){
+  adjustAngle = true;
+  target.theta = theta;
+  target.thetaTwo = &thetaTwo;
   target.rateTurn = rate;
   target.speedTurn = speed;
   return *this;
@@ -198,7 +210,19 @@ void Chassis::run() {
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 
       // Turn PID calc.
-      turn_output = turn_PID.calculate(target.theta, *theta);
+      // turn_output = turn_PID.calculate(target.theta, *theta);
+
+      // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
+      if(turnComplete && target.thetaTwo != nullptr){
+        turn_output = turn_PID.calculate(*target.thetaTwo, *theta);
+      }else{
+        turn_output = turn_PID.calculate(target.theta, *theta);
+      }
+      if(fabs(turn_PID.getError()) <= turn_tol){ 
+        turnComplete = true;
+        turnSlew.reset();
+        // turn_PID.set(66,0,33);
+      } 
 
       // Find quickest turn.
       calcDir();
@@ -222,7 +246,7 @@ void Chassis::run() {
         right(RslewOutput - TslewOutput);
       }
 
-      if (fabs(drive_PID.getError()) < tol) {
+      if (fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol) {
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
@@ -252,11 +276,13 @@ void Chassis::run() {
       double yPower = relYToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
 
       // Drive PID calc
-      drive_PID.setError(relXToPoint);
+      // drive_PID.setError(relXToPoint);
+      drive_PID.setError(xPower);
       drive_output = drive_PID.calculate();
   
       // Turn PID calc.
-      turn_PID.setError(relYToPoint);
+      // turn_PID.setError(relYToPoint);
+      turn_PID.setError(yPower);
       turn_output = turn_PID.calculate();
 
       // Find quickest turn.
@@ -280,7 +306,7 @@ void Chassis::run() {
 
       // std::cout << "turn: " << turnPower << " rel:" << relTurnAngle << std::endl;
 
-      if(fabs(drive_PID.getError()) <= tol && fabs(turn_PID.getError()) <= 0.75){
+      if(fabs(drive_output) <= drive_tol && fabs(turn_output) <= turn_tol){ //drive_PID.getError()) <= tol && fabs(turn_PID.getError()) <= 0.75
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
@@ -307,7 +333,7 @@ void Chassis::run() {
       left(TslewOutput);
       right(-TslewOutput);
 
-      if (fabs(turn_PID.getError()) < tol) {
+      if (fabs(turn_PID.getError()) < turn_tol) {
         left(0);
         right(0);
         withTurnGains().withTol();
@@ -342,7 +368,7 @@ void Chassis::run() {
       left(LslewOutput);
       right(RslewOutput);
 
-      if (fabs(drive_PID.getError()) < tol) {
+      if (fabs(drive_PID.getError()) < drive_tol) {
         left(0);
         right(0);
         withGains().withTol();

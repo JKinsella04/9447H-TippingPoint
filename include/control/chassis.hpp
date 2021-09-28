@@ -10,6 +10,7 @@ struct ChassisTarget {
     double x;
     double y;
     double theta;
+    double * thetaTwo;
     double speedDrive;
     double speedTurn;
     double rateDrive;
@@ -68,14 +69,19 @@ class Chassis {
     Chassis& withTurnGains(double kP_ = 133, double kI_ = 0, double kD_ = 66);
 
     /*
-    Sets the tolerance range for both Chassis::drive() and Chassis::turn().
+    Sets the tolerance range for both lateral and turn movements.
     */
-    Chassis& withTol(double tol_ = 1000);
+    Chassis& withTol(double tol_ = 20, double turn_tol_ = 2);
 
     /*
     Sets Target angle to reach while driving.
     */
     Chassis& withAngle(double theta, double rate = 900, double speed = 9000);
+
+    /*
+    Sets Target angle to reach while driving then updates it to the second target angle after reaching the first angle.
+    */
+    Chassis& withAngles(double theta, double thetaTwo, double rate = 900, double speed = 9000);
 
     /*
     Updates ChassisState and sets target position in inches.
@@ -120,8 +126,8 @@ class Chassis {
     
     static double *theta, *posX, *posY;
     static int *odomSide;
-    static double tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
-    static bool adjustAngle;
+    static double drive_tol, turn_tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
+    static bool adjustAngle, turnComplete;
 
     static double distToTarget, absAngleToTarget, relAngleToTarget;
     static double relXToPoint, relYToPoint;

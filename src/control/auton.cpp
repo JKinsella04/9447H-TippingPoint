@@ -67,12 +67,16 @@ void awp() {
   chassis.eDrive(20).withGains(20, 0, 0).withAngle(15).withTol(40).waitUntilSettled();
   chassis.eDrive(-100).withGains(20,0,0).withAngle(0, 1800, 12000).withTol(40).waitUntilSettled();
   mobileGoal.setState(MobileGoalState::UP);
-  chassis.eDrive(20).withGains(20,0,0).withAngle(-15).withTol(40).waitUntilSettled();
+  chassis.eDrive(20).withGains(20, 0, 0).withAngle(-15).withTol(40).waitUntilSettled();
 }
 
 void oneGoal() {
   chassis.setBrakeType(COAST);
-  chassis.drive(1000, 250, 345, 900, 9000, 900, 9000).withGains(10,0,5).withTurnGains(10,0,5).withTol(50).waitUntilSettled(); // 
+  chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
+  chassis.eDrive(65).withGains(30, 0, 10).withAngles(90, 0).withTurnGains(133, 0.01, 66).withTol(20, 20).waitUntilSettled();
+  // chassis.turn(0).withTurnGains(133, 0.1, 66).withTol(1).waitUntilSettled();
+  // chassis.drive(-250, 0, 345, 900, 9000, 900, 9000).withGains(9000,0,5).withTurnGains(10,0,5).withTol(50).waitUntilSettled();
+  // chassis.drive(800, -940, 0, 900, 9000, 900, 9000).withGains(9000,0,3000).withTurnGains(12000,0,6000).withTol(50).waitUntilSettled();
   // chassis.drive(0, 0, 900, 9000, 900, 9000).withGains(20,0,10).withTurnGains(10,0,5).withTol(20).waitUntilSettled();
   // chassis.drive(1000, 250, 900, 9000, 900, 9000).withGains(20,0,10).withTurnGains(10,0,5).withTol(20).waitUntilSettled();
 }
