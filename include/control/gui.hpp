@@ -11,7 +11,7 @@ LV_IMG_DECLARE(destiny) // background image is a destiny 2 emblem
 LV_IMG_DECLARE(noAuton_IMG)
 LV_IMG_DECLARE(homeRow_IMG)
 LV_IMG_DECLARE(oneGoal_IMG)
-LV_IMG_DECLARE(twoGoal_IMG)
+LV_IMG_DECLARE(skills_IMG)
 
 class Display{
     public:

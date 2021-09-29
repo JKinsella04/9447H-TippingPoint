@@ -27,7 +27,7 @@ void Autonomous::setId(int id_) {
     name = "One Goal";
     break;
   case 3:
-    name = "Two Goal";
+    name = "Skills";
     break;
   default:
     name = "ERROR INVALID AUTON";
@@ -46,7 +46,7 @@ void Autonomous::runAuton() {
     break;
   }
   case 3: {
-    twoGoal();
+    skills();
     break;
   }
 
