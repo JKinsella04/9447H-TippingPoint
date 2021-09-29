@@ -81,8 +81,8 @@ void opcontrol() {
   while (true) {
 		
 		// Controls Draggers.
-		// if(master.get_digital(DIGITAL_LEFT)) { Dragger::setState(true); }
-		// else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
+		if(master.get_digital(DIGITAL_LEFT)) { Dragger::setState(true); }
+		else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
 
 	  pros::delay(5);
  	}

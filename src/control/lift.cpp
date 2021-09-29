@@ -4,7 +4,7 @@
 
 LiftState liftMode = LiftState::IDLE;
 
-macro::PID lift_PID(10, 0.01, 5);
+macro::PID lift_PID(20, 0.1, 5);
 macro::Slew lift_Slew(600);
 
 double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 40, Lift::slewOutput = 0, Lift::lastTarget =0;
@@ -68,9 +68,11 @@ void Lift::run() {
     case LiftState::OPCONTROL: {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        lastTarget = 1800;
+        lastTarget = 1900;
+        lift_PID.set(20, 0.1, 5);
       } else if (master.get_digital(DIGITAL_L2)) {
         lastTarget = 0;
+        lift_PID.set(10,0.01,5);
       }
       move(lastTarget);
 

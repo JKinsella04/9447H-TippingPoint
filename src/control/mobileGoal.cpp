@@ -6,7 +6,7 @@ MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 macro::PID MobileGoal_PID(5, 0.01, 3.75);
 macro::Slew MobileGoal_Slew(600);
 
-double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0, MobileGoal::lastTarget = 3100;
+double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0, MobileGoal::lastTarget = 4000;
 
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
 
@@ -66,11 +66,11 @@ void MobileGoal::run() {
     case MobileGoalState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP))
       {
-        lastTarget = 100;
+        lastTarget = 500;
       }
       else if (master.get_digital(DIGITAL_X))
       {
-        lastTarget = 3100;
+        lastTarget = 4000;
       }
       move(lastTarget);
       break;

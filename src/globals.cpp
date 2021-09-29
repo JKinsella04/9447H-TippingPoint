@@ -37,6 +37,6 @@ Tracking Wheels Definitions
 pros::ADIAnalogIn mobileGoalPos('E');
 
 pros::ADIDigitalOut clamp ('H'),
-                    dragger('D');
+                    dragger('A');
 
 pros::Gps gps(5, 15, 15, 0); //port, X offset, Y offset, heading offset
