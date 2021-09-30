@@ -10,7 +10,7 @@ struct ChassisTarget {
     double x;
     double y;
     double theta;
-    double * thetaTwo;
+    double thetaTwo;
     double speedDrive;
     double speedTurn;
     double rateDrive;

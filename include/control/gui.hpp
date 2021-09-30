@@ -12,6 +12,7 @@ LV_IMG_DECLARE(noAuton_IMG)
 LV_IMG_DECLARE(homeRow_IMG)
 LV_IMG_DECLARE(oneGoal_IMG)
 LV_IMG_DECLARE(skills_IMG)
+LV_IMG_DECLARE(AWP_IMG)
 
 class Display{
     public:

@@ -32,6 +32,7 @@ void MobileGoal::reset(){
 void MobileGoal::setup(){
   leftMobileGoal.move_absolute(-800, 127);
   rightMobileGoal.move_absolute(-800, 127);
+  std::cout << "SETUP" << std::endl;
   pros::delay(2000);
 }
 
@@ -56,11 +57,12 @@ void MobileGoal::run() {
 
     switch (MobileGoalMode) {
     case MobileGoalState::DOWN: {
-      move(3100);
+      move(4000);
+      std::cout << "DOWN" << std::endl;
       break;
     }
     case MobileGoalState::UP: {
-      move(100);
+      move(500);
       break;
     }
     case MobileGoalState::OPCONTROL: {
@@ -76,8 +78,9 @@ void MobileGoal::run() {
       break;
     }
     case MobileGoalState::IDLE: {
-      leftMobileGoal.move(0);
-      rightMobileGoal.move(0);
+      std::cout << "IDLE" << std::endl;
+      // leftMobileGoal.move(0);
+      // rightMobileGoal.move(0);
       // MobileGoal motor to zero;
     }
     }

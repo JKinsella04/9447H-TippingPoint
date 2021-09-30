@@ -91,7 +91,6 @@ void Chassis::reset(){
 
   adjustAngle = false;
   turnComplete = false;
-  target.thetaTwo = nullptr;
 
   mode = ChassisState::IDLE;
 }
@@ -115,6 +114,7 @@ Chassis &Chassis::withTol(double drive_tol_, double turn_tol_) {
 Chassis &Chassis::withAngle(double theta, double rate, double speed){
   adjustAngle = true;
   target.theta = theta;
+  target.thetaTwo = theta;
   target.rateTurn = rate;
   target.speedTurn = speed;
   return *this;
@@ -123,7 +123,7 @@ Chassis &Chassis::withAngle(double theta, double rate, double speed){
 Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double speed){
   adjustAngle = true;
   target.theta = theta;
-  target.thetaTwo = &thetaTwo;
+  target.thetaTwo = thetaTwo;
   target.rateTurn = rate;
   target.speedTurn = speed;
   return *this;
@@ -213,15 +213,15 @@ void Chassis::run() {
       // turn_output = turn_PID.calculate(target.theta, *theta);
 
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
-      if(turnComplete && target.thetaTwo != nullptr){
-        turn_output = turn_PID.calculate(*target.thetaTwo, *theta);
+      if(turnComplete){
+        turn_output = turn_PID.calculate(target.thetaTwo, *theta);
       }else{
         turn_output = turn_PID.calculate(target.theta, *theta);
       }
       if(fabs(turn_PID.getError()) <= turn_tol){ 
         turnComplete = true;
         turnSlew.reset();
-        // turn_PID.set(66,0,33);
+        turn_PID.set(66,0.01,33);
       } 
 
       // Find quickest turn.
