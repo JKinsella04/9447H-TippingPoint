@@ -7,7 +7,8 @@ LiftState liftMode = LiftState::IDLE;
 macro::PID lift_PID(20, 0.1, 5);
 macro::Slew lift_Slew(600);
 
-double Lift::output = 0, Lift::target = 0, Lift::current = 0, Lift::tol = 40, Lift::slewOutput = 0, Lift::lastTarget =0;
+double Lift::output = 0, Lift::target = 0, Lift::tol = 40, Lift::slewOutput = 0, Lift::lastTarget = 0,
+      Lift::current = (leftArm.get_position() + rightArm.get_position() )/2;
 
 double tempLiftPos;
 
@@ -57,24 +58,34 @@ void Lift::run() {
     if(pros::competition::is_disabled()) goto end;
 
     switch (liftMode) {
-    case LiftState::ZERO: {
+    case LiftState::DOWN: {
       move(0);
       break;
     }
     case LiftState::UP: {
-      move(1990);
+      move(1900);
       break;
     }
     case LiftState::OPCONTROL: {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        lastTarget = 1900;
+        isSettled = false;
         lift_PID.set(20, 0.1, 5);
+        move(1900);
       } else if (master.get_digital(DIGITAL_L2)) {
-        lastTarget = 0;
+        isSettled = false;
         lift_PID.set(10,0.01,5);
+        move(0);
+      }else{
+        if (!isSettled) {
+          isSettled = true;
+          leftArm.move(0);
+          rightArm.move(0);
+          lastTarget = (leftArm.get_position() + rightArm.get_position()) / 2;
+          lift_Slew.reset();        
+        }
+        move(lastTarget); //Hold current Position.
       }
-      move(lastTarget);
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {
@@ -111,7 +122,7 @@ void Lift::move(double target){
     if (!pros::competition::is_autonomous()) {
       liftMode = LiftState::OPCONTROL;
     } else {
-      liftMode = LiftState::IDLE;
+      // liftMode = LiftState::IDLE;
     }
     isSettled = true;
   }

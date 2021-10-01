@@ -156,7 +156,6 @@ void Odom::stop() {
 	lastVelocity = velocity;
 	}
 	// if(accel.y <= 0.05) accel.y = 0;
-	std::cout << "Pos:" << position << std::endl;
 
     pros::delay(10);
   }

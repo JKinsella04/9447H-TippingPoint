@@ -18,6 +18,11 @@ class MobileGoal{
   MobileGoal& setState(MobileGoalState s);
 
   /*
+  Needs to run before Mobile Goal moves to either other state.
+  */
+  MobileGoal& setup();
+  
+  /*
   Sets mobileGoal motor brake type.
   @param pros::motor_brake_mode_e_t brake type.
   */
@@ -28,10 +33,6 @@ class MobileGoal{
   */
   void reset();
   
-  /*
-  Needs to run before Mobile Goal moves to either other state.
-  */
-  void setup();
 
   /*
   Delay thread until settled.

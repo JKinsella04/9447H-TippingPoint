@@ -3,7 +3,7 @@
 #include "globals.hpp"
 
 enum class LiftState { 
-    ZERO, UP, OPCONTROL,IDLE
+    DOWN, UP, OPCONTROL,IDLE
 }; 
 
 class Lift{

@@ -221,8 +221,6 @@ void Chassis::run() {
       if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
         turnComplete = true;
         turnSlew.reset();
-        // turn_PID.reset();
-        // turn_PID.set(133, 1, 66);
       }
       // Find quickest turn.
       calcDir();
@@ -293,10 +291,13 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
 
-      // std::cout << "Angle:" << drive_PID.getError() << std::endl; //<< "AngleDeg:" << turn_output << std::endl;
-      std::cout << "relX: " << relXToPoint << " relY: " << relYToPoint << std::endl;
-      // std::cout << "xPower: " << xPower << " yPower: " << yPower << std::endl; 
-      // std::cout << "Drive: " << drive_output << " Turn: " << turn_output << std::endl;
+      // macro::print("Angle: ", drive_PID.getError());
+      // macro::print("Turn: ", turn_output);
+      macro::print("relX: ", relXToPoint);
+      // macro::print("xPower:", xPower);
+      // macro::print("yPower:", yPower);
+      // macro::print("Drive:", drive_output);
+      // macro::print("Turn:", turn_output);
 
       left(LslewOutput + TslewOutput );
       right(RslewOutput - TslewOutput);
@@ -304,7 +305,9 @@ void Chassis::run() {
       // double relTurnAngle = relAngleToTarget - macro::toRad(180) + target.theta;
       // double turnPower = macro::clip(relTurnAngle/macro::toRad(30), -1, 1); 
 
-      // std::cout << "turn: " << turnPower << " rel:" << relTurnAngle << std::endl;
+      // macro::print("turn: ", turnPower");
+      // macro::print("rel: ", relTurnAngle");
+
 
       if(fabs(drive_output) <= drive_tol && fabs(turn_output) <= turn_tol){ //drive_PID.getError()) <= tol && fabs(turn_PID.getError()) <= 0.75
         left(0);
@@ -328,7 +331,7 @@ void Chassis::run() {
 
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
     
-      std::cout << "Error:" << turn_PID.getError() << std::endl; //Debug
+      macro::print("Error: ", turn_PID.getError()); //Debug
 
       left(TslewOutput);
       right(-TslewOutput);

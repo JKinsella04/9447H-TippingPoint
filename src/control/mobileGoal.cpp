@@ -6,7 +6,8 @@ MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 macro::PID MobileGoal_PID(5, 0.01, 3.75);
 macro::Slew MobileGoal_Slew(600);
 
-double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::current = 0, MobileGoal::tol = 30, MobileGoal::slewOutput = 0, MobileGoal::lastTarget = 4000;
+double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::tol = 30, MobileGoal::lastTarget = 0,
+       MobileGoal::slewOutput = 0, MobileGoal::current = mobileGoalPos.get_value();
 
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
 
@@ -16,6 +17,18 @@ MobileGoalState MobileGoal::getState(){
 
 MobileGoal& MobileGoal::setState(MobileGoalState s){
   MobileGoalMode = s;
+  return *this;
+}
+
+MobileGoal& MobileGoal::setup(){
+  isSettled = false;
+  // leftMobileGoal.move_absolute(-800, 127);
+  // rightMobileGoal.move_absolute(-800, 127);
+  leftMobileGoal.move(-100);
+  rightMobileGoal.move(-100);
+  macro::print("SETUP", 0);
+  pros::delay(250);
+  setState(MobileGoalState::DOWN);
   return *this;
 }
 
@@ -29,14 +42,6 @@ void MobileGoal::reset(){
   rightMobileGoal.tare_position();
 }
 
-void MobileGoal::setup(){
-  // leftMobileGoal.move_absolute(-800, 127);
-  // rightMobileGoal.move_absolute(-800, 127);
-  leftMobileGoal.move(-100);
-  rightMobileGoal.move(-100);
-  std::cout << "SETUP" << std::endl;
-  pros::delay(250);
-}
 
 void MobileGoal::waitUntilSettled(){
   while(!isSettled){ pros::delay(20);}
@@ -60,7 +65,6 @@ void MobileGoal::run() {
     switch (MobileGoalMode) {
     case MobileGoalState::DOWN: {
       move(3900);
-      std::cout << "DOWN" << std::endl;
       break;
     }
     case MobileGoalState::UP: {
@@ -70,17 +74,26 @@ void MobileGoal::run() {
     case MobileGoalState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP))
       {
-        lastTarget = 500;
+        isSettled = false;
+        move(500);
       }
       else if (master.get_digital(DIGITAL_X))
       {
-        lastTarget = 3900;
+        isSettled = false;
+        move(3900);
+      }else{
+      if(!isSettled){
+        isSettled = true;
+        leftMobileGoal.move(0);
+        rightMobileGoal.move(0);
+        lastTarget = mobileGoalPos.get_value();
       }
-      move(lastTarget);
+      move(lastTarget); // Hold current Position.
+      }
       break;
     }
     case MobileGoalState::IDLE: {
-      // std::cout << "IDLE" << std::endl;
+      // macro::print("IDLE", 0);
       // leftMobileGoal.move(0);
       // rightMobileGoal.move(0);
       // MobileGoal motor to zero;
