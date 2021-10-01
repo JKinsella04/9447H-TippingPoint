@@ -48,10 +48,10 @@ void initialize() {
 	chassis.setBrakeType(HOLD);
 
 	pros::Task LiftController(lift.start, NULL, "Lift Controller");
-	lift.setBrakeType(COAST);
+	lift.setBrakeType(HOLD);
 	
 	pros::Task MobileGoalController(mobileGoal.start, NULL, "MobileGoal Controller");
-	// mobileGoal.setBrakeType(HOLD);
+	mobileGoal.setBrakeType(COAST);
 
 	pros::Task DisplayController(display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);
@@ -74,11 +74,12 @@ void opcontrol() {
 	Lift lift;
 	lift.setState(LiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
-	// MobileGoal mobileGoal;
-	// mobileGoal.setup().waitUntilSettled();
-	// mobileGoal.setState(MobileGoalState::OPCONTROL); // Controls MobileGoal grabber.
+	MobileGoal mobileGoal;
+	mobileGoal.setState(MobileGoalState::OPCONTROL); // Controls MobileGoal grabber.
 
   while (true) {
+
+		if(master.get_digital(DIGITAL_DOWN)) mobileGoal.setup();
 		
 		// Controls Draggers.
 		if(master.get_digital(DIGITAL_LEFT)) { Dragger::setState(true); }

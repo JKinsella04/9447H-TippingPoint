@@ -69,22 +69,14 @@ void Lift::run() {
     case LiftState::OPCONTROL: {
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
-        isSettled = false;
         lift_PID.set(20, 0.1, 5);
         move(1900);
       } else if (master.get_digital(DIGITAL_L2)) {
-        isSettled = false;
         lift_PID.set(10,0.01,5);
         move(0);
       }else{
-        if (!isSettled) {
-          isSettled = true;
           leftArm.move(0);
-          rightArm.move(0);
-          lastTarget = (leftArm.get_position() + rightArm.get_position()) / 2;
-          lift_Slew.reset();        
-        }
-        move(lastTarget); //Hold current Position.
+          rightArm.move(0); //Hold current Position.
       }
 
       // Clamp Control

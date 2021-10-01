@@ -22,13 +22,13 @@ MobileGoal& MobileGoal::setState(MobileGoalState s){
 
 MobileGoal& MobileGoal::setup(){
   isSettled = false;
-  // leftMobileGoal.move_absolute(-800, 127);
-  // rightMobileGoal.move_absolute(-800, 127);
   leftMobileGoal.move(-100);
   rightMobileGoal.move(-100);
-  macro::print("SETUP", 0);
+  
   pros::delay(250);
+
   setState(MobileGoalState::DOWN);
+  setBrakeType(HOLD);
   return *this;
 }
 
@@ -74,21 +74,14 @@ void MobileGoal::run() {
     case MobileGoalState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP))
       {
-        isSettled = false;
         move(500);
       }
       else if (master.get_digital(DIGITAL_X))
       {
-        isSettled = false;
         move(3900);
       }else{
-      if(!isSettled){
-        isSettled = true;
         leftMobileGoal.move(0);
-        rightMobileGoal.move(0);
-        lastTarget = mobileGoalPos.get_value();
-      }
-      move(lastTarget); // Hold current Position.
+        rightMobileGoal.move(0); // Hold current Position.
       }
       break;
     }
