@@ -111,8 +111,8 @@ void Odom::run() {
     deltaL = currentL - lastDeltaL;
     deltaR = currentR - lastDeltaR;
 
-    posX = posX + (( deltaL + deltaR ) / 2) * cos( thetaRad );
-    posY = posY + (( deltaL + deltaR ) / 2) * sin( thetaRad );
+    posX = posX + (( deltaL + deltaR ) / 2.0) * cos( thetaRad );
+    posY = posY + (( deltaL + deltaR ) / 2.0) * sin( thetaRad );
 
     lastDeltaL = ( LF.get_position() + LB.get_position() )/2;
     lastDeltaR = ( RF.get_position() + RB.get_position() )/2;
