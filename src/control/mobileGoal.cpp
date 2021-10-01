@@ -59,7 +59,7 @@ void MobileGoal::run() {
 
     switch (MobileGoalMode) {
     case MobileGoalState::DOWN: {
-      move(4000);
+      move(3900);
       std::cout << "DOWN" << std::endl;
       break;
     }
@@ -74,7 +74,7 @@ void MobileGoal::run() {
       }
       else if (master.get_digital(DIGITAL_X))
       {
-        lastTarget = 4000;
+        lastTarget = 3900;
       }
       move(lastTarget);
       break;
