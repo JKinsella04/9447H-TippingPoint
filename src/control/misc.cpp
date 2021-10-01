@@ -17,6 +17,11 @@ void setState(bool state_) {
 } // namespace draggers
 
 namespace macro {
+
+void print(std::string s, double value){
+  std::cout << s << value << std::endl;
+}
+
 double angleWrap(double rad){
   while(rad < -PI){
     rad += 2 * PI;

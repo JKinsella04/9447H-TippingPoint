@@ -35,6 +35,11 @@ namespace Dragger {
 } // namespace draggers
 
 namespace macro {
+
+/*
+Print to terminal.
+*/
+void print(std::string s, double value);
   
 /**
  * Makes sure an angle is within the range -180 to 180 degrees.

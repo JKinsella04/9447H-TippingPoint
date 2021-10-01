@@ -39,6 +39,8 @@ double Chassis::distToTarget, Chassis::absAngleToTarget, Chassis::relAngleToTarg
 double Chassis::relXToPoint, Chassis::relYToPoint;
 double Chassis::mvmtXPower, Chassis::mvmtYPower; 
 
+double Chassis::tempTarget = 0, Chassis::tempTheta = 0;
+
 double debugSpeed = 3000;
 
 Chassis::Chassis() { }
@@ -210,23 +212,21 @@ void Chassis::run() {
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 
       // Turn PID calc.
-      // turn_output = turn_PID.calculate(target.theta, *theta);
-
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
       if(turnComplete){
         turn_output = turn_PID.calculate(target.thetaTwo, *theta);
       }else{
         turn_output = turn_PID.calculate(target.theta, *theta);
       }
-      if(fabs(turn_PID.getError()) <= turn_tol){ 
+      if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
         turnComplete = true;
         turnSlew.reset();
-        turn_PID.set(66,0.01,33);
-      } 
-
+        // turn_PID.reset();
+        // turn_PID.set(133, 1, 66);
+      }
       // Find quickest turn.
       calcDir();
-
+      
       // Turn slew calc.
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
       
@@ -236,7 +236,7 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
 
-      std::cout << "Output:" << LslewOutput << std::endl; // Debug
+      // macro::print("Turn: ", turn_output);
 
       if(!adjustAngle){
         left(LslewOutput);
@@ -418,8 +418,16 @@ void Chassis::right(double input){
 
 void Chassis::calcDir(){ // Find Quickest turn.
   if (fabs(turn_PID.getError()) > 180) {
-    turn_PID.setError(turn_PID.getError() - 360);
-    turn_output = turn_PID.calculate(); // recalculate output
+    if(*theta < 180){
+      tempTheta = *theta + 360;
+    }else{
+      if(!turnComplete){
+        tempTarget = target.theta + 360;
+      }else{
+        tempTarget = target.thetaTwo + 360;
+      }
+    }
+    turn_output = turn_PID.calculate(tempTarget, tempTheta); // recalculate output
   }
 }
 

@@ -132,4 +132,6 @@ class Chassis {
     static double distToTarget, absAngleToTarget, relAngleToTarget;
     static double relXToPoint, relYToPoint;
     static double mvmtXPower, mvmtYPower;
+
+    static double tempTarget, tempTheta;
 };

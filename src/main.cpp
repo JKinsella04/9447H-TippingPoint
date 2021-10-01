@@ -16,8 +16,8 @@ void initialize() {
 
 	// Class Init
 	Odom odom;	 
-	// Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY());
-	Chassis chassis(odom.getL(), odom.getYaw(), odom.getX(), odom.getY());
+	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY());
+	// Chassis chassis(odom.getL(), odom.getYaw(), odom.getX(), odom.getY());
  	Display display;
 	Lift lift;
 	MobileGoal mobileGoal;

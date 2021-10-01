@@ -61,10 +61,11 @@ void Autonomous::runAuton() {
 // Match Autons
 void awp() {
   mobileGoal.setup();
-  mobileGoal.setState(MobileGoalState::DOWN);
+  mobileGoal.setState(MobileGoalState::DOWN).waitUntilSettled();
   chassis.setBrakeType(COAST);
   chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
-  chassis.eDrive(225).withGains(30, 0, 10).withAngles(90, 180).withTurnGains(266, 1.5, 133).withTol(20, 20).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP);
+  chassis.eDrive(200).withGains(30, 0, 10).withAngles(90, 180).withTurnGains(266, 0, 133).withTol(20, 20).waitUntilSettled();
 }
 
 void oneGoal() {

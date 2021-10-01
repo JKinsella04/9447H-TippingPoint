@@ -68,8 +68,8 @@ Odom& Odom::calibrateGyro() {
 }
 
 Odom& Odom::zero() {
-  float left = abs( lf_Imu.get_heading() - 360 ) * PI / 180;
-  float right = abs( rf_Imu.get_heading() - 360 ) * PI / 180;
+  float left = abs( lf_Imu.get_heading() ) * PI / 180;
+  float right = abs( rf_Imu.get_heading() ) * PI / 180;
 
   float x = ( cos( left + PI ) + cos( right + PI ) ) / 2;
   float y = ( sin( left + PI ) + sin( right + PI ) ) / 2;
@@ -95,8 +95,8 @@ void Odom::run() {
   isRunning = true;
 
   while(isRunning) {
-    inertL = abs( lb_Imu.get_heading() - 360 ) * PI / 180;
-    inertR = abs( rf_Imu.get_heading() - 360 ) * PI / 180;
+    inertL = abs( lb_Imu.get_heading() ) * PI / 180;
+    inertR = abs( rf_Imu.get_heading() ) * PI / 180;
 
     float x = ( cos( inertL - offset + PI ) + cos( inertR - offset + PI ) ) / 2;
     float y = ( sin( inertL - offset + PI ) + sin( inertR - offset + PI ) ) / 2;

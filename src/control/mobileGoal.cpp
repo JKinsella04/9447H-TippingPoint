@@ -30,10 +30,12 @@ void MobileGoal::reset(){
 }
 
 void MobileGoal::setup(){
-  leftMobileGoal.move_absolute(-800, 127);
-  rightMobileGoal.move_absolute(-800, 127);
+  // leftMobileGoal.move_absolute(-800, 127);
+  // rightMobileGoal.move_absolute(-800, 127);
+  leftMobileGoal.move(-100);
+  rightMobileGoal.move(-100);
   std::cout << "SETUP" << std::endl;
-  pros::delay(2000);
+  pros::delay(250);
 }
 
 void MobileGoal::waitUntilSettled(){
@@ -78,7 +80,7 @@ void MobileGoal::run() {
       break;
     }
     case MobileGoalState::IDLE: {
-      std::cout << "IDLE" << std::endl;
+      // std::cout << "IDLE" << std::endl;
       // leftMobileGoal.move(0);
       // rightMobileGoal.move(0);
       // MobileGoal motor to zero;
@@ -105,7 +107,7 @@ void MobileGoal::move(double target){
     if (!pros::competition::is_autonomous()) {
       MobileGoalMode = MobileGoalState::OPCONTROL;
     } else {
-      MobileGoalMode = MobileGoalState::IDLE;
+      // MobileGoalMode = MobileGoalState::IDLE;
     }
     isSettled = true;
   }
