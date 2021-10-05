@@ -267,20 +267,20 @@ void Chassis::run() {
 
       double relAngleDeg = macro::toDeg(relAngleToTarget);
 
-      relXToPoint = sin(relAngleToTarget) * distToTarget;
-      relYToPoint = cos(relAngleToTarget) * distToTarget;
+      relXToPoint = cos(relAngleToTarget) * distToTarget;
+      relYToPoint = sin(relAngleToTarget) * distToTarget;
 
-      double xPower = relXToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
-      double yPower = relYToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
+      mvmtXPower = relXToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
+      mvmtYPower = relYToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
 
       // Drive PID calc
       // drive_PID.setError(relXToPoint);
-      drive_PID.setError(xPower);
+      drive_PID.setError(mvmtXPower);
       drive_output = drive_PID.calculate();
   
       // Turn PID calc.
       // turn_PID.setError(relYToPoint);
-      turn_PID.setError(yPower);
+      turn_PID.setError(mvmtYPower);
       turn_output = turn_PID.calculate();
 
       // Find quickest turn.

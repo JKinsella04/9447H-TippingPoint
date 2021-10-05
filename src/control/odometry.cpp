@@ -95,7 +95,7 @@ void Odom::run() {
   isRunning = true;
 
   while(isRunning) {
-    inertL = abs( lb_Imu.get_heading() ) * PI / 180;
+    inertL = abs( lf_Imu.get_heading() ) * PI / 180;
     inertR = abs( rf_Imu.get_heading() ) * PI / 180;
 
     float x = ( cos( inertL - offset + PI ) + cos( inertR - offset + PI ) ) / 2;
@@ -103,7 +103,6 @@ void Odom::run() {
 
     thetaRad = abs( atan2f(y, x) + PI );
     thetaDeg = thetaRad * 180 / PI;
-    yaw = ( lf_Imu.get_yaw() + lb_Imu.get_yaw() + rf_Imu.get_yaw() + rb_Imu.get_yaw()) / 4;
 
     currentL = ( LF.get_position() + LB.get_position() )/2;
     currentR = ( RF.get_position() + RB.get_position() )/2;
@@ -117,6 +116,11 @@ void Odom::run() {
     lastDeltaL = ( LF.get_position() + LB.get_position() )/2;
     lastDeltaR = ( RF.get_position() + RB.get_position() )/2;
 
+    // pros::c::gps_status_s_t gpsData;
+    
+    // posX = gpsData.x;
+    // posY = gpsData.y;
+
     pros::delay(10);
   }
 }
@@ -124,41 +128,3 @@ void Odom::run() {
 void Odom::stop() {
   isRunning = false;
 }
-
-/*
-    // Chassis Sensor Readings
-    odomL = OdomL.get_position();
-    thetaDeg = ( lb_Imu.get_yaw() + lf_Imu.get_yaw() + rf_Imu.get_yaw() ) / 3;
-    encoderCount = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position()) /4;
-
-    GPS Sensor
-    Struct for GPS coord values.
-    
-    pros::c::gps_status_s_t gpsData;
-    
-    global_x = gpsData.x;
-    global_y = gpsData.y;
-
-    IMU POSITION Tracking
-  double lastAccel = 0;
-	double lastTime = pros::c::millis();
-	double lastVelocity = 0;
-	double lastPosition = 0;
-	double velocity = 0;
-	double position = 0;
-	pros::c::imu_accel_s_t accel = lf_Imu.get_accel();
-	if(accel.x >= 0.02){
-	velocity = (lastVelocity + ( ( lastAccel + accel.x) /2 ) *(lastTime - pros::c::millis()));
-	position = (lastPosition + ( ( lastVelocity + velocity) /2 ) *(lastTime - pros::c::millis()));
-	lastPosition = position;
-	lastAccel = accel.x;
-	lastTime = pros::c::millis();
-	lastVelocity = velocity;
-	}
-	// if(accel.y <= 0.05) accel.y = 0;
-
-    pros::delay(10);
-  }
-}
-
-*/
