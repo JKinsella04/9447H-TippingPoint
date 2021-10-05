@@ -65,7 +65,11 @@ void awp() {
   mobileGoal.setup().waitUntilSettled();
   chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
   mobileGoal.setState(MobileGoalState::UP);
-  chassis.eDrive(200).withGains(30, 0, 10).withAngles(90, 180).withTurnGains(266, 0, 133).withTol(20, 20).waitUntilSettled();
+  chassis.eDrive(200,75).withGains(10, 0, 5).withAngles(90, 180).withTurnGains(266, 1, 133).withTol(10, 20).waitUntilSettled();
+  pros::delay(250);
+  clamp.set_value(true);
+  pros::delay(250);
+  chassis.eDrive(-30,900).withGains(30,0,10).withTol(20).waitUntilSettled();
 }
 
 void oneGoal() {

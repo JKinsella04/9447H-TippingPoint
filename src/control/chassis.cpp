@@ -221,6 +221,7 @@ void Chassis::run() {
       if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
         turnComplete = true;
         turnSlew.reset();
+        turn_PID.set(133,0,66);
       }
       // Find quickest turn.
       calcDir();
@@ -353,8 +354,8 @@ void Chassis::run() {
       double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
       
-      double leftOutput = leftSlew.calculate(leftJoystick);
-      double rightOutput = rightSlew.calculate(rightJoystick);
+      double leftOutput = leftSlew.withGains(900,900,true).calculate(leftJoystick);
+      double rightOutput = rightSlew.withGains(900,900,true).calculate(rightJoystick);
 
       left(leftOutput);
       right(rightOutput);
