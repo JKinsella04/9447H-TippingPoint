@@ -7,7 +7,7 @@ macro::PID MobileGoal_PID(5, 0.01, 3.75);
 macro::Slew MobileGoal_Slew(600);
 
 double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::tol = 30, MobileGoal::lastTarget = 0,
-       MobileGoal::slewOutput = 0, MobileGoal::current = mobileGoalPos.get_value();
+       MobileGoal::slewOutput = 0, MobileGoal::current = mobileGoalPos.get_value(), MobileGoal::delay = 0;
 
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
 
@@ -16,6 +16,13 @@ MobileGoalState MobileGoal::getState(){
 }
 
 MobileGoal& MobileGoal::setState(MobileGoalState s){
+  delay = 0;
+  MobileGoalMode = s;
+  return *this;
+}
+
+MobileGoal& MobileGoal::setState(MobileGoalState s, double delay_){
+  delay = delay_;
   MobileGoalMode = s;
   return *this;
 }
@@ -64,24 +71,26 @@ void MobileGoal::run() {
 
     switch (MobileGoalMode) {
     case MobileGoalState::DOWN: {
+      pros::delay(delay);
       move(3900);
       break;
     }
     case MobileGoalState::UP: {
+      pros::delay(delay);
       move(500);
       break;
     }
     case MobileGoalState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP))
       {
+        lastTarget = 0;
         move(500);
-      }
-      else if (master.get_digital(DIGITAL_X))
-      {
+      } else if (master.get_digital(DIGITAL_X)) {
+        lastTarget = 0;
         move(3900);
-      }else{
-        leftMobileGoal.move(0);
-        rightMobileGoal.move(0); // Hold current Position.
+      } else {
+        if(lastTarget ==0) lastTarget = mobileGoalPos.get_value();
+        move(lastTarget);
       }
       break;
     }

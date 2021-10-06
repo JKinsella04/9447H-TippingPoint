@@ -18,6 +18,11 @@ class MobileGoal{
   MobileGoal& setState(MobileGoalState s);
 
   /*
+  Updates MobileGoalState after the delay has passed.
+  */
+  MobileGoal& setState(MobileGoalState s, double delay);
+
+  /*
   Needs to run before Mobile Goal moves to either other state.
   */
   MobileGoal& setup();
@@ -47,7 +52,7 @@ class MobileGoal{
   static bool isRunning;
   static bool isSettled;
 
-  static double output, target, current, tol, slewOutput, lastTarget;
+  static double output, target, current, tol, slewOutput, lastTarget, delay;
 
   void move(double target);
 

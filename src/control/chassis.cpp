@@ -134,7 +134,7 @@ Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double 
 Chassis &Chassis::drive(double target_, double rate, double speed) {
   
   target.x = target_ * CONVERSION;
-  target.rateDrive = rate;
+  target.accel_rate = rate;
   target.speedDrive = speed;
   reset();
   isSettled = false;
@@ -142,10 +142,11 @@ Chassis &Chassis::drive(double target_, double rate, double speed) {
   return *this;
 }
 
-Chassis &Chassis::eDrive(double e_target_, double rate, double speed) {
+Chassis &Chassis::eDrive(double e_target_, double accel_rate, double decel_rate, double speed) {
   
   target.x = e_target_ * BASE_CONVERSION;
-  target.rateDrive = rate;
+  target.accel_rate = accel_rate;
+  target.decel_rate =  decel_rate; 
   target.speedDrive = speed;
   reset();
   isSettled = false;
@@ -153,12 +154,12 @@ Chassis &Chassis::eDrive(double e_target_, double rate, double speed) {
   return *this;
 }
 
-Chassis &Chassis::drive(double x, double y, double theta, double driveRate, double driveSpeed, double turnRate, double turnSpeed){
+Chassis &Chassis::drive(double x, double y, double theta, double rate, double driveSpeed, double turnRate, double turnSpeed){
   
   target.x = x;
   target.y = y;
   target.theta = theta;
-  target.rateDrive = driveRate;
+  target.accel_rate = rate;
   target.speedDrive = driveSpeed;
   target.rateTurn = turnRate;
   target.speedTurn = turnSpeed;
@@ -181,7 +182,7 @@ Chassis &Chassis::turn(double theta, double rate, double speed) {
 
 Chassis &Chassis::balance(double rate, double speed){
   
-  target.rateDrive = rate;
+  target.accel_rate = rate;
   target.speedDrive = speed;
   reset();
   isSettled = false;
@@ -232,8 +233,8 @@ void Chassis::run() {
       skip:
 
       // Drive slew calc.
-      LslewOutput = leftSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
-      RslewOutput = rightSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
+      LslewOutput = leftSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
 
       // macro::print("Turn: ", turn_output);
 
@@ -289,8 +290,8 @@ void Chassis::run() {
       
       // Slew Calcs.
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
-      LslewOutput = leftSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
-      RslewOutput = rightSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
+      LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
 
       // macro::print("Angle: ", drive_PID.getError());
       // macro::print("Turn: ", turn_output);
@@ -366,8 +367,8 @@ void Chassis::run() {
       current = (lf_Imu.get_pitch() + lb_Imu.get_pitch() + rf_Imu.get_pitch() + rb_Imu.get_pitch()) / 4;
       drive_output = drive_PID.calculate(0, current);
 
-      LslewOutput = leftSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
-      RslewOutput = rightSlew.withGains(target.rateDrive, target.rateDrive, true).withLimit(target.speedDrive).calculate(drive_output);
+      LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
 
       left(LslewOutput);
       right(RslewOutput);

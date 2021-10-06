@@ -13,7 +13,8 @@ struct ChassisTarget {
     double thetaTwo;
     double speedDrive;
     double speedTurn;
-    double rateDrive;
+    double accel_rate;
+    double decel_rate;
     double rateTurn;
 };
 
@@ -86,12 +87,12 @@ class Chassis {
     /*
     Updates ChassisState and sets target position in inches.
     */
-    Chassis& drive(double target_, double rate = 900, double speed = 9000);
+    Chassis& drive(double target_, double accel_rate = 900, double speed = 9000);
 
     /*
     Updates ChassisState and uses motor encoders.
     */
-    Chassis& eDrive(double e_target_, double rate = 900, double speed = 9000);
+    Chassis& eDrive(double e_target_, double accel_rate = 900, double decel_rate = 900, double speed = 9000);
 
     /*
     Updates ChassisState and sets target position from given (x,y) coords.
