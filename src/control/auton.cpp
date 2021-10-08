@@ -24,7 +24,7 @@ void Autonomous::setId(int id_) {
     name = "AWP";
     break;
   case 2:
-    name = "One Goal";
+    name = "Two Goal";
     break;
   case 3:
     name = "Skills";
@@ -42,7 +42,7 @@ void Autonomous::runAuton() {
     break;
   }
   case 2: {
-    oneGoal();
+    twoGoal();
     break;
   }
   case 3: {
@@ -51,8 +51,6 @@ void Autonomous::runAuton() {
   }
 
   default: {
-    awp();
-    // oneGoal();
     break;
   }
   }
@@ -92,7 +90,18 @@ void oneGoal() {
   // chassis.drive(1000, 250, 900, 9000, 900, 9000).withGains(20,0,10).withTurnGains(10,0,5).withTol(20).waitUntilSettled();
 }
 
-void twoGoal() {}
+void twoGoal() {
+  chassis.setBrakeType(COAST);
+  chassis.eDrive(75,1500).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  clamp.set_value(true);
+  chassis.eDrive(-50,900).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  clamp.set_value(false);
+  chassis.eDrive(-10,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  chassis.eDrive(55,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  clamp.set_value(true);
+  chassis.eDrive(-50,900).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+
+}
 
 // Skills
 void skills(){
