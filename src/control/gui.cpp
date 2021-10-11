@@ -3,13 +3,13 @@
 #include "gui.hpp"
 #include "auton.hpp"
 #include "chassis.hpp"
-#include "odometry.hpp"
+#include "positionTracking.hpp"
 #include "misc.hpp"
 #include <sstream>
 
 static Autonomous auton;
 static Chassis chassis;
-static Odom odom;
+static Position robotPos;
 
 bool Display::isRunning = false, Display::isInitalized = false;
 
@@ -25,7 +25,7 @@ static lv_obj_t *tab;
 static lv_obj_t *autonName;
 static lv_obj_t *autonGraphic;
 
-static lv_obj_t *odomVals;
+static lv_obj_t *posVals;
 static lv_obj_t *chassisVals;
 static lv_obj_t *printValue;
 
@@ -37,16 +37,14 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
   switch (id) { // Controls both tab 2 + 3.
   case 1:       // Tab 2 control
-    macro::print("X: ", odom.returnX());
-    macro::print("Y: ", odom.returnY());
-    // pros::delay(3000);
-    // autonomous();
+    pros::delay(2500);
+    autonomous();
     break;
   case 2: // Tab 3 control
     chassis.reset();
     break;
   case 3:
-    odom.zero();
+    robotPos.reset();
     break;
   case 4:
     // mobileGoal::reset(MG);
@@ -182,8 +180,8 @@ void Display::tabAuton(lv_obj_t *parent) {
 void Display::tabDebug(lv_obj_t *parent) {
   lv_obj_t *startAuton = createButton(1, 0, 20, 200, 40, "Start Auton", parent, btn_click_action, &style_btn, &style_btn_released);
   
-  odomVals = createLabel(10, 70, "Robot Pos = (0,0) ", parent);
-  lv_label_set_style(odomVals, &style_btn);
+  posVals = createLabel(10, 70, "Robot robotPos = (0,0) ", parent);
+  lv_label_set_style(posVals, &style_btn);
 
   chassisVals = createLabel(10, 90, "Chassis State: ", parent);
   lv_label_set_style(chassisVals, &style_btn);
@@ -198,7 +196,7 @@ void Display::tabDebug(lv_obj_t *parent) {
 
 void Display::tabSettings(lv_obj_t *parent) {
   lv_obj_t *resetIMU = createButton(2, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *resetOdom = createButton(3, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *resetpos = createButton(3, 0, 70, 200, 40, "Reset robotPos", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetLift = createButton(4, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
 }
 
@@ -226,11 +224,12 @@ void Display::run() {
     std::string temp = "Auton Selected: " + auton.getAuton();
     lv_label_set_text(autonName, temp.c_str());
 
-    std::ostringstream odomx, odomy;
-    odomx << odom.returnX();
-    odomy << odom.returnY();
-    std::string odomTemp = "Robot Pos: (" + odomx.str() + "," + odomy.str() + ")";
-    lv_label_set_text(odomVals, odomTemp.c_str());
+    // Print (X,Y) Coordinates
+    std::ostringstream posX, posY;
+    posX << *robotPos.getX();
+    posX << *robotPos.getY();
+    std::string posTemp = "Robot robotPos: (" + posX.str() + "," + posY.str() + ")";
+    lv_label_set_text(posVals, posTemp.c_str());
 
     // Placeholder for quickly adding a sensor value to screen.
     // std::ostringstream yaw;

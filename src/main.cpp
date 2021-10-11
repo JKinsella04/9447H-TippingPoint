@@ -5,44 +5,28 @@
 #include "control/gui.hpp"
 #include "control/auton.hpp"
 #include "control/mobileGoal.hpp"
-#include "control/odometry.hpp"
+#include "control/positionTracking.hpp"
 #include "control/lift.hpp"
 #include "control/mobileGoal.hpp"
 #include "globals.hpp"
-#include "pros/misc.h"
-
 
 void initialize() {
 
 	// Class Init
-	Odom odom;	 
-	Chassis chassis(odom.getL(), odom.getThetaDeg(), odom.getX(), odom.getY());
-	// Chassis chassis(odom.getL(), odom.getYaw(), odom.getX(), odom.getY());
+	Position robotPos;	 
+	Chassis chassis(robotPos.getRotation(), robotPos.getThetaDeg(), robotPos.getX(), robotPos.getY());
+	// Chassis chassis(robotPos.getL(), robotPos.getYaw(), robotPos.getX(), robotPos.getY());
  	Display display;
 	Lift lift;
 	MobileGoal mobileGoal;
 	
-	// Rotation Sensor calibration
-	// OdomL.reset_position();
-	// OdomS.reset_position();
-	// OdomL.set_reversed(false);
-
-	//Motor encoder calibration
-	LF.tare_position();
-	LB.tare_position();
-	RF.tare_position();
-	RB.tare_position();
-
-	// chassis.reset();
+	// Sensor and Motor  
+	robotPos.resetDriveBase().calibrateGyro();
 	lift.reset();	
 	mobileGoal.reset();	
 
-	// IMU calibration
-	odom.calibrateGyro();
-	odom.zero();
-
   // Threads
-	pros::Task OdometryController(odom.start, NULL, "Odom Controller");
+	pros::Task PositionController(robotPos.start, NULL, "Position Controller");
 
 	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");
 	chassis.setBrakeType(HOLD);

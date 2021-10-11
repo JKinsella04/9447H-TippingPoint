@@ -1,17 +1,19 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
-#include "odometry.hpp"
+#include "positionTracking.hpp"
 
-static Odom odom;
+static Position robotPos;
 
 // PID Init
 macro::PID drive_PID(0.5, 0.01, 0.25);
 macro::PID turn_PID(133, 0, 66);
+macro::PID theta_PID(133,0,66);
 
 // Slew Init
 macro::Slew leftSlew(900, 900, true);
 macro::Slew rightSlew(900, 900, true);
 macro::Slew turnSlew(900, 900, true);
+macro::Slew thetaSlew(900,900, true);
 
 // ChassisTarget Struct Init
 ChassisTarget target;
@@ -19,13 +21,10 @@ ChassisTarget target;
 // State Machine Init
 ChassisState mode = ChassisState::IDLE;
 
-
 // Variable Init
 bool Chassis::isRunning = false, Chassis::isSettled = true;
 
-double *Chassis::theta, *Chassis::posX, *Chassis::posY;
-
-int *Chassis::odomSide = 0;
+double *Chassis::theta, *Chassis::posX, *Chassis::posY, *Chassis::rotation;
 
 double Chassis::drive_tol = 0, Chassis::turn_tol = 0;
 
@@ -45,8 +44,8 @@ double debugSpeed = 3000;
 
 Chassis::Chassis() { }
 
-Chassis::Chassis(int *odomSide_, double *theta_, double *posX_, double *posY_){
-  odomSide = odomSide_;
+Chassis::Chassis(double *rotation_, double *theta_, double *posX_, double *posY_){
+  rotation = rotation_;
   theta = theta_;
   posX = posX_;
   posY = posY_;
@@ -208,7 +207,7 @@ void Chassis::run() {
     switch (mode) {
     case ChassisState::DRIVE: {
       // Drive PID calc.
-      drive_output = drive_PID.calculate(target.x, *odomSide);
+      drive_output = drive_PID.calculate(target.x, *rotation);
 
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 
@@ -301,11 +300,16 @@ void Chassis::run() {
       // macro::print("Drive:", drive_output);
       // macro::print("Turn:", turn_output);
 
-      left(LslewOutput + TslewOutput );
-      right(RslewOutput - TslewOutput);
+      double relTurnAngle = relAngleToTarget - macro::toRad(180) + target.theta;
+      double turnPower = macro::clip(relTurnAngle/macro::toRad(30), -1, 1);
+      theta_PID.setError(turnPower);
+      double thetaOutput = theta_PID.calculate();       
+      TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(thetaOutput);
 
-      // double relTurnAngle = relAngleToTarget - macro::toRad(180) + target.theta;
-      // double turnPower = macro::clip(relTurnAngle/macro::toRad(30), -1, 1); 
+      left(LslewOutput + TslewOutput + thetaOutput);
+      right(RslewOutput - TslewOutput - thetaOutput);
+
+
 
       // macro::print("turn: ", turnPower");
       // macro::print("rel: ", relTurnAngle");

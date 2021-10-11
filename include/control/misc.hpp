@@ -36,6 +36,15 @@ namespace Dragger {
 
 namespace macro {
 
+  struct Point{
+    double x;
+    double y;
+    double xRoot1;
+    double yRoot1;
+    double xRoot2;
+    double yRoot2;
+  };
+
 /*
 Print to terminal.
 */

@@ -29,7 +29,7 @@ class Chassis {
     Constructors.
     */
     Chassis();
-    Chassis(int *odomSide_, double *theta_, double *posX_, double *posY_);
+    Chassis(double *rotation_, double *theta_, double *posX_, double *posY_);
     
     /*
     Destructor.
@@ -125,8 +125,7 @@ class Chassis {
     static bool isSettled;
     static bool isRunning;
     
-    static double *theta, *posX, *posY;
-    static int *odomSide;
+    static double *theta, *posX, *posY, *rotation;
     static double drive_tol, turn_tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle, turnComplete;
 

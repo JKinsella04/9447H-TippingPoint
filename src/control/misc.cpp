@@ -1,6 +1,5 @@
 #include "control/misc.hpp"
-#include "pros/adi.hpp"
-#include "pros/motors.hpp"
+#include "curvePoint.hpp"
 
 // namespace intake {
 // void spin(double speed) { Intake.move(speed); }
@@ -43,6 +42,65 @@ double toRad(double degree){
 double toDeg(double radian){
   return radian * 180/PI;
 }
+
+// std::vector<Point> lineCircleIntersection(Point circleCenter, double radius, Point linePoint1, Point linePoint2){
+//   if(abs(linePoint1.y - linePoint2.y) < 0.003){
+//     linePoint1.y = linePoint2.y + 0.003;
+//   }
+//   if(abs(linePoint1.x - linePoint2.x) < 0.003){
+//     linePoint1.x = linePoint2.x + 0.003;
+//   }
+  
+//   double m1 = (linePoint2.y - linePoint1.y)/(linePoint2.x - linePoint1.x);
+
+  
+//   double x1 =  linePoint1.x - circleCenter.x;
+//   double y1 = linePoint1.y - circleCenter.y;
+
+//   double quadracticA = 1.0 + pow(m1,2);
+//   double quadracticB = (2.0 * m1 * y1) - (2.0 * pow(m1,2) *x1);
+//   double quadracticC = ((pow(m1,2)) * pow(x1,2)) - (2.0 * y1 * m1 * x1) + pow(y1,2) - pow(radius, 2);
+
+//   std::vector<Point> allPoints;
+
+//   try{
+//     double xRoot1 = (-quadracticB + sqrt(pow(quadracticB,2) -( 4 *quadracticA*quadracticC)))/(2*quadracticA);
+
+//     double yRoot1 = m1 * (xRoot1 - x1) + y1;
+    
+//     // Reapply offset
+//     xRoot1 += circleCenter.x;
+//     yRoot1 += circleCenter.y;
+
+//     double minX = linePoint1.x < linePoint2.x ? linePoint1.x : linePoint2.x;
+//     double maxX = linePoint1.x > linePoint2.x ? linePoint1.x : linePoint2.x;
+    
+//     if(xRoot1 > minX && xRoot1 < maxX){
+//       allPoints.push_back(new Point(xRoot1,yRoot1));
+//       allPoints.yRoot1 = yRoot1;
+//     }
+
+//     double xRoot2 = (-quadracticB - sqrt(pow(quadracticB,2) -( 4 *quadracticA*quadracticC)))/(2*quadracticA);
+//     double yRoot2 = m1 * (xRoot2 - x1) + y1;
+    
+//     // Reapply offset
+//     xRoot2 += circleCenter.x;
+//     yRoot2 += circleCenter.y;
+
+//     if(xRoot2 > minX && xRoot2 < maxX){
+//       allPoints.xRoot2 = xRoot2;
+//       allPoints.yRoot2 = yRoot2;
+//     }
+
+//   }catch(std::exception e){
+    
+//   }
+//   return allPoints;
+// }
+
+// curvePoint getFollowPointPath(std::vector<curvePoint> pathPoints, double xPos, double yPos, double followRadius){
+//   curvePoint followMe = new curvePoint(pathPoints.at(0));
+// }
 
 
 
