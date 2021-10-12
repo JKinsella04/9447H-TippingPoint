@@ -92,20 +92,38 @@ void oneGoal() {
 
 void twoGoal() {
   chassis.setBrakeType(COAST);
-  chassis.eDrive(75,1500).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  mobileGoal.setup().waitUntilSettled();
+  chassis.eDrive(-75,1500).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP);
+  chassis.eDrive(50,900).withGains(30,0,10).withAngle(225).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
   clamp.set_value(true);
-  chassis.eDrive(-50,900).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
-  clamp.set_value(false);
-  chassis.eDrive(-10,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
-  chassis.eDrive(55,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
-  clamp.set_value(true);
-  chassis.eDrive(-50,900).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  chassis.eDrive(-60,900).withGains(30,0,10).withAngle(225).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+
+  // clamp.set_value(false);
+  // chassis.eDrive(-10,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  // chassis.eDrive(55,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  // clamp.set_value(true);
+  // chassis.eDrive(-50,900).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
 
 }
 
 // Skills
 void skills(){
-
+  chassis.setBrakeType(COAST);
+  mobileGoal.setup().waitUntilSettled();
+  chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP);
+  chassis.eDrive(20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
+  chassis.drive(0,900, 90, 900);
+  chassis.drive(1200, 0, 90, 900);
+  chassis.drive(1200, -900, 180, 900);
+  chassis.drive(0, -900, 270, 900);
+  chassis.drive(-1200, 0, 270, 900);
+  chassis.drive(-900,-1500, 0, 900);
+  chassis.drive(0,0, 45, 900);
+  chassis.drive(1500, 900, 90, 900);
+  chassis.drive(900, 1500, 0, 900);
+  chassis.drive(-1500, 1500, 270, 900);
 }
 
 // Testing
