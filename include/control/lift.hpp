@@ -3,7 +3,7 @@
 #include "globals.hpp"
 
 enum class LiftState { 
-    DOWN, UP, OPCONTROL,IDLE
+    DOWN, MIDDLE, UP, OPCONTROL, IDLE,
 }; 
 
 class Lift{
@@ -38,6 +38,7 @@ class Lift{
   tares position of lift motors.
   */
   void reset();
+  
 
   static void start(void * ignore);
 
@@ -48,7 +49,6 @@ class Lift{
   static bool isSettled;
 
   static double output, target, current, tol, slewOutput, lastTarget;
-
 
   void move(double target);
 

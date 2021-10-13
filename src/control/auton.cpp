@@ -94,16 +94,20 @@ void twoGoal() {
   chassis.setBrakeType(COAST);
   mobileGoal.setup();
   chassis.eDrive(-85,1500, 900, 12000).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(100,10).waitUntilSettled();
-  mobileGoal.setState(MobileGoalState::UP);
-  chassis.eDrive(80,900).withGains(30,0,10).withAngle(135, 375).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
-  clamp.set_value(true);
-  chassis.eDrive(-110,750).withGains(30,0,10).withAngle(180).withTurnGains(133,0,66).withTol(40,20).waitUntilSettled();
-  mobileGoal.setState(MobileGoalState::DOWN);
-  chassis.eDrive(15,900).withGains(40,0,10).withAngle(270, 450).withTurnGains(133, 0, 66).withTol(40,30).waitUntilSettled();
-  clamp.set_value(false);
-  chassis.eDrive(-110,100).withGains(30,0,10).withAngle(300).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
   mobileGoal.setState(MobileGoalState::UP).waitUntilSettled();
-  chassis.eDrive(50,100).withGains(30,0,10).withAngle(90).withTurnGains(133,0,66).withTol(40,10).waitUntilSettled();
+  pros::delay(100);
+  chassis.eDrive(80,900).withGains(30,0,10).withAngle(135, 325).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  clamp.set_value(true);
+  lift.setState(LiftState::MIDDLE);
+  chassis.eDrive(-105,750).withGains(30,0,10).withAngle(180, 900).withTurnGains(133,0,66).withTol(40,20).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::DOWN).waitUntilSettled();
+  chassis.eDrive(-5,900).withGains(30,0,10).withAngle(180, 450).withTurnGains(133, 0, 66).withTol(40,30).waitUntilSettled();
+  chassis.eDrive(15,1000, 12000).withGains(40,0,10).withAngle(270, 450).withTurnGains(133, 0, 66).withTol(40,30).waitUntilSettled();
+  lift.setState(LiftState::DOWN).waitUntilSettled();
+  clamp.set_value(false);
+  chassis.eDrive(-125,100, 12000).withGains(30,0,10).withAngle(300).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP).waitUntilSettled();
+  chassis.eDrive(50,450).withGains(30,0,10).withAngle(90).withTurnGains(133,0,66).withTol(40,10).waitUntilSettled();
 }
 
 // Skills

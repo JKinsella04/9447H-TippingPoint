@@ -59,10 +59,16 @@ void Lift::run() {
 
     switch (liftMode) {
     case LiftState::DOWN: {
+      lift_PID.set(10,0.01,5);
       move(0);
       break;
     }
+    case LiftState::MIDDLE: {
+      move(500);
+      break;
+    }
     case LiftState::UP: {
+      lift_PID.set(20, 0.1, 5);
       move(1900);
       break;
     }
