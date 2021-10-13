@@ -104,13 +104,6 @@ void twoGoal() {
   chassis.eDrive(-110,100).withGains(30,0,10).withAngle(300).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
   mobileGoal.setState(MobileGoalState::UP).waitUntilSettled();
   chassis.eDrive(50,100).withGains(30,0,10).withAngle(90).withTurnGains(133,0,66).withTol(40,10).waitUntilSettled();
-
-  // clamp.set_value(false);
-  // chassis.eDrive(-10,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
-  // chassis.eDrive(55,900).withGains(30,0,10).withAngle(315).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
-  // clamp.set_value(true);
-  // chassis.eDrive(-50,900).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(20,10).waitUntilSettled();
-
 }
 
 // Skills
