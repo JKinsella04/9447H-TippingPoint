@@ -6,6 +6,9 @@ bool Position::isRunning = false;
 
 double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
 
+pros::c::gps_status_s_t Position::gpsData;
+
+
 double * Position::getX() {
   return &posX;
 }
@@ -67,13 +70,17 @@ void Position::run() {
 
   while(isRunning) {
 
-    pros::c::gps_status_s_t gpsData;
-    
+    gpsData = gps.get_status();
+
     posX = gpsData.x;
     posY = gpsData.y;
     
-    // thetaDeg = gps.get_heading();
-    thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading())/4; /*+ gps.get_heading() )/5;*/
+    if(gps.get_heading() != 360){
+      thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() + gps.get_heading() )/5;
+    }else{
+      thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4; /*+ gps.get_heading() )/5;*/
+    }
+
     thetaRad = macro::toRad(thetaDeg);
 
     error = gps.get_error();

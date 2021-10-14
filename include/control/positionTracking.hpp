@@ -36,4 +36,6 @@ class Position {
       static bool isRunning;
 
       static double posX, posY, thetaDeg, thetaRad, error, rotation;
+
+      static pros::c::gps_status_s_t gpsData;
 };
