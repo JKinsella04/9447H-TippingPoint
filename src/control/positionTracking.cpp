@@ -75,11 +75,7 @@ void Position::run() {
     posX = gpsData.x;
     posY = gpsData.y;
     
-    if(gps.get_heading() != 360){
-      thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() + gps.get_heading() )/5;
-    }else{
-      thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4; /*+ gps.get_heading() )/5;*/
-    }
+    thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4; /*+ gps.get_heading() )/5;*/
 
     thetaRad = macro::toRad(thetaDeg);
 
