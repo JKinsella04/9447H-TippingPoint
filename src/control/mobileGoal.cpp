@@ -32,7 +32,7 @@ MobileGoal& MobileGoal::setup(){
   leftMobileGoal.move(-100);
   rightMobileGoal.move(-100);
   
-  pros::delay(250);
+  pros::delay(275);
 
   setState(MobileGoalState::DOWN);
   setBrakeType(HOLD);

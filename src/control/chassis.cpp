@@ -258,29 +258,31 @@ void Chassis::run() {
     }
 
     case ChassisState::POINT: {
+      // distToTarget = sqrt( pow( target.x - *posX, 2) + pow( target.y - *posY, 2) );
       distToTarget = hypot(target.x - *posX, target.y - *posY);
 
+      if(*posX > 0){
       absAngleToTarget = atan2(target.y - *posY, target.x - *posX);
-
-      double thetaRad = macro::toRad(*theta);
-
-      relAngleToTarget = macro::angleWrap(absAngleToTarget - (thetaRad - macro::toRad(90)));
+      }else{
+      absAngleToTarget = atan2(target.y - *posY, target.x - *posX) + 180;
+      }
+      
+      relAngleToTarget = macro::angleWrap(absAngleToTarget - macro::toRad(*theta));
 
       double relAngleDeg = macro::toDeg(relAngleToTarget);
 
-      relXToPoint = cos(relAngleToTarget) * distToTarget;
-      relYToPoint = sin(relAngleToTarget) * distToTarget;
-
-      mvmtXPower = relXToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
-      mvmtYPower = relYToPoint / (fabs(relXToPoint) + fabs(relYToPoint));
+      // relXToPoint = cos(relAngleToTarget) * distToTarget;
+      // relYToPoint = sin(relAngleToTarget) * distToTarget;
+      mvmtXPower = distToTarget / (fabs(distToTarget) + fabs(relAngleDeg));
+      mvmtYPower = relAngleDeg / (fabs(distToTarget) + fabs(relAngleDeg));
 
       // Drive PID calc
-      // drive_PID.setError(relXToPoint);
+      // drive_PID.setError(distToTarget);
       drive_PID.setError(mvmtXPower);
       drive_output = drive_PID.calculate();
   
       // Turn PID calc.
-      // turn_PID.setError(relYToPoint);
+      // turn_PID.setError(relAngleDeg);
       turn_PID.setError(mvmtYPower);
       turn_output = turn_PID.calculate();
 
@@ -294,22 +296,22 @@ void Chassis::run() {
 
       // macro::print("Angle: ", drive_PID.getError());
       // macro::print("Turn: ", turn_output);
-      macro::print("relX: ", relXToPoint);
+      macro::print("relX: ", macro::toDeg(TslewOutput));
+      // macro::print("relY: ", *theta);
+      // macro::print("diff: ", relAngleDeg);
       // macro::print("xPower:", xPower);
       // macro::print("yPower:", yPower);
       // macro::print("Drive:", drive_output);
       // macro::print("Turn:", turn_output);
 
-      double relTurnAngle = relAngleToTarget - macro::toRad(180) + target.theta;
-      double turnPower = macro::clip(relTurnAngle/macro::toRad(30), -1, 1);
-      theta_PID.setError(turnPower);
-      double thetaOutput = theta_PID.calculate();       
-      TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(thetaOutput);
+      // double relTurnAngle = relAngleToTarget - macro::toRad(180) + target.theta;
+      // double turnPower = macro::clip(relTurnAngle/macro::toRad(30), -1, 1);
+      // theta_PID.setError(turnPower);
+      // double thetaOutput = theta_PID.calculate();       
+      // TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(thetaOutput);
 
-      left(LslewOutput + TslewOutput + thetaOutput);
-      right(RslewOutput - TslewOutput - thetaOutput);
-
-
+      left(LslewOutput - TslewOutput);
+      right(RslewOutput + TslewOutput);
 
       // macro::print("turn: ", turnPower");
       // macro::print("rel: ", relTurnAngle");
