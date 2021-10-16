@@ -34,9 +34,7 @@ double Chassis::current = 0, Chassis::drive_output = 0,
 
 bool Chassis::adjustAngle = false, Chassis::turnComplete = false;
 
-double Chassis::distToTarget, Chassis::absAngleToTarget, Chassis::relAngleToTarget; 
-double Chassis::relXToPoint, Chassis::relYToPoint;
-double Chassis::driveError, Chassis::turnError; 
+double Chassis::distToTarget, Chassis::driveError, Chassis::turnError; 
 
 double Chassis::tempTarget = 0, Chassis::tempTheta = 0;
 
@@ -261,42 +259,36 @@ void Chassis::run() {
       // Drive part.
       driveError = hypot(target.x - *posX, target.y - *posY);
 
-      if(*posX > 0){
-      target.theta = atan2(target.y - *posY, target.x - *posX);
-      }else{
-      target.theta = atan2(target.y - *posY, target.x - *posX) + 180;
-      }
-
-      drive_PID.setError(driveError);
-      drive_output = drive_PID.calculate();
-      
       // Turn part.
+      target.theta = atan2(target.y - *posY, target.x - *posX);
+    
       turnError = target.theta - macro::toRad(*theta);
       turnError = atan2( sin( turnError ), cos( turnError ) );
       turnError = macro::toDeg(turnError);
 
+      // Drive PID.
+      drive_PID.setError(driveError);
+      drive_output = drive_PID.calculate();
+      
+      // Turn PID.
       turn_PID.setError(turnError);
       turn_output = turn_PID.calculate();
       
-      // Find quickest turn.
-      // calcDir();
-      
       // Slew Calcs.
-      TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
       LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
-      RslewOutput = rightSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+      TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
 
       macro::print("relX: ", macro::toDeg(TslewOutput));
 
       if (target.reverse) {
         left(-LslewOutput + TslewOutput);
-        right(-RslewOutput - TslewOutput);
+        right(-LslewOutput - TslewOutput);
       } else {
         left(LslewOutput - TslewOutput);
-        right(RslewOutput + TslewOutput);
+        right(LslewOutput + TslewOutput);
       }
 
-      if(fabs(drive_output) <= drive_tol && fabs(turn_output) <= turn_tol){ //drive_PID.getError()) <= tol && fabs(turn_PID.getError()) <= 0.75
+      if(fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <= turn_tol){ //drive_PID.getError()) <= tol && fabs(turn_PID.getError()) <= 0.75
         left(0);
         right(0);
         withGains().withTurnGains().withTol();

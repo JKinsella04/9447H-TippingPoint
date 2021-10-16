@@ -76,7 +76,7 @@ void Position::run() {
     posY = gpsData.y * 1000;
     
     if(gpsHeading){
-      thetaDeg = gps.get_heading();
+      thetaDeg = abs(gps.get_heading() - 360);
     }else{
       thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4;
     }

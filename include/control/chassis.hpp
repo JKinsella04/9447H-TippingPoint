@@ -135,8 +135,7 @@ class Chassis {
     static double drive_tol, turn_tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle, turnComplete;
     
-    static double distToTarget, absAngleToTarget, relAngleToTarget;
-    static double relXToPoint, relYToPoint;
+    static double distToTarget;
     static double driveError, turnError;
 
     static double tempTarget, tempTheta;
