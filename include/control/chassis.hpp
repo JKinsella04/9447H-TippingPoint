@@ -6,6 +6,11 @@
 #define BASE_CONVERSION 35.2589412388  // Convert 3.25 to Inches with Motor Encoders.
 #define DRIVE_CONVERSION 94.48818897637795 // Convert joystick input to scale for voltage.
 
+struct coords {
+    double x;
+    double y;
+};
+
 struct ChassisTarget {
     double x;
     double y;
@@ -16,6 +21,7 @@ struct ChassisTarget {
     double accel_rate;
     double decel_rate;
     double rateTurn;
+    bool reverse;
 };
 
 enum class ChassisState { 
@@ -97,7 +103,7 @@ class Chassis {
     /*
     Updates ChassisState and sets target position from given (x,y) coords.
     */
-    Chassis& drive(double x, double y, double theta, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);
+    Chassis& drive(coords point, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000, bool reverse = false);
 
     /*
     Updates ChassisState and sets target theta.
@@ -128,10 +134,10 @@ class Chassis {
     static double *theta, *posX, *posY, *rotation;
     static double drive_tol, turn_tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle, turnComplete;
-
+    
     static double distToTarget, absAngleToTarget, relAngleToTarget;
     static double relXToPoint, relYToPoint;
-    static double mvmtXPower, mvmtYPower;
+    static double driveError, turnError;
 
     static double tempTarget, tempTheta;
 };

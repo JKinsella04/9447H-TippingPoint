@@ -1,10 +1,12 @@
 #include "auton.hpp"
 #include "chassis.hpp"
 #include "mobileGoal.hpp"
+#include "positionTracking.hpp"
 #include "lift.hpp"
 #include "misc.hpp"
 
 // Class Init
+Position robotPos;
 static Chassis chassis;
 MobileGoal mobileGoal;
 Lift lift;
@@ -112,23 +114,23 @@ void twoGoal() {
 }
 
 // Skills
-void skills(){
+void skills(){ // No mobileGoal since it blocks GPS sensor!
+  robotPos.getGPSHeading();
   chassis.setBrakeType(COAST);
-  chassis.drive(0,0, 90, 900).withGains(12000,0,0).withTurnGains(12000,0,0).withTol(40,20).waitUntilSettled();
-  // mobileGoal.setup().waitUntilSettled();
+  chassis.drive({0, 0}).withGains(12000,0,0).withTurnGains(12000,0,0).withTol(40,20).waitUntilSettled();
   // chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
-  // mobileGoal.setState(MobileGoalState::UP);
+  // clamp.set_value(true);
   // chassis.eDrive(20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
-  // chassis.drive(0,900, 90, 900);
-  // chassis.drive(1200, 0, 90, 900);
-  // chassis.drive(1200, -900, 180, 900);
-  // chassis.drive(0, -900, 270, 900);
-  // chassis.drive(-1200, 0, 270, 900);
-  // chassis.drive(-900,-1500, 0, 900);
-  // chassis.drive(0,0, 45, 900);
-  // chassis.drive(1500, 900, 90, 900);
-  // chassis.drive(900, 1500, 0, 900);
-  // chassis.drive(-1500, 1500, 270, 900);
+  // chassis.drive({0,900});
+  // chassis.drive({1200, 0});
+  // chassis.drive({1200, -900});
+  // chassis.drive({0, -900});
+  // chassis.drive({-1200, 0});
+  // chassis.drive({-900,-1500});
+  // chassis.drive({0,0});
+  // chassis.drive({1500, 900});
+  // chassis.drive({900, 1500});
+  // chassis.drive({-1500, 1500});
 }
 
 // Testing
