@@ -69,7 +69,7 @@ void Lift::run() {
     }
     case LiftState::UP: {
       lift_PID.set(20, 0.1, 5);
-      move(1900);
+      move(2000);
       break;
     }
     case LiftState::OPCONTROL: {
@@ -77,13 +77,14 @@ void Lift::run() {
       if (master.get_digital(DIGITAL_L1)) {
         lastTarget = -100;
         lift_PID.set(20, 0.1, 5);
-        move(1900);
+        move(2000);
       } else if (master.get_digital(DIGITAL_L2)) {
         lastTarget = -100;
         lift_PID.set(10,0.01,5);
         move(0);
       }else{
           if(lastTarget == -100) lastTarget = (leftArm.get_position() + rightArm.get_position() )/2;
+          lift_Slew.reset();
           move(lastTarget);
          //Hold current Position.
       }
