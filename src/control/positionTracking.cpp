@@ -2,7 +2,7 @@
 #include "misc.hpp"
 
 
-bool Position::isRunning = false;
+bool Position::isRunning = false, Position::gpsHeading =false;
 
 double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
 
@@ -33,6 +33,11 @@ double * Position::getRotation() {
   return &rotation;
 }
 
+Position& Position::getGPSHeading(bool gpsHeading_){
+  gpsHeading = gpsHeading;
+  return *this;
+}
+
 Position& Position::resetDriveBase() {
   LF.tare_position();
   LB.tare_position();
@@ -49,11 +54,6 @@ Position& Position::calibrateGyro() {
   
   while(lf_Imu.is_calibrating() || lb_Imu.is_calibrating() || rf_Imu.is_calibrating() || rb_Imu.is_calibrating()) {pros::delay(5);}
 
-  return *this;
-}
-
-Position& Position::reset() {
-  posX = posY = 0;
   return *this;
 }
 
@@ -75,8 +75,11 @@ void Position::run() {
     posX = gpsData.x * 1000;
     posY = gpsData.y * 1000;
     
-    thetaDeg = gps.get_heading();
-    // thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4; /*+ gps.get_heading() )/5;*/
+    if(gpsHeading){
+      thetaDeg = gps.get_heading();
+    }else{
+      thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4;
+    }
 
     thetaRad = macro::toRad(thetaDeg);
 

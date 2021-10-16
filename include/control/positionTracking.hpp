@@ -20,11 +20,20 @@ class Position {
 
     double * getRotation();
 
+    /*
+    Obtain heading from GPS instead of IMU.
+    */
+    Position& getGPSHeading(bool gpsHeading_ = true);
+
+    /*
+    Reset drive base encoders.
+    */
     Position& resetDriveBase();
 
-    Position& calibrateGyro();
-
-    Position& reset();
+    /*
+    Reset IMUs.
+    */
+    Position& calibrateGyro();  
 
     static void start(void * ignore);
 
@@ -36,6 +45,8 @@ class Position {
       static bool isRunning;
 
       static double posX, posY, thetaDeg, thetaRad, error, rotation;
+
+      static bool gpsHeading;
 
       static pros::c::gps_status_s_t gpsData;
 };
