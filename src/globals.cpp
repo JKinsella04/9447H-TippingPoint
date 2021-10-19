@@ -36,4 +36,4 @@ pros::ADIAnalogIn mobileGoalPos('E');
 pros::ADIDigitalOut clamp ('H'),
                     dragger('A');
 
-pros::Gps gps(5, 0, -0.3048, 0); //port, X offset, Y offset, heading offset
+pros::Gps gps(5, 0, -0.3048); 

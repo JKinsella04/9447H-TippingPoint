@@ -23,9 +23,9 @@ void initialize() {
 	// Sensor and Motor  
 	robotPos.resetDriveBase().calibrateGyro().getGPSHeading(false);
 	lift.reset();	
-	mobileGoal.reset();	
+	mobileGoal.reset();
 
-  // Threads
+	// Threads
 	pros::Task PositionController(robotPos.start, NULL, "Position Controller");
 
 	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");

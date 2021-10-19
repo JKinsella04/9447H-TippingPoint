@@ -44,7 +44,6 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     chassis.reset();
     break;
   case 3:
-    robotPos.reset();
     break;
   case 4:
     // mobileGoal::reset(MG);

@@ -262,9 +262,9 @@ void Chassis::run() {
       // Turn part.
       target.theta = atan2(target.y - *posY, target.x - *posX);
     
-      turnError = target.theta - macro::toRad(*theta);
+      turnError = ( target.theta - macro::toRad(*theta) );
       turnError = atan2( sin( turnError ), cos( turnError ) );
-      turnError = macro::toDeg(turnError);
+      turnError = macro::toDeg(turnError) + 90; 
 
       // Drive PID.
       drive_PID.setError(driveError);
@@ -278,7 +278,8 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
 
-      macro::print("relX: ", macro::toDeg(TslewOutput));
+      macro::print("Drive: ", drive_PID.getError());
+      macro::print("Turn: ", turn_PID.getError());
 
       if (target.reverse) {
         left(-LslewOutput + TslewOutput);
