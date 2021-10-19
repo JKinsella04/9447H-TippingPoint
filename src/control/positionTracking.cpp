@@ -2,12 +2,15 @@
 #include "misc.hpp"
 
 
-bool Position::isRunning = false, Position::gpsHeading =false;
-
-double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
+bool Position::isRunning = false;
 
 pros::c::gps_status_s_t Position::gpsData;
 
+double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
+
+double Position::currentL = 0, Position::currentR = 0, Position::deltaL = 0, Position::deltaR = 0, Position::lastL = 0, Position::lastR = 0;
+
+PositionTracker PositionTrackerState = PositionTracker::RELATIVE;
 
 double * Position::getX() {
   return &posX;
@@ -33,8 +36,8 @@ double * Position::getRotation() {
   return &rotation;
 }
 
-Position& Position::getGPSHeading(bool gpsHeading_){
-  gpsHeading = gpsHeading_;
+Position& Position::setState(PositionTracker s){
+  PositionTrackerState = s;
   return *this;
 }
 
@@ -70,25 +73,53 @@ void Position::run() {
 
   while(isRunning) {
 
-    gpsData = gps.get_status();
+    switch (PositionTrackerState) {
+    case PositionTracker::RELATIVE: {
+      thetaDeg = ( lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4;
+      thetaRad = macro::toRad(thetaDeg);
 
-    posX = gpsData.x * 1000;
-    posY = gpsData.y * 1000;
-    
-    if(gpsHeading){
-      thetaDeg = abs(gps.get_heading() -360);
-    }else{
-      thetaDeg = (lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4;
+      rotation = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position() ) /4;
+      
+      break;
     }
+    case PositionTracker::GPS: {
+      gpsData = gps.get_status();
+      
+      thetaDeg = abs(gps.get_heading() - 360);
+      thetaRad = macro::toRad(thetaDeg);
+      
+      posX = gpsData.x * 1000;
+      posY = gpsData.y * 1000;
 
-    thetaRad = macro::toRad(thetaDeg);
+      // GPS Error
+      error = gps.get_error();
+      break;
+    }
+    case PositionTracker::ODOM: {
+      thetaRad = abs(lf_Imu.get_heading() - 360) * (PI / 180);
+      thetaDeg = macro::toDeg(thetaRad);
 
-    error = gps.get_error();
+      currentL = ( LF.get_position() + LB.get_position() ) / 2;
+      currentR = ( RF.get_position() + RB.get_position() ) / 2;
 
-    rotation = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position() )/4;
+      deltaL = currentL - lastL;
+      deltaR = currentR - lastR;
 
+      posX = posX + ((deltaL + deltaR) / 2) * cos(thetaRad);
+      posY = posY + ((deltaL + deltaR) / 2) * sin(thetaRad);
+
+      lastL = ( LF.get_position() + LB.get_position() ) / 2;
+      lastR = ( RF.get_position() + RB.get_position() ) / 2;
+      
+      break;
+    }
+    }
     pros::delay(10);
   }
+}
+
+void Position::reset(){
+  posX = posY = 0;
 }
 
 void Position::stop() {

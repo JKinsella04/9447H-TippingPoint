@@ -116,7 +116,7 @@ void twoGoal() {
 // Skills
 void skills(){ // No mobileGoal since it blocks GPS sensor!
   // gps.initialize_full(0, 0, 180, 0, -0.3048);
-  robotPos.getGPSHeading();
+  robotPos.setState(PositionTracker::GPS);
   chassis.setBrakeType(COAST);
   chassis.drive({0, 0}).withGains(6,0,0).withTurnGains(400,0,0).withTol(300).waitUntilSettled();
 // chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();

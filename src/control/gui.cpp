@@ -44,6 +44,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     chassis.reset();
     break;
   case 3:
+    robotPos.calibrateGyro().resetDriveBase().reset();
     break;
   case 4:
     // mobileGoal::reset(MG);
@@ -187,16 +188,16 @@ void Display::tabDebug(lv_obj_t *parent) {
 
   printValue = createLabel(10, 120, "Value: NONE", parent);
   lv_label_set_style(printValue, &style_btn);
-
-  lv_obj_t *toggleClamp = createButton(5, 250, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *toggleDragger = createButton(6, 250, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *spinChassis = createButton(7, 250, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
  }
 
 void Display::tabSettings(lv_obj_t *parent) {
   lv_obj_t *resetIMU = createButton(2, 0, 20, 200, 40, "Reset IMU", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetpos = createButton(3, 0, 70, 200, 40, "Reset robotPos", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetLift = createButton(4, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
+
+  lv_obj_t *toggleClamp = createButton(5, 250, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *toggleDragger = createButton(6, 250, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *spinChassis = createButton(7, 250, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
 }
 
 void Display::start(void *ignore) {
@@ -210,13 +211,13 @@ void Display::start(void *ignore) {
 void Display::run() {
   isRunning = true;
 
+  // Tiny logo in top right corner
   lv_obj_t *s_logo = lv_obj_create(lv_layer_sys(), NULL);
   lv_obj_set_size(s_logo, 480, 240);
   lv_obj_set_style(s_logo, &lv_style_transp); // make the container invisible
   lv_obj_align(s_logo, NULL, LV_ALIGN_CENTER, 0, 25);
   lv_obj_set_pos(s_logo, 380, 0);
   Gif small_gif("/usd/small_logo.gif", s_logo);
-  // Tiny logo in top right corner
 
   while (isRunning) {
     // Current Auton Label

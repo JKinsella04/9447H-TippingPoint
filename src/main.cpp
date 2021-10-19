@@ -21,7 +21,7 @@ void initialize() {
 	MobileGoal mobileGoal;
 	
 	// Sensor and Motor  
-	robotPos.resetDriveBase().calibrateGyro().getGPSHeading(false);
+	robotPos.resetDriveBase().calibrateGyro().setState(PositionTracker::RELATIVE);
 	lift.reset();	
 	mobileGoal.reset();
 
