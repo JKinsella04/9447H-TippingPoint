@@ -151,7 +151,7 @@ Chassis &Chassis::eDrive(double e_target_, double accel_rate, double decel_rate,
   return *this;
 }
 
-Chassis &Chassis::drive(coords point, double rate, double driveSpeed, double turnRate, double turnSpeed, bool reverse){
+Chassis &Chassis::drive(coords point, bool reverse, double rate, double driveSpeed, double turnRate, double turnSpeed){
   
   target.x = point.x;
   target.y = point.y;
@@ -333,8 +333,8 @@ void Chassis::run() {
       double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
       
-      double leftOutput = leftSlew.withGains(900,900,true).calculate(leftJoystick);
-      double rightOutput = rightSlew.withGains(900,900,true).calculate(rightJoystick);
+      double leftOutput = leftSlew.withGains(900,900,true).withLimit(12000).calculate(leftJoystick);
+      double rightOutput = rightSlew.withGains(900,900,true).withLimit(12000).calculate(rightJoystick);
 
       left(leftOutput);
       right(rightOutput);

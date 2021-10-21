@@ -7,7 +7,7 @@ LiftState liftMode = LiftState::IDLE;
 macro::PID lift_PID(20, 0.1, 5);
 macro::Slew lift_Slew(600);
 
-double Lift::output = 0, Lift::target = 0, Lift::tol = 40, Lift::slewOutput = 0, Lift::lastTarget = -100,
+double Lift::output = 0, Lift::target = 0, Lift::tol = 50, Lift::slewOutput = 0, Lift::lastTarget = -100,
       Lift::current = (leftArm.get_position() + rightArm.get_position() )/2;
 
 double tempLiftPos;
@@ -19,6 +19,7 @@ LiftState Lift::getState(){
 }
 
 Lift& Lift::setState(LiftState s){
+  isSettled = false;
   liftMode = s;
   return *this;
 }

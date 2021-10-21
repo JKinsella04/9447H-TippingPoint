@@ -4,6 +4,7 @@
 #include "positionTracking.hpp"
 #include "lift.hpp"
 #include "misc.hpp"
+#include "pros/rtos.hpp"
 
 // Class Init
 Position robotPos;
@@ -115,11 +116,43 @@ void twoGoal() {
 
 // Skills
 void skills(){ // No mobileGoal since it blocks GPS sensor!
-  // gps.initialize_full(0, 0, 180, 0, -0.3048);
-  robotPos.setState(PositionTracker::GPS);
   chassis.setBrakeType(COAST);
-  chassis.drive({0, 0}).withGains(6,0,0).withTurnGains(400,0,0).withTol(300).waitUntilSettled();
-// chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
+  robotPos.setState(PositionTracker::RELATIVE);
+  chassis.eDrive(10).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
+  clamp.set_value(true);
+  lift.setState(LiftState::UP);
+  chassis.eDrive(-80, 60, 450).withGains(15, 0, 6.25).withAngle(90, 1000, 12000).withTurnGains(266,0,133).withTol(50, 5).waitUntilSettled();
+  chassis.eDrive(-80, 211.5).withGains(30, 0, 6.25).withAngle(180, 850, 10000).withTurnGains(266,0,133).withTol(100, 5).waitUntilSettled();
+  chassis.eDrive(-15).withGains(60, .75, 10).withAngle(180).withTurnGains(133,0,66).withTol(40,10).waitUntilSettled();
+  chassis.eDrive(3.5,900).withGains(30,.75,10).withAngle(180).withTurnGains(266,0,133).withTol(30,10).waitUntilSettled();
+  chassis.turn(270).withTurnGains(133,0,66).withTol(5,5).waitUntilSettled();
+  chassis.eDrive(17.5,900).withGains(30,0,10).withAngle(270).withTurnGains(266,0,133).withTol(120,10).waitUntilSettled();
+  pros::delay(1000);
+  clamp.set_value(false);
+  chassis.eDrive(-7,900).withGains(30,0,10).withAngle(180, 350).withTurnGains(133,0,66).withTol(30,10).waitUntilSettled();
+  lift.setState(LiftState::DOWN).waitUntilSettled();
+  chassis.eDrive(60,900).withGains(30,0,10).withAngle(180, 450).withTurnGains(133,0,66).withTol(40,10).waitUntilSettled();
+  pros::delay(500);
+  clamp.set_value(true);
+  // chassis.eDrive(-20,900).withGains(30,0,10).withAngle(350, 450).withTurnGains(133,0,66).withTol(40,10).waitUntilSettled();
+  // lift.setState(LiftState::UP).waitUntilSettled();
+  // chassis.turn(270).withTurnGains(266,0,133).withTol(5,10).waitUntilSettled();
+  // chassis.eDrive(17.5,900).withGains(30,0,10).withAngle(270).withTurnGains(266,0,133).withTol(120,10).waitUntilSettled();
+  // pros::delay(1000);
+  // clamp.set_value(false);
+  // chassis.turn(360).withTurnGains(66,0,33).withTol(5,5).waitUntilSettled();
+  // lift.setState(LiftState::DOWN);
+  // chassis.eDrive(20).withGains(60, 0.1, 10).withAngle(270).withTurnGains(133,0,66).withTol(20).waitUntilSettled();
+  // chassis.eDrive(-20).withGains(60, 0.1, 10).withAngle(270).withTurnGains(133,0,66).withTol(20).waitUntilSettled();
+  // chassis.turn(270).withTurnGains(133,0,66).withTol(5,5).waitUntilSettled();
+  // chassis.eDrive(20).withGains(60, 0.1, 10).withAngle(270).withTurnGains(133,0,66).withTol(20).waitUntilSettled();
+  // clamp.set_value(false);
+  // robotPos.setState(PositionTracker::GPS);
+  // chassis.drive({0, -900}).withGains(9,0,0).withTurnGains(400,0,0).withTol(500).waitUntilSettled();
+  // chassis.drive({-900, 300}).withGains(9,0,0).withTurnGains(200,0,0).withTol(750, 10).waitUntilSettled();
+  // robotPos.setState(PositionTracker::RELATIVE);
+  // chassis.eDrive(10).withGains(30, 0.1, 10).withAngle(0).withTurnGains(133,0,66).withTol(20).waitUntilSettled();
+  // robotPos.setState(PositionTracker::GPS);
   // clamp.set_value(true);
   // chassis.eDrive(20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
   // chassis.drive({0,900});

@@ -103,7 +103,7 @@ class Chassis {
     /*
     Updates ChassisState and sets target position from given (x,y) coords.
     */
-    Chassis& drive(coords point, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000, bool reverse = false);
+    Chassis& drive(coords point, bool reverse = false, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);
 
     /*
     Updates ChassisState and sets target theta.
