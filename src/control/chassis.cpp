@@ -212,9 +212,9 @@ void Chassis::run() {
       // Turn PID calc.
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
       if(turnComplete){
-        turn_output = turn_PID.calculate(target.thetaTwo, *theta);
+        turnError = target.thetaTwo - *theta;
       }else{
-        turn_output = turn_PID.calculate(target.theta, *theta);
+        turnError =  target.theta - *theta;
       }
       if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
         turnComplete = true;
@@ -222,7 +222,8 @@ void Chassis::run() {
         turn_PID.set(133,0,66);
       }
       // Find quickest turn.
-      calcDir();
+      turn_output = atan2(sin( turnError ), cos( turnError ));
+      turn_output = turn_PID.setError(turnError).calculate();
       
       // Turn slew calc.
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
@@ -304,10 +305,11 @@ void Chassis::run() {
 
     case ChassisState::TURN: {
       // Turn PID calc
-      turn_output = turn_PID.calculate(target.theta, *theta);
+      turnError = target.theta - *theta;
 
       // Find quickest turn.
-      calcDir();
+      turnError = atan2(sin( turnError ), cos( turnError ));
+      turn_output = turn_PID.setError(turnError).calculate();
 
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
     
@@ -397,21 +399,6 @@ void Chassis::right(double input){
   RF.move_voltage(input);
   // RM.move_voltage(input);
   RB.move_voltage(input);
-}
-
-void Chassis::calcDir(){ // Find Quickest turn.
-  if (fabs(turn_PID.getError()) > 180) {
-    if(*theta < 180){
-      tempTheta = *theta + 360;
-    }else{
-      if(!turnComplete){
-        tempTarget = target.theta + 360;
-      }else{
-        tempTarget = target.thetaTwo + 360;
-      }
-    }
-    turn_output = turn_PID.calculate(tempTarget, tempTheta); // recalculate output
-  }
 }
 
 void Chassis::stop() { isRunning = false; }

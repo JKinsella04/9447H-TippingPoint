@@ -214,6 +214,8 @@ PID &PID::set(double kP_, double kI_, double kD_) {
   return *this;
 }
 
+PID& PID::setError(double error_) { error = error_; }
+
 double PID::calculate(double target, double current) {
   // Proportional Calculation
   if (error == 0) {
@@ -235,8 +237,6 @@ double PID::calculate(double target, double current) {
   error = 0;
   return output;
 }
-
-void PID::setError(double error_) { error = error_; }
 
 double PID::getError() { return prevError; }
 

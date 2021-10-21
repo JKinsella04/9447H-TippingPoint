@@ -113,16 +113,16 @@ public:
   set the PID values
   */
   PID &set(double kP_, double kI_, double kD_);
+  
+  /*
+  Sets error to given value.
+  */
+  PID& setError(double error_);
 
   /*
   calculates output based off set values.
   */
   double calculate(double target = 0, double current = 0);
-
-  /*
-  Sets error to given value.
-  */
-  void setError(double error_);
 
   /*
   Returns error.

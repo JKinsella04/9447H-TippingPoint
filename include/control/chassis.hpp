@@ -123,8 +123,6 @@ class Chassis {
 
     void right(double input);
 
-    void calcDir();
-
     void stop();
 
     private:
