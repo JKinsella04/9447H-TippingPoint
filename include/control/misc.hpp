@@ -1,15 +1,6 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
-#include "pros/adi.hpp"
-#include "pros/imu.h"
-
-#define GOAL_OUT 1000
-#define GOAL_IN  0
-
-#define BOTH 0
-#define LEFT 1
-#define RIGHT 2
 
 // namespace intake{
 //     /*

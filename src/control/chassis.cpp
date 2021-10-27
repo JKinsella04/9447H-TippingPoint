@@ -7,13 +7,11 @@ static Position robotPos;
 // PID Init
 macro::PID drive_PID(0.5, 0.01, 0.25);
 macro::PID turn_PID(133, 0, 66);
-macro::PID theta_PID(133,0,66);
 
 // Slew Init
 macro::Slew leftSlew(900, 900, true);
 macro::Slew rightSlew(900, 900, true);
 macro::Slew turnSlew(900, 900, true);
-macro::Slew thetaSlew(900,900, true);
 
 // ChassisTarget Struct Init
 ChassisTarget target;
