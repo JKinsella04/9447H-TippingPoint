@@ -119,6 +119,8 @@ class Chassis {
 
     void run();
 
+    void calcDir();
+
     void left(double input);
 
     void right(double input);

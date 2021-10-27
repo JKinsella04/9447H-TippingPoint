@@ -9,6 +9,7 @@
 #include "control/lift.hpp"
 #include "control/mobileGoal.hpp"
 #include "globals.hpp"
+#include "pros/misc.hpp"
 
 void initialize() {
 
@@ -51,6 +52,8 @@ void autonomous() {
 }
 
 void opcontrol() {
+	Autonomous auton;
+
   Chassis chassis;
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
@@ -62,14 +65,7 @@ void opcontrol() {
 	mobileGoal.setBrakeType(HOLD);
 	mobileGoal.setState(MobileGoalState::OPCONTROL); // Controls MobileGoal grabber.
 
-  while (true) {
-
-		if(master.get_digital(DIGITAL_DOWN)) mobileGoal.setup();
-		
-		// Controls Draggers.
-		if(master.get_digital(DIGITAL_LEFT)) { Dragger::setState(true); }
-		else if(master.get_digital(DIGITAL_RIGHT)) { Dragger::setState(false); }
-
+  while (true) {		
 	  pros::delay(5);
  	}
 }

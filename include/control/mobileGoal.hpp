@@ -3,7 +3,7 @@
 #include "globals.hpp"
 
 enum class MobileGoalState { 
-    DOWN, UP, OPCONTROL,IDLE
+    DOWN, UP, MIDDLE, OPCONTROL,IDLE
 }; 
 
 class MobileGoal{

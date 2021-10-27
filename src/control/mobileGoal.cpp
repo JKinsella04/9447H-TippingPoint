@@ -1,12 +1,13 @@
 #include "mobileGoal.hpp"
 #include "misc.hpp"
+#include <algorithm>
 
 MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 
 macro::PID MobileGoal_PID(5, 0.01, 3.75);
 macro::Slew MobileGoal_Slew(600);
 
-double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::tol = 30, MobileGoal::lastTarget = 0,
+double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::tol = 100, MobileGoal::lastTarget = 0,
        MobileGoal::slewOutput = 0, MobileGoal::current = mobileGoalPos.get_value(), MobileGoal::delay = 0;
 
 bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
@@ -80,15 +81,23 @@ void MobileGoal::run() {
       move(500);
       break;
     }
+    case MobileGoalState::MIDDLE: {
+      move(1500);
+      break;
+    }
     case MobileGoalState::OPCONTROL: {
-      if (master.get_digital(DIGITAL_UP))
+      if (master.get_digital(DIGITAL_UP) || partner.get_digital(DIGITAL_UP))
       {
         lastTarget = 0;
         move(500);
-      } else if (master.get_digital(DIGITAL_X)) {
+      } else if (master.get_digital(DIGITAL_X) || partner.get_digital(DIGITAL_X)) {
         lastTarget = 0;
         move(3900);
-      } else {
+      } else if(master.get_digital(DIGITAL_DOWN) || partner.get_digital(DIGITAL_DOWN)){
+        lastTarget = 0;
+        leftMobileGoal.move(-100);
+        rightMobileGoal.move(-100);
+      }else {
         if(lastTarget ==0) lastTarget = mobileGoalPos.get_value();
         move(lastTarget);
       }

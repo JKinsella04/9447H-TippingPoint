@@ -212,9 +212,9 @@ void Chassis::run() {
       // Turn PID calc.
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
       if(turnComplete){
-        turnError = target.thetaTwo - *theta;
+        turn_output = turn_PID.calculate(target.thetaTwo, *theta);
       }else{
-        turnError =  target.theta - *theta;
+        turn_output = turn_PID.calculate(target.theta, *theta);
       }
       if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
         turnComplete = true;
@@ -222,9 +222,8 @@ void Chassis::run() {
         turn_PID.set(133,0,66);
       }
       // Find quickest turn.
-      turn_output = atan2(sin( turnError ), cos( turnError ));
-      turn_output = turn_PID.setError(turnError).calculate();
-      
+      calcDir();
+
       // Turn slew calc.
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
       
@@ -266,6 +265,7 @@ void Chassis::run() {
       turnError = ( target.theta - macro::toRad(*theta) );
       turnError = atan2( sin( turnError ), cos( turnError ) );
       turnError = macro::toDeg(turnError) + 90; 
+      if(target.reverse) turnError -= 180;
 
       // Drive PID.
       drive_PID.setError(driveError);
@@ -283,8 +283,8 @@ void Chassis::run() {
       macro::print("Turn: ", turn_PID.getError());
 
       if (target.reverse) {
-        left(-LslewOutput + TslewOutput);
-        right(-LslewOutput - TslewOutput);
+        left(-LslewOutput  - TslewOutput);
+        right(-LslewOutput + TslewOutput);
       } else {
         left(LslewOutput - TslewOutput);
         right(LslewOutput + TslewOutput);
@@ -305,11 +305,10 @@ void Chassis::run() {
 
     case ChassisState::TURN: {
       // Turn PID calc
-      turnError = target.theta - *theta;
+      turn_output = turn_PID.calculate(target.theta - *theta);
 
       // Find quickest turn.
-      turnError = atan2(sin( turnError ), cos( turnError ));
-      turn_output = turn_PID.setError(turnError).calculate();
+      calcDir();
 
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
     
@@ -388,7 +387,20 @@ void Chassis::run() {
 }
 
 // Macros
-
+void Chassis::calcDir(){ // Find Quickest turn.
+  if (fabs(turn_PID.getError()) > 180) {
+    if(*theta < 180){
+      tempTheta = *theta + 360;
+    }else{
+      if(!turnComplete){
+        tempTarget = target.theta + 360;
+      }else{
+        tempTarget = target.thetaTwo + 360;
+      }
+    }
+    turn_output = turn_PID.calculate(tempTarget, tempTheta); // recalculate output
+  }
+}
 void Chassis::left(double input){
   LF.move_voltage(input);
   // LM.move_voltage(input);

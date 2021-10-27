@@ -6,7 +6,7 @@
 #define COAST pros::E_MOTOR_BRAKE_COAST
 
 //Controller Declaration
-extern pros::Controller master;
+extern pros::Controller master, partner;
 
 //Motor Declarations
 extern pros::Motor leftArm, rightArm;

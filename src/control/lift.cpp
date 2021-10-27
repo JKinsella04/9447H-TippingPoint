@@ -69,7 +69,7 @@ void Lift::run() {
       break;
     }
     case LiftState::UP: {
-      lift_PID.set(20, 0.1, 5);
+      lift_PID.set(21, 0.2, 7.5);
       move(2000);
       break;
     }
