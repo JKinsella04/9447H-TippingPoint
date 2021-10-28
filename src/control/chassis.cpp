@@ -1,6 +1,7 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
 #include "positionTracking.hpp"
+#include "pros/rtos.hpp"
 
 static Position robotPos;
 
@@ -71,7 +72,12 @@ ChassisState Chassis::getState(){
 }
 
 void Chassis::waitUntilSettled() {
-  while(!isSettled) pros::delay(20);
+    int t = 0;
+  while(!isSettled) {
+    t += 25;
+    if(t == 5000) isSettled = true;
+    pros::delay(20);
+  }
 }
 
 void Chassis::reset(){
