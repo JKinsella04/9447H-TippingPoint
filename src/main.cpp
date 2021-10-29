@@ -16,7 +16,6 @@ void initialize() {
 	// Class Init
 	Position robotPos;	 
 	Chassis chassis(robotPos.getRotation(), robotPos.getThetaDeg(), robotPos.getX(), robotPos.getY());
-	// Chassis chassis(robotPos.getL(), robotPos.getYaw(), robotPos.getX(), robotPos.getY());
  	Display display;
 	Lift lift;
 	MobileGoal mobileGoal;
