@@ -4,7 +4,7 @@
 
 MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 
-macro::PID MobileGoal_PID(5, 0.01, 3.75);
+macro::PID MobileGoal_PID(10, 0.01, 3.75);
 macro::Slew MobileGoal_Slew(600);
 
 double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::tol = 100, MobileGoal::lastTarget = 0,
