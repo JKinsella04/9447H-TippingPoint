@@ -105,8 +105,8 @@ void Position::run() {
       deltaL = currentL - lastL;
       deltaR = currentR - lastR;
 
-      posX = posX + ((deltaL + deltaR) / 2) * cos(thetaRad);
-      posY = posY + ((deltaL + deltaR) / 2) * sin(thetaRad);
+      posX += ((deltaL + deltaR) / 2) * cos(thetaRad);
+      posY += ((deltaL + deltaR) / 2) * sin(thetaRad);
 
       lastL = ( LF.get_position() + LB.get_position() ) / 2;
       lastR = ( RF.get_position() + RB.get_position() ) / 2;

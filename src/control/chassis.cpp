@@ -1,6 +1,8 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
 #include "positionTracking.hpp"
+#include "pros/imu.h"
+#include "pros/rtos.h"
 #include "pros/rtos.hpp"
 
 static Position robotPos;
@@ -21,7 +23,7 @@ ChassisTarget target;
 ChassisState mode = ChassisState::IDLE;
 
 // Variable Init
-bool Chassis::isRunning = false, Chassis::isSettled = true;
+bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false;
 
 double *Chassis::theta, *Chassis::posX, *Chassis::posY, *Chassis::rotation;
 
@@ -70,10 +72,13 @@ ChassisState Chassis::getState(){
 }
 
 void Chassis::waitUntilSettled() {
-    int t = 0;
+  int t = 0;
   while(!isSettled) {
-    t += 25;
-    if(t == 5000) isSettled = true;
+    t += 5;
+    pros::c::imu_accel_s_t lf = lf_Imu.get_accel(), lb = lb_Imu.get_accel(), rf = rf_Imu.get_accel(), rb = rb_Imu.get_accel();
+    double avgAccel = (lf.y + lb.y + rf.y + rb.y) / 4;
+    if( t >= 100 && abs( avgAccel ) < 0.0009) isSettled = true;
+
     pros::delay(20);
   }
 }
@@ -237,8 +242,6 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
 
-      // macro::print("Error: ", turn_PID.getError());
-
       if(!adjustAngle){
         left(LslewOutput);
         right(RslewOutput);
@@ -247,7 +250,7 @@ void Chassis::run() {
         right(RslewOutput - TslewOutput);
       }
 
-      if (fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol) {
+      if ( fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol ) { 
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
@@ -257,6 +260,8 @@ void Chassis::run() {
         goto end;
       }
       break;
+
+      checkAccel = true;
     }
 
     case ChassisState::POINT: {
@@ -268,8 +273,8 @@ void Chassis::run() {
     
       turnError = ( target.theta - macro::toRad(*theta) );
       turnError = atan2( sin( turnError ), cos( turnError ) );
-      turnError = macro::toDeg(turnError) + 90; 
-      if(target.reverse) turnError -= 180;
+      turnError = macro::toDeg(turnError); 
+      // if(target.reverse) turnError -= 180;
 
       // Drive PID.
       drive_PID.setError(driveError);

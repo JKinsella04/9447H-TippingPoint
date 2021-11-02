@@ -130,6 +130,7 @@ class Chassis {
     private:
     static bool isSettled;
     static bool isRunning;
+    static bool checkAccel;
     
     static double *theta, *posX, *posY, *rotation;
     static double drive_tol, turn_tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;

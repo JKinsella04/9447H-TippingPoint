@@ -226,16 +226,21 @@ void Display::run() {
 
     // Print (X,Y) Coordinates
     std::ostringstream posX, posY;
-    posX << *robotPos.getX();
-    posX << *robotPos.getY();
-    std::string posTemp = "Robot robotPos: (" + posX.str() + "," + posY.str() + ")";
+    posX << floor(*robotPos.getX() * 100) /100;
+    posY << floor(*robotPos.getY() * 100) /100;
+    std::string posTemp = "Curr Pos: (" + posX.str() + "," + posY.str() + ")";
     lv_label_set_text(posVals, posTemp.c_str());
 
     // Placeholder for quickly adding a sensor value to screen.
-    // std::ostringstream yaw;
-    // yaw << L_IMU.get_yaw();
-    // std::string tempValue = "Value: " + yaw.str();
-    // lv_label_set_text(printValue, tempValue.c_str());
+    std::ostringstream value;
+    pros::c::imu_accel_s_t lf = lf_Imu.get_accel();
+    pros::c::imu_accel_s_t lb = lb_Imu.get_accel();
+    pros::c::imu_accel_s_t rf = rf_Imu.get_accel();
+    pros::c::imu_accel_s_t rb = rb_Imu.get_accel();
+
+    value << ( lf.y + lb.y + rf.y + rb.y ) /4;
+    std::string tempValue = "Accel: " + value.str();
+    lv_label_set_text(printValue, tempValue.c_str());
 
     std::string cstate;
     switch(chassis.getState()){
