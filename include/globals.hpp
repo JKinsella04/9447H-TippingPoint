@@ -1,5 +1,6 @@
 #pragma once
 #include "main.h"
+#include "pros/distance.hpp"
 
 #define HOLD pros::E_MOTOR_BRAKE_HOLD
 #define BRAKE pros::E_MOTOR_BRAKE_BRAKE
@@ -17,6 +18,8 @@ extern pros::Motor LF, /*LM,*/ LB, RF, /*RM,*/ RB;
 
 //Inertial Declarations
 extern pros::Imu lf_Imu, lb_Imu, rf_Imu, rb_Imu;
+
+extern pros::Distance platform;
 
 //Tracking Wheel Declarations
 extern pros::Rotation OdomL, OdomS;

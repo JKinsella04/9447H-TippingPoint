@@ -126,7 +126,7 @@ void skills(){ // No mobileGoal since it blocks GPS sensor!
   pros::delay(500);
   chassis.eDrive(9).withGains(30, 0.1, 10).withAngle(180).withTol(50).waitUntilSettled();
   chassis.turn(90).withGains(266, 1, 133).withTol(0,10).waitUntilSettled();
-  chassis.eDrive(25).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50).waitUntilSettled();
+  chassis.eDrive(25).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50, true).waitUntilSettled();
   pros::delay(1500);
   clamp.set_value(false);
   chassis.eDrive(-10).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
@@ -139,7 +139,7 @@ void skills(){ // No mobileGoal since it blocks GPS sensor!
   chassis.eDrive(-40).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
   pros::delay(200);
   chassis.turn(90).withGains(266, 1, 133).withTol(0,10).waitUntilSettled();
-  chassis.eDrive(17).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50).waitUntilSettled();
+  chassis.eDrive(17).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50, true).waitUntilSettled();
   pros::delay(750);
   clamp.set_value(false);
   chassis.eDrive(-20).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50).waitUntilSettled();

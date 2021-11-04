@@ -23,7 +23,7 @@ ChassisTarget target;
 ChassisState mode = ChassisState::IDLE;
 
 // Variable Init
-bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false;
+bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false, Chassis::checkDist = false;
 
 double *Chassis::theta, *Chassis::posX, *Chassis::posY, *Chassis::rotation;
 
@@ -73,6 +73,7 @@ ChassisState Chassis::getState(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
+    if(checkDist && platform.get() <= 75) isSettled = true;
     // pros::c::imu_accel_s_t lf = lf_Imu.get_accel(), lb = lb_Imu.get_accel(), rf = rf_Imu.get_accel(), rb = rb_Imu.get_accel();
     // double avgAccel = (lf.y + lb.y + rf.y + rb.y) / 4;
     // if( abs( avgAccel ) < 0.0009) isSettled = true;
@@ -110,9 +111,10 @@ Chassis &Chassis::withTurnGains(double kP_, double kI_, double kD_){
   return *this;
 }
 
-Chassis &Chassis::withTol(double drive_tol_, double turn_tol_) {
+Chassis &Chassis::withTol(double drive_tol_, double turn_tol_, bool checkDist_) {
   drive_tol = drive_tol_;
   turn_tol = turn_tol_;
+  checkDist = checkDist_;
   return *this;
 }
 

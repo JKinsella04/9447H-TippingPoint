@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/distance.hpp"
 #include "pros/misc.h"
 
 //Controller Definition
@@ -25,6 +26,12 @@ pros::Motor LF(20, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS), //19,9,13,
 Inertial sensor Definitions
 */
 pros::Imu lf_Imu(16), lb_Imu(9), rf_Imu(19), rb_Imu(8);
+
+
+/*
+Dist Sensor Definition.
+*/
+pros::Distance platform(12);
 
 /*
 Tracking Wheels Definitions
