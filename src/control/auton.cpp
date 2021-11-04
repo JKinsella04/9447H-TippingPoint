@@ -63,7 +63,7 @@ void awp() {
   // gps.initialize_full(intX, intX, intTheta, offX, offY);
   robotPos.setState(PositionTracker::RELATIVE);
   chassis.setBrakeType(COAST);
-  mobileGoal.setup().waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::SETUP).waitUntilSettled();
   chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
   mobileGoal.setState(MobileGoalState::UP);
   chassis.eDrive(160,75,450).withGains(15, 0, 6.25).withAngles(90, 178).withTurnGains(266, 1, 133).withTol(50, 20).waitUntilSettled();
@@ -85,8 +85,9 @@ void awp() {
 void oneGoal() { }
 
 void twoGoal() {
+  robotPos.setState(PositionTracker::RELATIVE);
   chassis.setBrakeType(COAST);
-  mobileGoal.setup();
+  mobileGoal.setState(MobileGoalState::SETUP);
   chassis.eDrive(-85,1500, 900, 12000).withGains(30,0,10).withAngle(0).withTurnGains(133,0,66).withTol(100,10).waitUntilSettled();
   mobileGoal.setState(MobileGoalState::UP).waitUntilSettled();
   // pros::delay(200);
@@ -107,17 +108,42 @@ void twoGoal() {
 
 // Skills
 void skills(){ // No mobileGoal since it blocks GPS sensor!
-  chassis.setBrakeType(COAST);
-  // mobileGoal.setup().waitUntilSettled();
   robotPos.setState(PositionTracker::RELATIVE);
-  chassis.eDrive(50).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
-  chassis.eDrive(-25).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
-  // mobileGoal.setState(MobileGoalState::UP);
-  // robotPos.setState(PositionTracker::GPS);
-  // chassis.drive({100,900}).withGains(12,0,0).withTurnGains(100,0,0).withTol(100,50).waitUntilSettled();
-  // clamp.set_value(true);
-  // lift.setState(LiftState::UP);
-  // chassis.drive({900,0}, true).withGains(12,0,0).withTurnGains(100,0,0).withTol(100,50).waitUntilSettled();
+  chassis.setBrakeType(COAST);
+  mobileGoal.setState(MobileGoalState::SETUP).waitUntilSettled();
+  pros::delay(500);
+  chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP);
+  chassis.eDrive(10).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();
+  pros::delay(100);
+  chassis.turn(90).withGains(266, 0.5, 133).withTol(0,10).waitUntilSettled();
+  chassis.eDrive(90).withGains(30, 0.1, 10).withAngle(92).withTol(60, 10).waitUntilSettled();
+  clamp.set_value(true);
+  lift.setState(LiftState::UP);
+  chassis.eDrive(70).withGains(30, 0.1, 10).withAngle(180).withTol(40, 5).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::DOWN).waitUntilSettled();
+  chassis.eDrive(-10).withGains(30, 0.1, 10).withAngle(180).withTol(50).waitUntilSettled();
+  pros::delay(500);
+  chassis.eDrive(9).withGains(30, 0.1, 10).withAngle(180).withTol(50).waitUntilSettled();
+  chassis.turn(90).withGains(266, 1, 133).withTol(0,10).waitUntilSettled();
+  chassis.eDrive(25).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50).waitUntilSettled();
+  pros::delay(1500);
+  clamp.set_value(false);
+  chassis.eDrive(-10).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
+  chassis.turn(0).withGains(266, 0.5, 133).withTol(0,5).waitUntilSettled();
+  lift.setState(LiftState::DOWN).waitUntilSettled();
+  chassis.eDrive(25).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
+  clamp.set_value(true);
+  pros::delay(500);
+  lift.setState(LiftState::UP);
+  chassis.eDrive(-40).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
+  pros::delay(200);
+  chassis.turn(90).withGains(266, 1, 133).withTol(0,10).waitUntilSettled();
+  chassis.eDrive(17).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50).waitUntilSettled();
+  pros::delay(750);
+  clamp.set_value(false);
+  chassis.eDrive(-20).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50).waitUntilSettled();
+// chassis.drive({900,0}, true).withGains(12,0,0).withTurnGains(100,0,0).withTol(100,50).waitUntilSettled();
   // clamp.set_value(false);
   // robotPos.setState(PositionTracker::RELATIVE);
   // chassis.eDrive(-20).withGains(30, 0.1, 10).withTol(20).waitUntilSettled();

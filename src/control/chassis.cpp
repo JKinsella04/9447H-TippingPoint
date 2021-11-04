@@ -72,13 +72,10 @@ ChassisState Chassis::getState(){
 }
 
 void Chassis::waitUntilSettled() {
-  int t = 0;
   while(!isSettled) {
-    t += 5;
-    pros::c::imu_accel_s_t lf = lf_Imu.get_accel(), lb = lb_Imu.get_accel(), rf = rf_Imu.get_accel(), rb = rb_Imu.get_accel();
-    double avgAccel = (lf.y + lb.y + rf.y + rb.y) / 4;
-    if( t >= 100 && abs( avgAccel ) < 0.0009) isSettled = true;
-
+    // pros::c::imu_accel_s_t lf = lf_Imu.get_accel(), lb = lb_Imu.get_accel(), rf = rf_Imu.get_accel(), rb = rb_Imu.get_accel();
+    // double avgAccel = (lf.y + lb.y + rf.y + rb.y) / 4;
+    // if( abs( avgAccel ) < 0.0009) isSettled = true;
     pros::delay(20);
   }
 }
@@ -273,7 +270,7 @@ void Chassis::run() {
     
       turnError = ( target.theta - macro::toRad(*theta) );
       turnError = atan2( sin( turnError ), cos( turnError ) );
-      turnError = macro::toDeg(turnError); 
+      turnError = macro::toDeg(turnError) + 90; 
       // if(target.reverse) turnError -= 180;
 
       // Drive PID.

@@ -3,7 +3,7 @@
 #include "globals.hpp"
 
 enum class MobileGoalState { 
-    DOWN, UP, MIDDLE, OPCONTROL,IDLE
+    DOWN, UP, MIDDLE, OPCONTROL, SETUP, IDLE
 }; 
 
 class MobileGoal{
@@ -21,11 +21,6 @@ class MobileGoal{
   Updates MobileGoalState after the delay has passed.
   */
   MobileGoal& setState(MobileGoalState s, double delay);
-
-  /*
-  Needs to run before Mobile Goal moves to either other state.
-  */
-  MobileGoal& setup();
   
   /*
   Sets mobileGoal motor brake type.

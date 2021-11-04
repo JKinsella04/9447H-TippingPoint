@@ -65,12 +65,6 @@ void opcontrol() {
 	mobileGoal.setState(MobileGoalState::OPCONTROL); // Controls MobileGoal grabber.
 
   while (true) {
-    pros::c::imu_accel_s_t lf = lf_Imu.get_accel();
-    pros::c::imu_accel_s_t lb = lb_Imu.get_accel();
-    pros::c::imu_accel_s_t rf = rf_Imu.get_accel();
-    pros::c::imu_accel_s_t rb = rb_Imu.get_accel();
-		double avgAccel = ( lf.y + lb.y + rf.y + rb.y ) /4;
-		macro::print("Accel: ", avgAccel);
     pros::delay(5);
  	}
 }

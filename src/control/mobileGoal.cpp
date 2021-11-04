@@ -4,7 +4,7 @@
 
 MobileGoalState MobileGoalMode = MobileGoalState::IDLE;
 
-macro::PID MobileGoal_PID(10, 0.01, 3.75);
+macro::PID MobileGoal_PID(7.5, 0.01, 3.75);
 macro::Slew MobileGoal_Slew(600);
 
 double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::tol = 100, MobileGoal::lastTarget = 0,
@@ -25,18 +25,7 @@ MobileGoal& MobileGoal::setState(MobileGoalState s){
 MobileGoal& MobileGoal::setState(MobileGoalState s, double delay_){
   delay = delay_;
   MobileGoalMode = s;
-  return *this;
-}
-
-MobileGoal& MobileGoal::setup(){
   isSettled = false;
-  leftMobileGoal.move(-100);
-  rightMobileGoal.move(-100);
-  
-  pros::delay(275);
-
-  setState(MobileGoalState::DOWN);
-  setBrakeType(HOLD);
   return *this;
 }
 
@@ -73,7 +62,7 @@ void MobileGoal::run() {
     switch (MobileGoalMode) {
     case MobileGoalState::DOWN: {
       pros::delay(delay);
-      move(3900);
+      move(3800);
       break;
     }
     case MobileGoalState::UP: {
@@ -92,7 +81,7 @@ void MobileGoal::run() {
         move(500);
       } else if (master.get_digital(DIGITAL_X) || partner.get_digital(DIGITAL_X)) {
         lastTarget = 0;
-        move(3900);
+        move(3800);
       } else if(master.get_digital(DIGITAL_DOWN) || partner.get_digital(DIGITAL_DOWN)){
         lastTarget = 0;
         leftMobileGoal.move(-100);
@@ -102,6 +91,16 @@ void MobileGoal::run() {
         move(lastTarget);
       }
       break;
+    }
+    case MobileGoalState::SETUP:{
+      isSettled = false;
+      leftMobileGoal.move(-100);
+      rightMobileGoal.move(-100);
+
+      pros::delay(275);
+
+      setState(MobileGoalState::DOWN);
+      setBrakeType(HOLD);
     }
     case MobileGoalState::IDLE: {
       // macro::print("IDLE", 0);
