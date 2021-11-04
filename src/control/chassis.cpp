@@ -1,5 +1,6 @@
 #include "control/chassis.hpp"
 #include "control/misc.hpp"
+#include "globals.hpp"
 #include "positionTracking.hpp"
 #include "pros/imu.h"
 #include "pros/rtos.h"
@@ -73,7 +74,7 @@ ChassisState Chassis::getState(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    if(checkDist && platform.get() <= 75) isSettled = true;
+    if(checkDist && platform.get() <= 125 && platform.get() != 0) isSettled = true;
     // pros::c::imu_accel_s_t lf = lf_Imu.get_accel(), lb = lb_Imu.get_accel(), rf = rf_Imu.get_accel(), rb = rb_Imu.get_accel();
     // double avgAccel = (lf.y + lb.y + rf.y + rb.y) / 4;
     // if( abs( avgAccel ) < 0.0009) isSettled = true;
@@ -95,8 +96,7 @@ void Chassis::reset(){
   RF.tare_position();
   RB.tare_position();
 
-  adjustAngle = false;
-  turnComplete = false;
+  adjustAngle = turnComplete = checkDist = checkAccel = false;
 
   mode = ChassisState::IDLE;
 }
