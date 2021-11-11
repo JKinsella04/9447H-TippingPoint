@@ -152,13 +152,16 @@ PID &PID::set(double kP_, double kI_, double kD_) {
   return *this;
 }
 
-PID& PID::setError(double error_) { error = error_; return *this;}
+PID& PID::setError(double error_) { 
+  calcErr = false;
+  error = error_; 
+  return *this;
+  }
 
 double PID::calculate(double target, double current) {
   // Proportional Calculation
-  if (error == 0) {
-    error = target - current;
-  }
+  error = target - current;
+
   // Integral Calculation
   integral = integral + error;
   if (error == 0)
@@ -172,11 +175,10 @@ double PID::calculate(double target, double current) {
 
   // Output Calculation
   output = error * kP + integral * kI + derivative * kD;
-  error = 0;
   return output;
 }
 
-double PID::getError() { return prevError; }
+double PID::getError() { return error; }
 
 void PID::reset(){ output = target = current = error = integral = derivative = prevError = 0; }
 

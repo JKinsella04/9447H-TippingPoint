@@ -24,7 +24,8 @@ ChassisTarget target;
 ChassisState mode = ChassisState::IDLE;
 
 // Variable Init
-bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false, Chassis::checkDist = false;
+bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false, Chassis::checkDist = false,
+     Chassis::checkErr = false;
 
 double *Chassis::theta, *Chassis::posX, *Chassis::posY, *Chassis::rotation;
 
@@ -83,6 +84,7 @@ void Chassis::waitUntilSettled() {
 }
 
 void Chassis::reset(){
+  macro::print("SETTLED ", 0);
   // PID values reset
   drive_PID.reset();
   turn_PID.reset();
@@ -96,7 +98,7 @@ void Chassis::reset(){
   RF.tare_position();
   RB.tare_position();
 
-  adjustAngle = turnComplete = checkDist = checkAccel = false;
+  adjustAngle = turnComplete = checkDist = checkAccel = checkErr = false;
 
   mode = ChassisState::IDLE;
 }
@@ -138,6 +140,7 @@ Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double 
 
 Chassis &Chassis::drive(double target_, double rate, double speed) {
   
+  macro::print("DRIVE ", 0);
   target.x = target_ * CONVERSION;
   target.accel_rate = rate;
   target.speedDrive = speed;
@@ -149,6 +152,7 @@ Chassis &Chassis::drive(double target_, double rate, double speed) {
 
 Chassis &Chassis::eDrive(double e_target_, double accel_rate, double decel_rate, double speed) {
   
+  macro::print("DRIVE ", 0);
   target.x = e_target_ * BASE_CONVERSION;
   target.accel_rate = accel_rate;
   target.decel_rate =  decel_rate; 
@@ -161,6 +165,7 @@ Chassis &Chassis::eDrive(double e_target_, double accel_rate, double decel_rate,
 
 Chassis &Chassis::drive(coords point, bool reverse, double rate, double driveSpeed, double turnRate, double turnSpeed){
   
+  macro::print("POINT ", 0);
   target.x = point.x;
   target.y = point.y;
   target.accel_rate = rate;
@@ -176,6 +181,7 @@ Chassis &Chassis::drive(coords point, bool reverse, double rate, double driveSpe
 
 Chassis &Chassis::turn(double theta, double rate, double speed) {
   
+  macro::print("TURN ", 0);
   target.theta = theta;
   target.rateTurn = rate;
   target.speedTurn = speed;
@@ -187,6 +193,7 @@ Chassis &Chassis::turn(double theta, double rate, double speed) {
 
 Chassis &Chassis::balance(double rate, double speed){
   
+  macro::print("BALANCE ", 0);
   target.accel_rate = rate;
   target.speedDrive = speed;
   reset();
@@ -249,7 +256,7 @@ void Chassis::run() {
         right(RslewOutput - TslewOutput);
       }
 
-      if ( fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol ) { 
+      if ( fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol  && checkErr) { 
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
@@ -258,9 +265,9 @@ void Chassis::run() {
         mode = ChassisState::IDLE;
         goto end;
       }
-      break;
+      checkAccel = checkErr = true;
 
-      checkAccel = true;
+      break;
     }
 
     case ChassisState::POINT: {
@@ -313,7 +320,7 @@ void Chassis::run() {
 
     case ChassisState::TURN: {
       // Turn PID calc
-      turn_output = turn_PID.calculate(target.theta - *theta);
+      turn_output = turn_PID.calculate(target.theta, *theta);
 
       // Find quickest turn.
       calcDir();
@@ -325,7 +332,7 @@ void Chassis::run() {
       left(TslewOutput);
       right(-TslewOutput);
 
-      if (fabs(turn_PID.getError()) < turn_tol) {
+      if ( fabs( turn_PID.getError() ) <= turn_tol ) {
         left(0);
         right(0);
         withTurnGains().withTol();
@@ -347,6 +354,8 @@ void Chassis::run() {
 
       left(leftOutput);
       right(rightOutput);
+
+      lf_Imu.get_roll() >= 5 || lf_Imu.get_roll() <= -5 ? setBrakeType(HOLD) : setBrakeType(COAST);
       break;
     }
 

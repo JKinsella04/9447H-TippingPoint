@@ -128,5 +128,6 @@ public:
 private:
   double target = 0, current = 0, error = 0, integral = 0, derivative = 0,
          prevError = 0, kP = 0, kI = 0, kD = 0, output = 0;
+  bool calcErr = true;
 };
 } // namespace macro

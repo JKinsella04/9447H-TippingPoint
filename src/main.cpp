@@ -9,7 +9,6 @@
 #include "control/lift.hpp"
 #include "control/mobileGoal.hpp"
 #include "globals.hpp"
-#include "pros/misc.hpp"
 
 void initialize() {
 
@@ -61,8 +60,7 @@ void opcontrol() {
 	lift.setState(LiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
 	MobileGoal mobileGoal;
-	mobileGoal.setBrakeType(HOLD);
-	mobileGoal.setState(MobileGoalState::OPCONTROL); // Controls MobileGoal grabber.
+	mobileGoal.setState(MobileGoalState::SETUP);
 
   while (true) {
     pros::delay(5);
