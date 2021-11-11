@@ -75,7 +75,7 @@ ChassisState Chassis::getState(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    if(checkDist && platform.get() <= 125 && platform.get() != 0) isSettled = true;
+    if(checkDist && platform.get() <= 125 && platform.get() != 0){ macro::print("OBJECT DETECTED: ", 1); isSettled = true; }
     // pros::c::imu_accel_s_t lf = lf_Imu.get_accel(), lb = lb_Imu.get_accel(), rf = rf_Imu.get_accel(), rb = rb_Imu.get_accel();
     // double avgAccel = (lf.y + lb.y + rf.y + rb.y) / 4;
     // if( abs( avgAccel ) < 0.0009) isSettled = true;
@@ -84,7 +84,7 @@ void Chassis::waitUntilSettled() {
 }
 
 void Chassis::reset(){
-  macro::print("SETTLED ", 0);
+  macro::print("RESET: ", 0);
   // PID values reset
   drive_PID.reset();
   turn_PID.reset();
@@ -98,7 +98,7 @@ void Chassis::reset(){
   RF.tare_position();
   RB.tare_position();
 
-  adjustAngle = turnComplete = checkDist = checkAccel = checkErr = false;
+  adjustAngle = turnComplete = checkDist = checkAccel = false;
 
   mode = ChassisState::IDLE;
 }
@@ -282,13 +282,9 @@ void Chassis::run() {
       turnError = macro::toDeg(turnError) + 90; 
       // if(target.reverse) turnError -= 180;
 
-      // Drive PID.
-      drive_PID.setError(driveError);
-      drive_output = drive_PID.calculate();
-      
-      // Turn PID.
-      turn_PID.setError(turnError);
-      turn_output = turn_PID.calculate();
+      // PID Calcs.
+      drive_output = drive_PID.calculate(driveError);
+      turn_output = turn_PID.calculate(turnError);
       
       // Slew Calcs.
       LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
@@ -326,13 +322,14 @@ void Chassis::run() {
       calcDir();
 
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
-    
-      macro::print("Error: ", turn_PID.getError()); //Debug
+
+      macro::print("Turn Error: ", turn_PID.getError());
 
       left(TslewOutput);
       right(-TslewOutput);
 
       if ( fabs( turn_PID.getError() ) <= turn_tol ) {
+        macro::print("TURN FINISHED: ", 0);
         left(0);
         right(0);
         withTurnGains().withTol();
@@ -404,20 +401,16 @@ void Chassis::run() {
 }
 
 // Macros
-void Chassis::calcDir(){ // Find Quickest turn.
-  if (fabs(turn_PID.getError()) > 180) {
-    if(*theta < 180){
-      tempTheta = *theta + 360;
-    }else{
-      if(!turnComplete){
-        tempTarget = target.theta + 360;
-      }else{
-        tempTarget = target.thetaTwo + 360;
-      }
-    }
-    turn_output = turn_PID.calculate(tempTarget, tempTheta); // recalculate output
-  }
+void Chassis::calcDir() { // Find Quickest turn.
+  turnComplete ? turnError = target.thetaTwo - *theta : turnError = target.theta - *theta;
+
+  turnError = macro::toRad(turnError);
+  turnError = atan2( sin( turnError ), cos( turnError ) );
+  turnError = macro::toDeg(turnError);
+
+  turn_output = turn_PID.calculate(turnError);
 }
+
 void Chassis::left(double input){
   LF.move_voltage(input);
   // LM.move_voltage(input);

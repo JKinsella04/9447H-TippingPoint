@@ -60,7 +60,7 @@ void opcontrol() {
 	lift.setState(LiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
 	MobileGoal mobileGoal;
-	mobileGoal.setState(MobileGoalState::SETUP);
+	mobileGoal.setState(MobileGoalState::SETUP); // Controls Mobile Goal.
 
   while (true) {
     pros::delay(5);

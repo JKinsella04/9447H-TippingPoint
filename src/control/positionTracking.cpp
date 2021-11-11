@@ -75,11 +75,17 @@ void Position::run() {
 
     switch (PositionTrackerState) {
     case PositionTracker::RELATIVE: {
-      thetaDeg = ( lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4;
+      if(lf_Imu.get_heading() > 358 || lb_Imu.get_heading() > 358  || rf_Imu.get_heading() > 358 || rb_Imu.get_heading() > 358){ // Account for imu drift.
+        thetaDeg = 0;
+      }else{
+        thetaDeg = ( lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4;
+      }
+
       thetaRad = macro::toRad(thetaDeg);
 
       rotation = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position() ) /4;
       
+      macro::print("Theta: ", thetaDeg); // Debug
       break;
     }
     case PositionTracker::GPS: {
