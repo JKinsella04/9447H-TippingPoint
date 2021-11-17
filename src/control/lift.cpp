@@ -65,6 +65,7 @@ void Lift::run() {
       break;
     }
     case LiftState::MIDDLE: {
+      lift_PID.set(21, 0.2, 7.5);
       move(500);
       break;
     }
@@ -83,12 +84,17 @@ void Lift::run() {
         lastTarget = -100;
         lift_PID.set(10,0.01,5);
         move(0);
-      }else{
+      } else if( lf_Imu.get_roll() >= 5 || lf_Imu.get_roll() <= -5 ){
+        lastTarget = -100;
+        lift_PID.set(21, 0.2, 7.5);
+        move(500);
+      } else{
           if(lastTarget == -100) lastTarget = (leftArm.get_position() + rightArm.get_position() )/2;
           lift_Slew.reset();
           move(lastTarget);
          //Hold current Position.
       }
+
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {
