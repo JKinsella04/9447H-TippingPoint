@@ -14,7 +14,7 @@ double Lift::output = 0, Lift::target = 0, Lift::tol = 50, Lift::slewOutput = 0,
 
 double tempLiftPos;
 
-bool Lift::isRunning = false, Lift::isSettled = true, Lift::isDelayingClamp = false;
+bool Lift::isRunning = false, Lift::isSettled = true, Lift::isDelayingClamp = false, Lift::clampState = false, Lift::lastClampState = clampState;
 
 LiftState Lift::getState(){
   return liftMode;
@@ -120,10 +120,14 @@ void Lift::run() {
     }
     }
 
-    if(isDelayingClamp){
-      if(abs( chassis.getDriveError()) < chassis.getTol() * 2) setClamp(clampState);
-    }else{
+    if (clampState != lastClampState && isDelayingClamp) {
+      if (abs(chassis.getDriveError()) < chassis.getTol() * 2) {
+        setClamp(clampState);
+        lastClampState = clampState;
+      }
+    } else if (clampState != lastClampState) {
       clamp.set_value(clampState);
+      lastClampState = clampState;
     }
 
     end:

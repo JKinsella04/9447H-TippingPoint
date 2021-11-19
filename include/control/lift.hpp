@@ -53,7 +53,7 @@ class Lift{
   private:
   static bool isRunning;
   static bool isSettled;
-  static bool isDelayingClamp, clampState;
+  static bool isDelayingClamp, clampState, lastClampState;
 
   static double output, target, current, tol, slewOutput, lastTarget;
 
