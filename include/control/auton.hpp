@@ -32,9 +32,6 @@ class Autonomous{
 ===========================================*/
 
 void awp();
-void oneGoal();
-void twoGoal();
-
+void elim();
 void skills();
-
 void test();

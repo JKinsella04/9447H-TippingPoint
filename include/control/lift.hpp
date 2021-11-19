@@ -24,6 +24,12 @@ class Lift{
   Lift& setClamp(bool state_);
 
   /*
+  Sets the lift's clamp once the robot has moved far enough.
+  @param bool clamp_ True for clamped False for released.
+  */
+  Lift& delayClamp(bool state_);
+
+  /*
   Sets lift motor brake type.
   @param pros::motor_brake_mode_e_t brake type.
   */
@@ -47,6 +53,7 @@ class Lift{
   private:
   static bool isRunning;
   static bool isSettled;
+  static bool isDelayingClamp, clampState;
 
   static double output, target, current, tol, slewOutput, lastTarget;
 

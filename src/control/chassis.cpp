@@ -73,6 +73,18 @@ ChassisState Chassis::getState(){
   return mode;
 }
 
+double Chassis::getDriveError(){
+  return drive_PID.getError();
+}
+
+double Chassis::getTurnError(){
+  return turn_PID.getError();
+}
+
+double Chassis::getTol(){
+  return drive_tol;
+}
+
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
     if(checkDist && platform.get() <= 125 && platform.get() != 0){ macro::print("OBJECT DETECTED: ", 1); isSettled = true; }

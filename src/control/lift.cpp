@@ -1,6 +1,8 @@
 #include "lift.hpp"
 #include "misc.hpp"
-#include "pros/misc.hpp"
+#include "chassis.hpp"
+
+Chassis chassis;
 
 LiftState liftMode = LiftState::IDLE;
 
@@ -12,7 +14,7 @@ double Lift::output = 0, Lift::target = 0, Lift::tol = 50, Lift::slewOutput = 0,
 
 double tempLiftPos;
 
-bool Lift::isRunning = false, Lift::isSettled = true;
+bool Lift::isRunning = false, Lift::isSettled = true, Lift::isDelayingClamp = false;
 
 LiftState Lift::getState(){
   return liftMode;
@@ -26,6 +28,12 @@ Lift& Lift::setState(LiftState s){
 
 Lift& Lift::setClamp(bool state_){
   clamp.set_value(state_);
+  return *this;
+}
+
+Lift& Lift::delayClamp(bool state_){
+  isDelayingClamp = true;
+  clampState = state_;
   return *this;
 }
 
@@ -99,9 +107,9 @@ void Lift::run() {
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {
-        setClamp(true);
+        clamp.set_value(true);
       } else if (master.get_digital(DIGITAL_R2)) {
-        setClamp(false);
+        clamp.set_value(false);
       }
       break;
     }
@@ -110,6 +118,12 @@ void Lift::run() {
       rightArm.move(0);
       // Lift motor to zero;
     }
+    }
+
+    if(isDelayingClamp){
+      if(abs( chassis.getDriveError()) < chassis.getTol() * 2) setClamp(clampState);
+    }else{
+      clamp.set_value(clampState);
     }
 
     end:

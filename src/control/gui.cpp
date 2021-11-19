@@ -169,7 +169,7 @@ void Display::cleanUp() {
 
 void Display::tabAuton(lv_obj_t *parent) {
   lv_obj_t *AWP = createButton(1, 0, 20, 200, 40, "AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
-  lv_obj_t *twoGoal = createButton(2, 0, 70, 200, 40, "Two Goal", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *Elim = createButton(2, 0, 70, 200, 40, "Elim", parent, btn_auton_action, &style_btn, &style_btn_released);
   lv_obj_t *skills = createButton(3, 0, 120, 200, 40, "Skills", parent, btn_auton_action, &style_btn, &style_btn_released);
 
   autonGraphic = lv_img_create(parent, NULL);
