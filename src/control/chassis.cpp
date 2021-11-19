@@ -76,9 +76,6 @@ ChassisState Chassis::getState(){
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
     if(checkDist && platform.get() <= 125 && platform.get() != 0){ macro::print("OBJECT DETECTED: ", 1); isSettled = true; }
-    // pros::c::imu_accel_s_t lf = lf_Imu.get_accel(), lb = lb_Imu.get_accel(), rf = rf_Imu.get_accel(), rb = rb_Imu.get_accel();
-    // double avgAccel = (lf.y + lb.y + rf.y + rb.y) / 4;
-    // if( abs( avgAccel ) < 0.0009) isSettled = true;
     pros::delay(20);
   }
 }

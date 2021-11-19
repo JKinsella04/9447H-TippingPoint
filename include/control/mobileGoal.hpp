@@ -46,6 +46,7 @@ class MobileGoal{
   private:
   static bool isRunning;
   static bool isSettled;
+  static bool isSetup;
 
   static double output, target, current, tol, slewOutput, lastTarget, delay;
 

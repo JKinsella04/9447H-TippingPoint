@@ -75,6 +75,7 @@ void Lift::run() {
       break;
     }
     case LiftState::OPCONTROL: {
+      current = ( leftArm.get_position() + rightArm.get_position() )/2;
       // Lift Control
       if (master.get_digital(DIGITAL_L1)) {
         lastTarget = -100;
@@ -84,7 +85,7 @@ void Lift::run() {
         lastTarget = -100;
         lift_PID.set(10,0.01,5);
         move(0);
-      } else if( lf_Imu.get_roll() >= 5 || lf_Imu.get_roll() <= -5 ){
+      } else if(current <= 500 && lf_Imu.get_roll() >= 5 || lf_Imu.get_roll() <= -5 ){
         lastTarget = -100;
         lift_PID.set(21, 0.2, 7.5);
         move(500);

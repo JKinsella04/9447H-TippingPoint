@@ -10,7 +10,7 @@ macro::Slew MobileGoal_Slew(600);
 double MobileGoal::output = 0, MobileGoal::target = 0, MobileGoal::tol = 100, MobileGoal::lastTarget = 0,
        MobileGoal::slewOutput = 0, MobileGoal::current = mobileGoalPos.get_value(), MobileGoal::delay = 0;
 
-bool MobileGoal::isRunning = false, MobileGoal::isSettled = true;
+bool MobileGoal::isRunning = false, MobileGoal::isSettled = true, MobileGoal::isSetup = false;
 
 MobileGoalState MobileGoal::getState(){
   return MobileGoalMode;
@@ -93,6 +93,7 @@ void MobileGoal::run() {
       break;
     }
     case MobileGoalState::SETUP:{
+      if(!isSetup){
       isSettled = false;
       leftMobileGoal.move(-100);
       rightMobileGoal.move(-100);
@@ -101,6 +102,10 @@ void MobileGoal::run() {
 
       setState(MobileGoalState::DOWN);
       setBrakeType(HOLD);
+      isSetup = true;
+      }else{
+        setState(MobileGoalState::OPCONTROL);
+      }
     }
     case MobileGoalState::IDLE: {
       // macro::print("IDLE", 0);

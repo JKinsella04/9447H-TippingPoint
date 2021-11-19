@@ -1,3 +1,4 @@
+.cache/
 # Compiled Object files
 *.o
 *.obj
@@ -7,7 +8,6 @@
 *.elf
 
 # PROS
-.cache/
 bin/
 .vscode/
 compile_commands.json
@@ -15,16 +15,3 @@ temp.log
 temp.errors
 *.ini
 .d/
-.cache/clangd/index/auton.cpp.E17575B10289AB26.idx
-.cache/clangd/index/chassis.cpp.CA734F6F19D62C87.idx
-.cache/clangd/index/chassis.hpp.F21E25EF0A23AB71.idx
-.cache/clangd/index/globals.cpp.FDF474D3E9995AED.idx
-.cache/clangd/index/globals.hpp.FAA6616D188714EC.idx
-.cache/clangd/index/gui.cpp.F74A6298228E3A8A.idx
-.cache/clangd/index/main.cpp.FD3E66F80514D780.idx
-.cache/clangd/index/misc.cpp.A984F14FB15A528F.idx
-.cache/clangd/index/misc.hpp.546F89C5C41129C0.idx
-.cache/clangd/index/mobileGoal.cpp.A4E1C4F5325650D4.idx
-.cache/clangd/index/mobileGoal.hpp.12CC47CA0F47A5BC.idx
-.cache/clangd/index/positionTracking.cpp.674F395560C10726.idx
-.cache/clangd/index/auton.cpp.E17575B10289AB26.idx
