@@ -14,7 +14,7 @@ double Lift::output = 0, Lift::target = 0, Lift::tol = 50, Lift::slewOutput = 0,
 
 double tempLiftPos;
 
-bool Lift::isRunning = false, Lift::isSettled = true, Lift::isDelayingClamp = false, Lift::clampState = false, Lift::lastClampState = clampState;
+bool Lift::isRunning = false, Lift::isSettled = true, Lift::isDelayingClamp = false, Lift::clampState = false, Lift::lastClampState = !clampState;
 
 LiftState Lift::getState(){
   return liftMode;
@@ -27,7 +27,7 @@ Lift& Lift::setState(LiftState s){
 }
 
 Lift& Lift::setClamp(bool state_){
-  clamp.set_value(state_);
+  clampState = state_;
   return *this;
 }
 

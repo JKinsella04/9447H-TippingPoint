@@ -114,11 +114,11 @@ void skills(){ // No mobileGoal since it blocks GPS sensor!
   pros::delay(100);
   chassis.turn(90).withGains(266, 0.5, 133).withTol(0,5).waitUntilSettled();
   pros::delay(100);
-  chassis.eDrive(85).withGains(30, 0.1, 10).withAngle(90).withTol(60, 10).waitUntilSettled();
+  chassis.eDrive(85).withGains(30, 0.1, 10).withAngle(90).withTol(10, 10).waitUntilSettled();
   lift.setClamp(true).setState(LiftState::UP);
   chassis.eDrive(60).withGains(30, 0.1, 10).withAngle(175, 100).withTol(80, 5).waitUntilSettled();
   mobileGoal.setState(MobileGoalState::DOWN).waitUntilSettled();
-  chassis.eDrive(30).withGains(30, 0.1, 10).withAngle(175).withTol(50, 10).waitUntilSettled();
+  chassis.eDrive(29).withGains(30, 0.1, 10).withAngle(180).withTol(10, 10).waitUntilSettled();
   pros::delay(500);
   chassis.turn(90).withGains(133, 1, 66).withTol(0,12).waitUntilSettled();
   chassis.eDrive(20).withGains(30, 0.1, 10).withAngle(88).withTol(120, 50, true).waitUntilSettled();
@@ -127,14 +127,14 @@ void skills(){ // No mobileGoal since it blocks GPS sensor!
   // First Goal //
 
 
-  chassis.eDrive(-7).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
+  chassis.eDrive(-7).withGains(30, 0.1, 10).withTol(10).waitUntilSettled();
   chassis.turn(5).withGains(266, 0.5, 133).withTol(0,5).waitUntilSettled();
   lift.setState(LiftState::DOWN).waitUntilSettled();
-  chassis.eDrive(30).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
+  chassis.eDrive(40).withGains(30, 0.1, 10).withTol(10).waitUntilSettled();
   lift.setClamp(true);
   pros::delay(500);
   lift.setState(LiftState::UP);
-  chassis.eDrive(-55).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
+  chassis.eDrive(-60).withGains(30, 0.1, 10).withTol(10).waitUntilSettled();
   pros::delay(200);
   chassis.turn(90).withGains(133, 1, 66).withTol(0,15).waitUntilSettled();
   chassis.eDrive(25).withGains(30, 0.1, 10).withAngle(90).withTol(120, 50, true).waitUntilSettled();
@@ -143,29 +143,40 @@ void skills(){ // No mobileGoal since it blocks GPS sensor!
   // Second goal //
   
   
-  chassis.eDrive(-32).withGains(20, 0.1, 10).withAngle(90).withTol(40, 20).waitUntilSettled();
-  lift.setState(LiftState::DOWN);
-  chassis.turn(330).withGains(133, 2, 66).withTol(0,5).waitUntilSettled();
+  chassis.eDrive(-27).withGains(20, 0.1, 10).withAngle(90).withTol(10, 20).waitUntilSettled();
+  lift.setState(LiftState::DOWN).waitUntilSettled();
+  chassis.turn(330).withGains(133, 1, 66).withTol(0,5).waitUntilSettled();
   pros::delay(200);
-  chassis.eDrive(40).withGains(30, 0.1, 10).withTol(40).waitUntilSettled();
+  chassis.eDrive(40).withGains(30, 0.1, 10).withTol(10).waitUntilSettled();
   lift.setClamp(true);
   pros::delay(200);
-  lift.setState(LiftState::UP).waitUntilSettled();  
+  lift.setState(LiftState::MIDDLE).waitUntilSettled();  
   chassis.turn(235).withGains(133, 1, 66).withTol(0,12).waitUntilSettled();
-  chassis.eDrive(-110).withGains(30, 0.1, 10).withAngle(235, 175).withTol(40, 20).waitUntilSettled();
+  lift.setState(LiftState::UP).waitUntilSettled();  
+  chassis.eDrive(-110).withGains(30, 0.1, 10).withAngle(235, 175).withTol(10, 20).waitUntilSettled();
   chassis.turn(170).withGains(133, 1, 66).withTol(0,12).waitUntilSettled();
-  lift.delayClamp(false);
-  chassis.eDrive(20, 900, 900, 12000).withGains(30, 0.1, 10).withTol(80).waitUntilSettled();
+  chassis.eDrive(35, 900, 900, 12000).withGains(30, 0.1, 10).withTol(120).waitUntilSettled();
+  lift.setClamp(false);
   pros::delay(500);
-  chassis.eDrive(-15).withGains(30, 0.1, 10).withTol(50).waitUntilSettled();
+  chassis.eDrive(-15).withGains(30, 0.1, 10).withTol(10).waitUntilSettled();
   // THIRD GOAL //
 
+  chassis.turn(112).withGains(133, 1, 66).withTol(0,15).waitUntilSettled();
+  chassis.eDrive(-35).withGains(30, 0.1, 10).withTol(10).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::UP).waitUntilSettled();
+  chassis.eDrive(-160, 75).withGains(15, 0, 6.25).withAngle(90).withTol(10, 20).waitUntilSettled();
+  mobileGoal.setState(MobileGoalState::DOWN).waitUntilSettled();
+  // FOURTH GOAL //
 
+  chassis.eDrive(15).withGains(30, 0.1, 10).withTol(10).waitUntilSettled();
+  chassis.turn(180).withGains(133, 1, 66).withTol(0,15).waitUntilSettled();
+  lift.setState(LiftState::DOWN);
+  chassis.eDrive(160).withGains(30, 0.1, 10).withAngle(180).withTol(10).waitUntilSettled();
+  lift.setClamp(true);
 }
 
 // Testing
 void test() {
-  //   Chassis.drive(20).withGains(.3, 0.01,
-  //   .15).withTol(100).waitUntilSettled(); Chassis.turn(90).withGains(133,
-  //   0.01, 66).withTol(1).waitUntilSettled();
+  //   Chassis.drive(20).withGains(.3, 0.01, .15).withTol(100).waitUntilSettled();
+  // Chassis.turn(90).withGains(133, 0.01, 66).withTol(1).waitUntilSettled();
 }

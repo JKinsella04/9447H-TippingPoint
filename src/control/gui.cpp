@@ -233,13 +233,8 @@ void Display::run() {
 
     // Placeholder for quickly adding a sensor value to screen.
     std::ostringstream value;
-    pros::c::imu_accel_s_t lf = lf_Imu.get_accel();
-    pros::c::imu_accel_s_t lb = lb_Imu.get_accel();
-    pros::c::imu_accel_s_t rf = rf_Imu.get_accel();
-    pros::c::imu_accel_s_t rb = rb_Imu.get_accel();
-
-    value << ( lf.y + lb.y + rf.y + rb.y ) /4;
-    std::string tempValue = "Accel: " + value.str();
+    value << floor( *robotPos.getThetaDeg() * 100) /100;
+    std::string tempValue = "IMU: " + value.str();
     lv_label_set_text(printValue, tempValue.c_str());
 
     std::string cstate;
