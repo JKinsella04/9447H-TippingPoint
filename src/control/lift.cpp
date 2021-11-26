@@ -9,7 +9,7 @@ LiftState liftMode = LiftState::IDLE;
 macro::PID lift_PID(20, 0.1, 5);
 macro::Slew lift_Slew(600);
 
-double Lift::output = 0, Lift::target = 0, Lift::tol = 50, Lift::slewOutput = 0, Lift::lastTarget = -100,
+double Lift::output = 0, Lift::target = 0, Lift::tol = 75, Lift::slewOutput = 0, Lift::lastTarget = -100,
       Lift::current = (leftArm.get_position() + rightArm.get_position() )/2;
 
 double tempLiftPos;
@@ -78,7 +78,7 @@ void Lift::run() {
       break;
     }
     case LiftState::UP: {
-      lift_PID.set(21, 0.2, 7.5);
+      lift_PID.set(22, 0.2, 7.5);
       move(2000);
       break;
     }
@@ -122,7 +122,7 @@ void Lift::run() {
 
     if (clampState != lastClampState && isDelayingClamp) {
       if (abs(chassis.getDriveError()) < chassis.getTol() * 2) {
-        setClamp(clampState);
+        clamp.set_value(clampState);
         lastClampState = clampState;
       }
     } else if (clampState != lastClampState) {
