@@ -361,12 +361,12 @@ void Chassis::run() {
       left(leftOutput);
       right(rightOutput);
 
-      lf_Imu.get_roll() >= 5 || lf_Imu.get_roll() <= -5 ? setBrakeType(HOLD) : setBrakeType(COAST);
+      if (lf_Imu.get_roll() >= 10 || lf_Imu.get_roll() <= -10) setBrakeType(HOLD);
       break;
     }
 
     case ChassisState::BALANCE: {
-      current = (lf_Imu.get_pitch() + lb_Imu.get_pitch() + rf_Imu.get_pitch() + rb_Imu.get_pitch()) / 4;
+      current = lf_Imu.get_roll();
       drive_output = drive_PID.calculate(0, current);
 
       LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);

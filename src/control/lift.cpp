@@ -93,7 +93,7 @@ void Lift::run() {
         lastTarget = -100;
         lift_PID.set(10,0.01,5);
         move(0);
-      } else if(current <= 500 && lf_Imu.get_roll() >= 5 || lf_Imu.get_roll() <= -5 ){
+      } else if(current <= 500 && lf_Imu.get_roll() >= 10 || lf_Imu.get_roll() <= -10 ){
         lastTarget = -100;
         lift_PID.set(21, 0.2, 7.5);
         move(500);
