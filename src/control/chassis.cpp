@@ -372,18 +372,19 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
 
-      left(LslewOutput);
-      right(RslewOutput);
+      // left(LslewOutput);
+      // right(RslewOutput);
+      macro::print("Error: ", drive_PID.getError());
 
-      if (fabs(drive_PID.getError()) < drive_tol) {
-        left(0);
-        right(0);
-        withGains().withTol();
-        reset();
-        isSettled = true;
-        mode = ChassisState::IDLE;
-        goto end;
-      }
+      // if (fabs(drive_PID.getError()) < drive_tol) {
+      //   left(0);
+      //   right(0);
+      //   withGains().withTol();
+      //   reset();
+      //   isSettled = true;
+      //   mode = ChassisState::IDLE;
+      //   goto end;
+      // }
     }
 
     case ChassisState::DEBUG: {
