@@ -3,7 +3,7 @@
 #include "globals.hpp"
 
 enum class LiftState { 
-    DOWN, MIDDLE, UP, OPCONTROL, IDLE
+    DOWN, MIDDLE, UP, OPCONTROL
 }; 
 
 class Lift{
@@ -53,9 +53,9 @@ class Lift{
   private:
   static bool isRunning;
   static bool isSettled;
-  static bool isDelayingClamp, clampState, lastClampState;
+  static bool isDelayingClamp, clampState, lastClampState, checkLift;
 
-  static double output, target, current, tol, slewOutput, lastTarget;
+  static double output, target, current, tol, slewOutput;
 
   void move(double target);
 

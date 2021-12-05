@@ -62,10 +62,10 @@ void Chassis::setState(ChassisState s){
 
 void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
   LF.set_brake_mode(state);
-  // LM.set_brake_mode(state);
+  LM.set_brake_mode(state);
   LB.set_brake_mode(state);
   RF.set_brake_mode(state);
-  // RM.set_brake_mode(state);
+  RM.set_brake_mode(state);
   RB.set_brake_mode(state);
 }
 
@@ -87,7 +87,6 @@ double Chassis::getTol(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    if(checkDist && platform.get() <= 125 && platform.get() != 0){ macro::print("OBJECT DETECTED: ", 1); isSettled = true; }
     pros::delay(20);
   }
 }
@@ -103,8 +102,10 @@ void Chassis::reset(){
   rightSlew.reset();
 
   LF.tare_position();
+  LM.tare_position();
   LB.tare_position();
   RF.tare_position();
+  RM.tare_position();
   RB.tare_position();
 
   adjustAngle = turnComplete = checkDist = checkAccel = false;
@@ -423,13 +424,13 @@ void Chassis::calcDir() { // Find Quickest turn.
 
 void Chassis::left(double input){
   LF.move_voltage(input);
-  // LM.move_voltage(input);
+  LM.move_voltage(input);
   LB.move_voltage(input);
 }
 
 void Chassis::right(double input){
   RF.move_voltage(input);
-  // RM.move_voltage(input);
+  RM.move_voltage(input);
   RB.move_voltage(input);
 }
 

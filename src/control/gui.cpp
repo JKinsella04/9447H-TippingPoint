@@ -47,7 +47,6 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     robotPos.calibrateGyro().resetDriveBase().reset();
     break;
   case 4:
-    // mobileGoal::reset(MG);
     break;
   case 5:{
     clampIsToggled = !clampIsToggled;
@@ -55,8 +54,6 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     break;
   }
   case 6: {
-    draggerIsToggled = !draggerIsToggled;
-    dragger.set_value(draggerIsToggled);
     break;
   }
   case 7:{

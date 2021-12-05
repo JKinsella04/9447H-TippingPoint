@@ -1,46 +1,36 @@
 #pragma once
-#include "main.h"
 #include "globals.hpp"
+#include "main.h"
 
-// namespace intake{
-//     /*
-//     Set speed for intakes.
-//     */
-//     void spin(double speed);
-    
-//     /*
-//     Set target and speed for intakes.
-//     */
-//     void spin(double target, double speed);
 
-// }
+namespace conveyer {
+/*
+Set speed for the conveyer.
+*/
+void spin(double speed);
 
-namespace Dragger {
-  /*
-  Sets the dragger's state.
-  @param int which_ Either both or just one of the draggers.
-  @param bool dragger_ True for extended False for retracted.
-  */
-  void setState( bool state_ = false);
+/*
+Set target and speed for conveyer.
+*/
+void spin(double target, double speed);
 
-} // namespace draggers
-
+} // namespace conveyer
 namespace macro {
 
-  struct Point{
-    double x;
-    double y;
-    double xRoot1;
-    double yRoot1;
-    double xRoot2;
-    double yRoot2;
-  };
+struct Point {
+  double x;
+  double y;
+  double xRoot1;
+  double yRoot1;
+  double xRoot2;
+  double yRoot2;
+};
 
 /*
 Print to terminal.
 */
 void print(std::string s, double value);
-  
+
 /**
  * Makes sure an angle is within the range -180 to 180 degrees.
  * @param rad angle in radians
@@ -64,7 +54,7 @@ public:
   Slew(double accel_);
   Slew(double accel_, double decel_);
   Slew(double accel_, double decel_, bool reversible_);
-  
+
   /*
   Sets accel and decel rates plus reversible boolean.
   */
@@ -74,12 +64,12 @@ public:
   Sets limit.
   */
   Slew &withLimit(double limit_);
-  
+
   /*
   Calculates and returns slew output.
   */
   double calculate(int input);
-  
+
   /*
   Returns output without doing new calculation.
   */
@@ -104,11 +94,11 @@ public:
   set the PID values
   */
   PID &set(double kP_, double kI_, double kD_);
-  
+
   /*
   Sets error to given value.
   */
-  PID& setError(double error_);
+  PID &setError(double error_);
 
   /*
   calculates output based off set values.

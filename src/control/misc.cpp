@@ -1,18 +1,10 @@
 #include "control/misc.hpp"
 
-// namespace intake {
-// void spin(double speed) { Intake.move(speed); }
+namespace conveyer {
+void spin(double speed) { intake.move(speed); }
 
-// void spin(double target, double speed) { Intake.move_relative(target, speed); }
-// } // namespace intake
-
-//TODO: Stop mobile goal before hitting wheels! (Potentiometer??)
-
-namespace Dragger {
-void setState(bool state_) {
-    dragger.set_value(state_);
-  }
-} // namespace draggers
+void spin(double target, double speed) { intake.move_relative(target, speed); }
+} // namespace intake
 
 namespace macro {
 

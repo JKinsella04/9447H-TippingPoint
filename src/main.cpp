@@ -22,7 +22,6 @@ void initialize() {
 	// Sensor and Motor  
 	robotPos.resetDriveBase().calibrateGyro().setState(PositionTracker::RELATIVE);
 	lift.reset();	
-	mobileGoal.reset();
 
 	// Threads
 	pros::Task PositionController(robotPos.start, NULL, "Position Controller");
@@ -34,7 +33,6 @@ void initialize() {
 	lift.setBrakeType(HOLD);
 	
 	pros::Task MobileGoalController(mobileGoal.start, NULL, "MobileGoal Controller");
-	mobileGoal.setBrakeType(HOLD);
 
 	pros::Task DisplayController(display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);
@@ -50,8 +48,6 @@ void autonomous() {
 }
 
 void opcontrol() {
-	Autonomous auton;
-
   Chassis chassis;
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
@@ -60,7 +56,7 @@ void opcontrol() {
 	lift.setState(LiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
 	MobileGoal mobileGoal;
-	mobileGoal.setState(MobileGoalState::SETUP); // Controls Mobile Goal.
+	mobileGoal.setState(MobileGoalState::UP); // Controls Mobile Goal.
 
   while (true) {
     pros::delay(5);
