@@ -173,11 +173,13 @@ Chassis &Chassis::eDrive(double e_target_, double accel_rate, double decel_rate,
   return *this;
 }
 
-Chassis &Chassis::drive(coords point, bool reverse, double rate, double driveSpeed, double turnRate, double turnSpeed){
+Chassis &Chassis::drive(coords endPoint, coords controlPoint ,bool reverse, double rate, double driveSpeed, double turnRate, double turnSpeed){
   
   macro::print("POINT ", 0);
-  target.x = point.x;
-  target.y = point.y;
+  target.x = endPoint.x;
+  target.y = endPoint.y;
+  target.controlX = controlPoint.x;
+  target.controlY = controlPoint.y;
   target.accel_rate = rate;
   target.speedDrive = driveSpeed;
   target.rateTurn = turnRate;
@@ -281,46 +283,12 @@ void Chassis::run() {
     }
 
     case ChassisState::POINT: {
-      // Drive part.
-      driveError = hypot(target.x - *posX, target.y - *posY);
+      for ( float t = 0; t <= 1; t += 0.01){
+      target.x = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).x;
+      target.y = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).y;
 
-      // Turn part.
-      target.theta = atan2(target.y - *posY, target.x - *posX);
-    
-      turnError = ( target.theta - macro::toRad(*theta) );
-      turnError = atan2( sin( turnError ), cos( turnError ) );
-      turnError = macro::toDeg(turnError) + 90; 
-      // if(target.reverse) turnError -= 180;
-
-      // PID Calcs.
-      drive_output = drive_PID.calculate(driveError);
-      turn_output = turn_PID.calculate(turnError);
-      
-      // Slew Calcs.
-      LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
-      TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
-
-      macro::print("Drive: ", drive_PID.getError());
-      macro::print("Turn: ", turn_PID.getError());
-
-      if (target.reverse) {
-        left(-LslewOutput  - TslewOutput);
-        right(-LslewOutput + TslewOutput);
-      } else {
-        left(LslewOutput - TslewOutput);
-        right(LslewOutput + TslewOutput);
+      moveToPoint(target);
       }
-
-      if(fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <= turn_tol){ //drive_PID.getError()) <= tol && fabs(turn_PID.getError()) <= 0.75
-        left(0);
-        right(0);
-        withGains().withTurnGains().withTol();
-        reset();
-        isSettled = true;
-        mode = ChassisState::IDLE;
-        goto end;
-      }
-
       break;
     }
 
@@ -432,6 +400,44 @@ void Chassis::right(double input){
   RF.move_voltage(input);
   RM.move_voltage(input);
   RB.move_voltage(input);
+}
+
+void Chassis::moveToPoint(ChassisTarget target) {
+  do{
+  // Drive part.
+  driveError = hypot(target.x - *posX, target.y - *posY);
+
+  // Turn part.
+  target.theta = atan2(target.y - *posY, target.x - *posX);
+
+  turnError = (target.theta - macro::toRad(*theta));
+  turnError = atan2(sin(turnError), cos(turnError));
+  // turnError = macro::toDeg(turnError) + 90;
+  if(target.reverse) turnError -= 180;
+
+  // PID Calcs.
+  drive_output = drive_PID.calculate(driveError);
+  turn_output = turn_PID.calculate(turnError);
+
+  // Slew Calcs.
+  LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true)
+                    .withLimit(target.speedDrive)
+                    .calculate(drive_output);
+  TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true)
+                    .withLimit(target.speedTurn)
+                    .calculate(turn_output);
+
+  macro::print("Drive: ", drive_PID.getError());
+  macro::print("Turn: ", turn_PID.getError());
+
+  if (target.reverse) {
+    left(-LslewOutput - TslewOutput);
+    right(-LslewOutput + TslewOutput);
+  } else {
+    left(LslewOutput - TslewOutput);
+    right(LslewOutput + TslewOutput);
+  }}
+  while( fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <=turn_tol );
 }
 
 void Chassis::stop() { isRunning = false; }

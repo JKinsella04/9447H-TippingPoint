@@ -1,20 +1,18 @@
 #pragma once
-#include "main.h"
 #include "globals.hpp"
+#include "misc.hpp"
 
 #define CONVERSION 4169.079328314997 // Convert 2.75in Wheels to Inches with V5 rotation Sensor.
 #define BASE_CONVERSION 35.2589412388  // Convert 3.25 to Inches with Motor Encoders.
 #define DRIVE_CONVERSION 94.48818897637795 // Convert joystick input to scale for voltage.
 #define driveErr 0
 #define turnErr 1
-struct coords {
-    double x;
-    double y;
-};
 
 struct ChassisTarget {
     double x;
     double y;
+    double controlX;
+    double controlY;
     double theta;
     double thetaTwo;
     double speedDrive;
@@ -120,7 +118,7 @@ class Chassis {
     /*
     Updates ChassisState and sets target position from given (x,y) coords.
     */
-    Chassis& drive(coords point, bool reverse = false, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);
+    Chassis& drive(coords endPoint, coords controlPoint, bool reverse = false, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);
 
     /*
     Updates ChassisState and sets target theta.
@@ -141,6 +139,8 @@ class Chassis {
     void left(double input);
 
     void right(double input);
+
+    void moveToPoint(ChassisTarget target);
 
     void stop();
 

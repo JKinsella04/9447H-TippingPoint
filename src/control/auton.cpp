@@ -75,4 +75,6 @@ void skills(){
 
 // Testing
 void test() {
+  robotPos.setState(PositionTracker::ODOM);
+  chassis.drive({500,500}, {250,250}).waitUntilSettled();
 }

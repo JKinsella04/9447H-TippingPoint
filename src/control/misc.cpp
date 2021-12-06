@@ -34,6 +34,28 @@ double toDeg(double radian){
   return radian * 180/PI;
 }
 
+coords quadracticBezier ( coords p0, coords p1, coords p2, double t){
+  coords cp;
+  cp.x = p1.x * 2 - ( p0.x + p2.x ) /2;
+  cp.y = p1.y * 2 - ( p0.y + p2.y ) /2;
+  
+  coords pFinal;
+  pFinal.x = pow(1 - t, 2) * p0.x + (1 - t) * 2 * t * cp.x + t * t * p2.x;
+  pFinal.y = pow(1 - t, 2) * p0.y + (1 - t) * 2 * t * cp.y + t * t * p2.y;
+  return pFinal;
+}
+
+coords cubicBezier ( coords p0, coords p1, coords p2, coords p3, double t){
+  coords cp;
+  cp.x = p1.x * 2 - ( p0.x + p2.x ) /2;
+  cp.y = p1.y * 2 - ( p0.y + p2.y ) /2;
+
+  coords pFinal;
+  pFinal.x = pow( 1 - t, 3) * p0.x + pow( 1 - t, 2) * 3 * t * cp.x + (1 - t) * 3 * t * t * p2.x + t * t * t * p3.x;
+  pFinal.y = pow( 1 - t, 3) * p0.y + pow( 1 - t, 2) * 3 * t * cp.y + (1 - t) * 3 * t * t * p2.y + t * t * t * p3.y;
+  return pFinal;
+}
+
 Slew::Slew(double accel_) : accel(accel_), decel(0) { noDecel = true; }
 
 Slew::Slew(double accel_, double decel_) : accel(accel_), decel(decel_) {
@@ -173,5 +195,4 @@ double PID::calculate(double target, double current) {
 double PID::getError() { return error; }
 
 void PID::reset(){ output = target = current = error = integral = derivative = prevError = 0; }
-
 } // namespace macro

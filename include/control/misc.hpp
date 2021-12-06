@@ -1,8 +1,10 @@
 #pragma once
 #include "globals.hpp"
-#include "main.h"
 
-
+struct coords {
+    double x;
+    double y;
+};
 namespace conveyer {
 /*
 Set speed for the conveyer.
@@ -48,6 +50,27 @@ double toRad(double degree);
 convert given radian to degree.
 */
 double toDeg(double radian);
+
+/*
+Bezier Curve Calculation.
+p0 - Start Point
+p1 - Control Point
+p2 - End Point
+t - Increment
+pFinal - Curve Output
+*/
+coords quadracticBezier( coords p0, coords p1, coords p2, double t);
+
+/*
+Bezier Curve Calculation.
+p0 - Start Point
+p1 - Control Point
+p2 - 2nd Control Point
+p2 - End Point
+t - Increment
+pFinal - Curve Output
+*/
+coords cubicBezier ( coords p0, coords p1, coords p2, coords p3, double t);
 
 class Slew {
 public:
