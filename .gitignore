@@ -1,4 +1,3 @@
-.cache/
 # Compiled Object files
 *.o
 *.obj
@@ -8,6 +7,7 @@
 *.elf
 
 # PROS
+.cache/
 bin/
 .vscode/
 compile_commands.json
