@@ -2,35 +2,35 @@
 #include "main.h"
 #include "globals.hpp"
 
-enum class LiftState { 
+enum class FrontLiftState { 
     DOWN, MIDDLE, UP, OPCONTROL
 }; 
 
-class Lift{
+class FrontLift{
   public:
   
-  LiftState getState();  
+  FrontLiftState getState();  
   
   /*
-  Updates LiftState to either ZERO, UP, OPCONTROL, IDLE.
-  @param LiftState s wanted state.
+  Updates FrontLiftState to either ZERO, UP, OPCONTROL, IDLE.
+  @param FrontLiftState s wanted state.
   */
-  Lift& setState(LiftState s);
+  FrontLift& setState(FrontLiftState s);
 
   /*
-  Sets the lift's clamp.
+  Sets the FrontLift's clamp.
   @param bool clamp_ True for clamped False for released.
   */
-  Lift& setClamp(bool state_);
+  FrontLift& setClamp(bool state_);
 
   /*
-  Sets the lift's clamp once the robot has moved far enough.
+  Sets the FrontLift's clamp once the robot has moved far enough.
   @param bool clamp_ True for clamped False for released.
   */
-  Lift& delayClamp(bool state_);
+  FrontLift& delayClamp(bool state_);
 
   /*
-  Sets lift motor brake type.
+  Sets FrontLift motor brake type.
   @param pros::motor_brake_mode_e_t brake type.
   */
   void setBrakeType(pros::motor_brake_mode_e_t state);
@@ -41,7 +41,7 @@ class Lift{
   void waitUntilSettled();
 
   /*
-  tares position of lift motors.
+  tares position of FrontLift motors.
   */
   void reset();
   
@@ -53,7 +53,7 @@ class Lift{
   private:
   static bool isRunning;
   static bool isSettled;
-  static bool isDelayingClamp, clampState, lastClampState, checkLift;
+  static bool isDelayingClamp, clampState, lastClampState, checkFrontLift;
 
   static double output, target, current, tol, slewOutput;
 

@@ -3,13 +3,16 @@
 #include "gui.hpp"
 #include "auton.hpp"
 #include "chassis.hpp"
+#include "frontLift.hpp"
+#include "backLift.hpp"
 #include "positionTracking.hpp"
 #include "misc.hpp"
-#include <sstream>
 
 static Autonomous auton;
 static Chassis chassis;
 static Position robotPos;
+static FrontLift frontLift;
+static BackLift backLift;
 
 bool Display::isRunning = false, Display::isInitalized = false;
 
@@ -47,10 +50,12 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     robotPos.calibrateGyro().resetDriveBase().reset();
     break;
   case 4:
+    frontLift.reset();
     break;
   case 5:{
     clampIsToggled = !clampIsToggled;
-    clamp.set_value(clampIsToggled);
+    frontClamp.set_value(clampIsToggled);
+    backClamp.set_value(clampIsToggled);
     break;
   }
   case 6: {

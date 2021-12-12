@@ -1,16 +1,16 @@
 #include "auton.hpp"
 #include "chassis.hpp"
 #include "globals.hpp"
-#include "mobileGoal.hpp"
+#include "backLift.hpp"
 #include "positionTracking.hpp"
-#include "lift.hpp"
+#include "frontLift.hpp"
 #include "misc.hpp"
 
 // Class Init
 Position robotPos;
 static Chassis chassis;
-MobileGoal mobileGoal;
-Lift lift;
+BackLift backLift;
+FrontLift frontLift;
 
 std::string Autonomous::name;
 
@@ -61,8 +61,8 @@ void Autonomous::runAuton() {
 
 // Match Autons
 void awp() {
-  lift.setState(LiftState::UP).setClamp(true).waitUntilSettled();
-  mobileGoal.setState(MobileGoalState::UP);
+  frontLift.setState(FrontLiftState::UP).setClamp(true).waitUntilSettled();
+  backLift.setState(BackLiftState::UP);
   conveyer::spin(127);  
 }
 

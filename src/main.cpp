@@ -4,10 +4,9 @@
 #include "control/chassis.hpp"
 #include "control/gui.hpp"
 #include "control/auton.hpp"
-#include "control/mobileGoal.hpp"
+#include "control/backLift.hpp"
+#include "control/frontLift.hpp"
 #include "control/positionTracking.hpp"
-#include "control/lift.hpp"
-#include "control/mobileGoal.hpp"
 #include "globals.hpp"
 
 void initialize() {
@@ -16,12 +15,12 @@ void initialize() {
 	Position robotPos;	 
 	Chassis chassis(robotPos.getRotation(), robotPos.getThetaDeg(), robotPos.getX(), robotPos.getY());
  	Display display;
-	Lift lift;
-	MobileGoal mobileGoal;
+	FrontLift frontLift;
+	BackLift backLift;
 	
 	// Sensor and Motor  
 	robotPos.resetDriveBase().calibrateGyro().setState(PositionTracker::RELATIVE);
-	lift.reset();	
+	frontLift.reset();	
 
 	// Threads
 	pros::Task PositionController(robotPos.start, NULL, "Position Controller");
@@ -29,10 +28,10 @@ void initialize() {
 	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");
 	chassis.setBrakeType(HOLD);
 
-	pros::Task LiftController(lift.start, NULL, "Lift Controller");
-	lift.setBrakeType(HOLD);
+	pros::Task LiftController(frontLift.start, NULL, "FrontLift Controller");
+	frontLift.setBrakeType(HOLD);
 	
-	pros::Task MobileGoalController(mobileGoal.start, NULL, "MobileGoal Controller");
+	pros::Task backLiftController(backLift.start, NULL, "BackLift Controller");
 
 	pros::Task DisplayController(display.start, NULL, "Display Controller");
 	DisplayController.set_priority(TASK_PRIORITY_MIN);
@@ -52,11 +51,11 @@ void opcontrol() {
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
 
-	Lift lift;
-	lift.setState(LiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
+	FrontLift frontLift;
+	frontLift.setState(FrontLiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
-	MobileGoal mobileGoal;
-	mobileGoal.setState(MobileGoalState::UP); // Controls Mobile Goal.
+	BackLift backLift;
+	backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
 
   while (true) {
     pros::delay(5);

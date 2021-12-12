@@ -19,6 +19,6 @@ extern pros::Motor LF, LM, LB, RF, RM, RB;
 //Inertial Declarations
 extern pros::Imu lf_Imu, lb_Imu, rf_Imu, rb_Imu;
 
-extern pros::ADIDigitalOut clamp, mg;
+extern pros::ADIDigitalOut frontClamp, backClamp, backArm;
 
 extern pros::Gps gps;
