@@ -12,15 +12,6 @@ void print(std::string s, double value){
   std::cout << s << value << std::endl;
 }
 
-double angleWrap(double rad){
-  while(rad < -PI){
-    rad += 2 * PI;
-  }
-  while(rad > PI){
-    rad -= 2 * PI;
-  }
-  return rad;
-}
 
 double clip(double n, double lower, double upper) {
   return std::max(lower, std::min(n, upper));

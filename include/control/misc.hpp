@@ -18,26 +18,11 @@ void spin(double target, double speed);
 
 } // namespace conveyer
 namespace macro {
-
-struct Point {
-  double x;
-  double y;
-  double xRoot1;
-  double yRoot1;
-  double xRoot2;
-  double yRoot2;
-};
-
 /*
 Print to terminal.
 */
 void print(std::string s, double value);
 
-/**
- * Makes sure an angle is within the range -180 to 180 degrees.
- * @param rad angle in radians
- */
-double angleWrap(double rad);
 /**
 takes a value and clips it between a lower and upper limit.
 */
