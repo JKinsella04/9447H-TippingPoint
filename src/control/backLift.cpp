@@ -55,7 +55,8 @@ void BackLift::run() {
       break;
     }
     }
-
+    
+    if(master.get_digital(DIGITAL_DOWN)) conveyer::spin(-127);
     end:
 
     pros::delay(10);

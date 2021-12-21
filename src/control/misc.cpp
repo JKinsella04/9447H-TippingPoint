@@ -161,7 +161,7 @@ PID& PID::setError(double error_) {
   calcErr = false;
   error = error_; 
   return *this;
-  }
+}
 
 double PID::calculate(double target, double current) {
   // Proportional Calculation

@@ -43,20 +43,19 @@ Position& Position::setState(PositionTracker s){
 
 Position& Position::resetDriveBase() {
   LF.tare_position();
+  LM.tare_position();
   LB.tare_position();
   RF.tare_position();
+  RM.tare_position();
   RB.tare_position();
   return *this;
 }
 
 Position& Position::calibrateGyro() {
-  lf_Imu.reset();
-  lb_Imu.reset();
-  rf_Imu.reset();
-  rb_Imu.reset();
+  L_Imu.reset();
+  R_Imu.reset();
   
-  while(lf_Imu.is_calibrating() || lb_Imu.is_calibrating() || rf_Imu.is_calibrating() || rb_Imu.is_calibrating()) {pros::delay(5);}
-
+  while(L_Imu.is_calibrating() || R_Imu.is_calibrating() ) {pros::delay(5);}
   return *this;
 }
 
@@ -75,15 +74,15 @@ void Position::run() {
 
     switch (PositionTrackerState) {
     case PositionTracker::RELATIVE: {
-      if(lf_Imu.get_heading() > 357 || lb_Imu.get_heading() > 357  || rf_Imu.get_heading() > 357 || rb_Imu.get_heading() > 357){ // Account for imu drift.
+      if(L_Imu.get_heading() > 357 || R_Imu.get_heading() > 357){ // Account for imu drift.
         thetaDeg = 0;
       }else{
-        thetaDeg = ( lf_Imu.get_heading() + lb_Imu.get_heading() + rf_Imu.get_heading() + rb_Imu.get_heading() )/4;
+        thetaDeg = ( L_Imu.get_heading() + R_Imu.get_heading() )/2;
       }
 
       thetaRad = macro::toRad(thetaDeg);
 
-      rotation = ( LF.get_position() + LB.get_position() + RF.get_position() + RB.get_position() ) /4;
+      rotation = ( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position()+ RM.get_position() + RB.get_position() ) /6;
       
       macro::print("Theta: ", thetaDeg); // Debug
       break;
@@ -102,11 +101,11 @@ void Position::run() {
       break;
     }
     case PositionTracker::ODOM: {
-      thetaRad = abs(lf_Imu.get_heading() - 360) * (PI / 180);
+      thetaRad = abs(L_Imu.get_heading() - 360) * (PI / 180);
       thetaDeg = macro::toDeg(thetaRad);
 
-      currentL = ( LF.get_position() + LB.get_position() ) / 2;
-      currentR = ( RF.get_position() + RB.get_position() ) / 2;
+      currentL = ( LF.get_position() + LM.get_position()+ LB.get_position() ) / 3;
+      currentR = ( RF.get_position() + RM.get_position()+ RB.get_position() ) / 3;
 
       deltaL = currentL - lastL;
       deltaR = currentR - lastR;

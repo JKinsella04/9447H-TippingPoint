@@ -21,7 +21,7 @@ pros::Motor LF(20, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             RB(1, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
 
 // Inertial sensor Definitions //
-pros::Imu lf_Imu(16), lb_Imu(9), rf_Imu(19), rb_Imu(8);
+pros::Imu L_Imu(16), R_Imu(9);
 
 // Pneumatic Definitions //
 pros::ADIDigitalOut frontClamp ('H'),

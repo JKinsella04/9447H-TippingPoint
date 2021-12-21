@@ -1,6 +1,7 @@
 #include "frontLift.hpp"
-#include "misc.hpp"
 #include "chassis.hpp"
+#include "misc.hpp"
+
 
 Chassis chassis;
 
@@ -9,47 +10,47 @@ FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
 macro::PID FrontLift_PID(20, 0.1, 5);
 macro::Slew FrontLift_Slew(600);
 
-double FrontLift::output = 0, FrontLift::target = 0, FrontLift::tol = 75, FrontLift::slewOutput = 0,
-      FrontLift::current = arm.get_position();
+double FrontLift::output = 0, FrontLift::target = 0, FrontLift::tol = 75,
+       FrontLift::slewOutput = 0, FrontLift::current = arm.get_position();
 
 double tempFrontLiftPos;
 
-bool FrontLift::isRunning = false, FrontLift::isSettled = true, FrontLift::isDelayingClamp = false, FrontLift::clampState = false, FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = false;
+bool FrontLift::isRunning = false, FrontLift::isSettled = true,
+     FrontLift::isDelayingClamp = false, FrontLift::clampState = false,
+     FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = false;
 
-FrontLiftState FrontLift::getState(){
-  return FrontLiftMode;
-}
+FrontLiftState FrontLift::getState() { return FrontLiftMode; }
 
-FrontLift& FrontLift::setState(FrontLiftState s){
+FrontLift &FrontLift::setState(FrontLiftState s) {
   isSettled = false;
   FrontLiftMode = s;
   return *this;
 }
 
-FrontLift& FrontLift::setClamp(bool state_){
+FrontLift &FrontLift::setClamp(bool state_) {
   clampState = state_;
   return *this;
 }
 
-FrontLift& FrontLift::delayClamp(bool state_){
+FrontLift &FrontLift::delayClamp(bool state_) {
   isDelayingClamp = true;
   clampState = state_;
   return *this;
 }
 
-void FrontLift::setBrakeType(pros::motor_brake_mode_e_t state){
+void FrontLift::setBrakeType(pros::motor_brake_mode_e_t state) {
   arm.set_brake_mode(state);
 }
 
-void FrontLift::waitUntilSettled(){
-  while(!isSettled){ pros::delay(20);}
+void FrontLift::waitUntilSettled() {
+  while (!isSettled) {
+    pros::delay(20);
+  }
 }
 
-void FrontLift::reset(){
-  arm.tare_position();
-}
+void FrontLift::reset() { arm.tare_position(); }
 
-void FrontLift::start(void * ignore) {
+void FrontLift::start(void *ignore) {
   if (!isRunning) {
     pros::delay(500);
     FrontLift *that = static_cast<FrontLift *>(ignore);
@@ -62,11 +63,12 @@ void FrontLift::run() {
 
   while (isRunning) {
 
-    if(pros::competition::is_disabled()) goto end;
+    if (pros::competition::is_disabled())
+      goto end;
 
     switch (FrontLiftMode) {
     case FrontLiftState::DOWN: {
-      FrontLift_PID.set(10,0.01,5);
+      FrontLift_PID.set(10, 0.01, 5);
       move(0);
       break;
     }
@@ -81,25 +83,26 @@ void FrontLift::run() {
       break;
     }
     case FrontLiftState::OPCONTROL: {
-      current = arm.get_position();
       // FrontLift Control
+      current = arm.get_position();
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
         FrontLift_PID.set(20, 0.1, 5);
         move(2000);
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
-        FrontLift_PID.set(10,0.01,5);
+        FrontLift_PID.set(10, 0.01, 5);
         move(0);
-      } else if(current <= 500 && lf_Imu.get_roll() >= 10 || lf_Imu.get_roll() <= -10 ){
+      } else if (current <= 500 && L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) {
         checkFrontLift = true;
         FrontLift_PID.set(21, 0.2, 7.5);
         move(500);
-      } else{
-          if(checkFrontLift) current = arm.get_position();
-          FrontLift_Slew.reset();
-          move(current);
-          checkFrontLift = false;
+      } else {
+        if (checkFrontLift)
+          current = arm.get_position();
+        FrontLift_Slew.reset();
+        move(current);
+        checkFrontLift = false;
       }
 
       // Clamp Control
@@ -112,6 +115,7 @@ void FrontLift::run() {
     }
     }
 
+    // Delayed Clamp Control
     if (clampState != lastClampState && isDelayingClamp) {
       if (abs(chassis.getDriveError()) < chassis.getTol() * 2) {
         frontClamp.set_value(clampState);
@@ -122,13 +126,13 @@ void FrontLift::run() {
       lastClampState = clampState;
     }
 
-    end:
+  end:
 
     pros::delay(10);
   }
 }
 
-void FrontLift::move(double target){
+void FrontLift::move(double target) {
   current = arm.get_position();
 
   output = FrontLift_PID.calculate(target, current);
@@ -140,8 +144,6 @@ void FrontLift::move(double target){
   if (fabs(FrontLift_PID.getError()) < tol) {
     if (!pros::competition::is_autonomous()) {
       FrontLiftMode = FrontLiftState::OPCONTROL;
-    } else {
-      // FrontLiftMode = FrontLiftState::IDLE;
     }
     isSettled = true;
   }

@@ -12,7 +12,7 @@ class BackLift{
   BackLiftState getState();  
   
   /*
-  Updates BackLiftState to either ZERO, UP, OPCONTROL, IDLE.
+  Updates BackLiftState to either ZERO, UP, OPCONTROL.
   @param BackLiftState s wanted state.
   */
   BackLift& setState(BackLiftState s);
@@ -28,8 +28,5 @@ class BackLift{
 
   private:
   static bool isRunning;
-
-  void move(double target);
-
 };
 

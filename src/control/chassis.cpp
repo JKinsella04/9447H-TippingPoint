@@ -330,12 +330,12 @@ void Chassis::run() {
       left(leftOutput);
       right(rightOutput);
 
-      if (lf_Imu.get_roll() >= 10 || lf_Imu.get_roll() <= -10) setBrakeType(HOLD);
+      if (L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) setBrakeType(HOLD);
       break;
     }
 
     case ChassisState::BALANCE: {
-      current = lf_Imu.get_roll();
+      current = L_Imu.get_roll();
       drive_output = drive_PID.calculate(0, current);
 
       LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);

@@ -12,7 +12,7 @@ class FrontLift{
   FrontLiftState getState();  
   
   /*
-  Updates FrontLiftState to either ZERO, UP, OPCONTROL, IDLE.
+  Updates FrontLiftState to either ZERO, UP, OPCONTROL.
   @param FrontLiftState s wanted state.
   */
   FrontLift& setState(FrontLiftState s);
