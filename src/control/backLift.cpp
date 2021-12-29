@@ -31,27 +31,33 @@ void BackLift::run() {
 
     switch (BackLiftMode) {
     case BackLiftState::DOWN: {
-      backArm.set_value(true);
-      backClamp.set_value(false);
+      backArm.set_value(false);
+      backClamp.set_value(true);
       conveyer::spin(0);
       break;
     }
     case BackLiftState::UP: {
-      backArm.set_value(false);
-      backClamp.set_value(true);
+      backArm.set_value(true);
+      backClamp.set_value(false);
       conveyer::spin(127);
       break;
     }
     case BackLiftState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP)) {
-        backArm.set_value(false);
-        backClamp.set_value(true);
+        backArm.set_value(true);
+        // backClamp.set_value(false);
         conveyer::spin(127);
       } else if (master.get_digital(DIGITAL_X)) {
-        backArm.set_value(true);
-        backClamp.set_value(false);
+        backArm.set_value(false);
+        // backClamp.set_value(true);
         conveyer::spin(0);
       }
+      if(master.get_digital(DIGITAL_DOWN)){
+        backClamp.set_value(true);
+      } else if(master.get_digital(DIGITAL_B)){
+        backClamp.set_value(false);
+      }
+
       break;
     }
     }
