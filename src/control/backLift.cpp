@@ -58,11 +58,10 @@ void BackLift::run() {
         backClamp.set_value(false);
       }
 
+      if(master.get_digital(DIGITAL_LEFT)) conveyer::spin(-127);
       break;
     }
     }
-    
-    if(master.get_digital(DIGITAL_DOWN)) conveyer::spin(-127);
     end:
 
     pros::delay(10);
