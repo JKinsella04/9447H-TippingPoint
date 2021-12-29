@@ -58,6 +58,10 @@ void opcontrol() {
 	backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
 
   while (true) {
+		for (int delay = 10000; delay > 0; delay -= 95){
+		pros::delay(delay);
+		master.rumble("..-");
+		}
     pros::delay(5);
  	}
 }
