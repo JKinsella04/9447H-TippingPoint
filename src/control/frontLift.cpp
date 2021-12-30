@@ -96,7 +96,7 @@ void FrontLift::run() {
         move(500);
       } else {
           current = arm.get_position();
-          while (!master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
+          while (!master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
             move(current);
             pros::delay(5);
           }

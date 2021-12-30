@@ -2,11 +2,10 @@
 #include "control/misc.hpp"
 #include "globals.hpp"
 #include "positionTracking.hpp"
-#include "pros/imu.h"
-#include "pros/rtos.h"
-#include "pros/rtos.hpp"
+#include "frontLift.hpp"
 
 static Position robotPos;
+static FrontLift frontLift;
 
 // PID Init
 macro::PID drive_PID(0.5, 0.01, 0.25);
@@ -323,12 +322,17 @@ void Chassis::run() {
     case ChassisState::OPCONTROL: {
       double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
-      
-      double leftOutput = leftSlew.withGains(900,900,true).withLimit(12000).calculate(leftJoystick);
-      double rightOutput = rightSlew.withGains(900,900,true).withLimit(12000).calculate(rightJoystick);
 
-      left(leftOutput);
-      right(rightOutput);
+      if (arm.get_position() >= 500) { // Slow Decel when holding a goal.
+        LslewOutput = leftSlew.withGains(900, 450, true).withLimit(12000).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(900, 450, true).withLimit(12000).calculate(rightJoystick);
+      } else {
+        LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
+      }
+
+      left(LslewOutput);
+      right(RslewOutput);
 
       if (L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) setBrakeType(HOLD);
       break;
