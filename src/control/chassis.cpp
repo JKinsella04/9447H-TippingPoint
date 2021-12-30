@@ -323,9 +323,9 @@ void Chassis::run() {
       double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
 
-      if (arm.get_position() >= 500) { // Slow Decel when holding a goal.
-        LslewOutput = leftSlew.withGains(900, 450, true).withLimit(12000).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(900, 450, true).withLimit(12000).calculate(rightJoystick);
+      if (arm.get_position() >= 500) { // Slow accel when holding a goal.
+        LslewOutput = leftSlew.withGains(450, 900, true).withLimit(12000).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(450, 900, true).withLimit(12000).calculate(rightJoystick);
       } else {
         LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
         RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
