@@ -44,20 +44,15 @@ void BackLift::run() {
     }
     case BackLiftState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP)) {
+        backClamp.set_value(true);
+        pros::delay(50);
         backArm.set_value(true);
-        // backClamp.set_value(false);
         conveyer::spin(127);
       } else if (master.get_digital(DIGITAL_X)) {
         backArm.set_value(false);
-        // backClamp.set_value(true);
+        backClamp.set_value(false);
         conveyer::spin(0);
       }
-      if(master.get_digital(DIGITAL_DOWN)){
-        backClamp.set_value(true);
-      } else if(master.get_digital(DIGITAL_B)){
-        backClamp.set_value(false);
-      }
-
       if(master.get_digital(DIGITAL_LEFT)) conveyer::spin(-127);
       break;
     }

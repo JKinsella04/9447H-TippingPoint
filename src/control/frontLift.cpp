@@ -69,7 +69,7 @@ void FrontLift::run() {
     switch (FrontLiftMode) {
     case FrontLiftState::DOWN: {
       FrontLift_PID.set(10, 0.01, 5);
-      move(0);
+      move(50);
       break;
     }
     case FrontLiftState::MIDDLE: {
@@ -84,23 +84,26 @@ void FrontLift::run() {
     }
     case FrontLiftState::OPCONTROL: {
       // FrontLift Control
-      current = arm.get_position();
+      double target;
       if (master.get_digital(DIGITAL_L1)) {
-        FrontLift_PID.set(40, 0.1, 5);
-        move(2000);
+        checkFrontLift = true;
+        FrontLift_PID.set(30, 0.1, 5);
+        target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
+        checkFrontLift = true;
         FrontLift_PID.set(20, 0.01, 5);
-        move(0);
-      } else if (current <= 500 && L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) {
-        FrontLift_PID.set(40, 0.2, 7.5);
-        move(500);
+        target = 50;
+      } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) {
+        FrontLift_PID.set(30, 0.2, 7.5);
+        target = 750;
       } else {
-          current = arm.get_position();
-          while (!master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
-            move(current);
-            pros::delay(5);
-          }
+        if(checkFrontLift){
+        FrontLift_Slew.reset();
+        target = arm.get_position();
+        checkFrontLift = false;
+        }
       }
+      move(target);
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {

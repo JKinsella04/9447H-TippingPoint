@@ -334,7 +334,12 @@ void Chassis::run() {
       left(LslewOutput);
       right(RslewOutput);
 
-      if (L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) setBrakeType(HOLD);
+      if (L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) {
+        setBrakeType(HOLD);
+      }
+      else{
+        setBrakeType(COAST);
+      }
       break;
     }
 

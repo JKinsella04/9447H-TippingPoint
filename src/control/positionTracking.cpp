@@ -84,7 +84,7 @@ void Position::run() {
 
       rotation = ( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position()+ RM.get_position() + RB.get_position() ) /6;
       
-      macro::print("Theta: ", thetaDeg); // Debug
+      // macro::print("Theta: ", thetaDeg); // Debug
       break;
     }
     case PositionTracker::GPS: {
