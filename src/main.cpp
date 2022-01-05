@@ -8,6 +8,9 @@
 #include "control/frontLift.hpp"
 #include "control/positionTracking.hpp"
 #include "globals.hpp"
+#include "okapi/api/units/QTime.hpp"
+#include "okapi/impl/util/timer.hpp"
+#include "pros/rtos.h"
 
 void initialize() {
 
@@ -57,11 +60,12 @@ void opcontrol() {
 	BackLift backLift;
 	backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
 
+	double offset = pros::c::millis();
+
   while (true) {
-		for (int delay = 10000; delay > 0; delay -= 95){
+		double time = pros::c::millis() - offset;
+		double delay = ( 75000 - time ) / 7500;
 		pros::delay(delay);
-		master.rumble("..-");
-		}
-    pros::delay(5);
+		master.rumble("..");
  	}
 }
