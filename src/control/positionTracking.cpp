@@ -55,7 +55,7 @@ Position& Position::calibrateGyro() {
   L_Imu.reset();
   R_Imu.reset();
   
-  while(L_Imu.is_calibrating() || R_Imu.is_calibrating() ) {pros::delay(5);}
+  while(L_Imu.is_calibrating() || R_Imu.is_calibrating() ) { pros::delay(5); }
   return *this;
 }
 
@@ -82,7 +82,7 @@ void Position::run() {
 
       thetaRad = macro::toRad(thetaDeg);
 
-      rotation = ( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position()+ RM.get_position() + RB.get_position() ) /6;
+      rotation = ( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position() + RM.get_position() + RB.get_position() ) /6;
       
       // macro::print("Theta: ", thetaDeg); // Debug
       break;
