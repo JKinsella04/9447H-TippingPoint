@@ -84,17 +84,16 @@ void FrontLift::run() {
     }
     case FrontLiftState::OPCONTROL: {
       // FrontLift Control
-      double target;
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
-        FrontLift_PID.set(30, 0.1, 5);
+        FrontLift_PID.set(20, 0.1, 5);
         target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
         FrontLift_PID.set(20, 0.01, 5);
         target = 50;
       } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) {
-        FrontLift_PID.set(30, 0.2, 7.5);
+        FrontLift_PID.set(20, 0.2, 7.5);
         target = 750;
       } else {
         if(checkFrontLift){
