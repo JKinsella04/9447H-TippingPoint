@@ -23,7 +23,7 @@ ChassisTarget target;
 ChassisState mode = ChassisState::IDLE;
 
 // Variable Init
-bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false, Chassis::checkDist = false,
+bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false, Chassis::justTurn = false,
      Chassis::checkErr = false;
 
 double *Chassis::theta, *Chassis::posX, *Chassis::posY, *Chassis::rotation;
@@ -107,7 +107,7 @@ void Chassis::reset(){
   RM.tare_position();
   RB.tare_position();
 
-  adjustAngle = turnComplete = checkDist = checkAccel = false;
+  adjustAngle = turnComplete = justTurn = checkAccel = false;
 
   mode = ChassisState::IDLE;
 }
@@ -122,10 +122,10 @@ Chassis &Chassis::withTurnGains(double kP_, double kI_, double kD_){
   return *this;
 }
 
-Chassis &Chassis::withTol(double drive_tol_, double turn_tol_, bool checkDist_) {
+Chassis &Chassis::withTol(double drive_tol_, double turn_tol_, bool justTurn_) {
   drive_tol = drive_tol_;
   turn_tol = turn_tol_;
-  checkDist = checkDist_;
+  justTurn = justTurn_;
   return *this;
 }
 
@@ -147,11 +147,12 @@ Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double 
   return *this;
 }
 
-Chassis &Chassis::drive(double target_, double rate, double speed) {
+Chassis &Chassis::drive(double target_,  double accel_rate, double decel_rate, double speed) {
   
   macro::print("DRIVE ", 0);
-  target.x = target_ * CONVERSION;
-  target.accel_rate = rate;
+  target.x = target_;
+  target.accel_rate = accel_rate;
+  target.decel_rate = decel_rate;
   target.speedDrive = speed;
   reset();
   isSettled = false;
@@ -259,6 +260,9 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
 
+      macro::print("DRIVE ERR", drive_PID.getError());
+      macro::print("TURN ERR", turn_PID.getError());
+
       if(!adjustAngle){
         left(LslewOutput);
         right(RslewOutput);
@@ -268,6 +272,15 @@ void Chassis::run() {
       }
 
       if ( fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol  && checkErr) { 
+        left(0);
+        right(0);
+        withGains().withTurnGains().withTol();
+        reset();
+        isSettled = true;
+        mode = ChassisState::IDLE;
+        goto end;
+      }
+      if( turnComplete && justTurn && fabs ( turn_PID.getError() < turn_tol) ){
         left(0);
         right(0);
         withGains().withTurnGains().withTol();

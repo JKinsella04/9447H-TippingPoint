@@ -40,6 +40,11 @@ class Position {
     double * getRotation();
 
     /*
+    Sets offset value for theta in Degrees.
+    */
+    void setThetaOffset(double offset_);
+
+    /*
     Return current state.
     */
     PositionTracker getState();
@@ -74,5 +79,5 @@ class Position {
 
       static double posX, posY, thetaDeg, thetaRad, error, rotation;
 
-      static double currentL, currentR, deltaL, deltaR, lastL, lastR;
+      static double currentL, currentR, deltaL, deltaR, lastL, lastR, offset;
 };

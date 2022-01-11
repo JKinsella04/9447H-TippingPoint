@@ -7,8 +7,8 @@ Chassis chassis;
 
 FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
 
-macro::PID FrontLift_PID(40, 0.1, 5);
-macro::Slew FrontLift_Slew(600);
+macro::PID FrontLift_PID(30, 1, 12.5);
+macro::Slew FrontLift_Slew(900,600);
 
 double FrontLift::output = 0, FrontLift::target = 0, FrontLift::tol = 75,
        FrontLift::slewOutput = 0, FrontLift::current = arm.get_position();
@@ -17,7 +17,7 @@ double tempFrontLiftPos;
 
 bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::isDelayingClamp = false, FrontLift::clampState = false,
-     FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = false;
+     FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
 
@@ -68,17 +68,17 @@ void FrontLift::run() {
 
     switch (FrontLiftMode) {
     case FrontLiftState::DOWN: {
-      FrontLift_PID.set(10, 0.01, 5);
+      FrontLift_PID.set(15, 0.01, 5);
       move(50);
       break;
     }
     case FrontLiftState::MIDDLE: {
-      FrontLift_PID.set(40, 0.2, 7.5);
+      FrontLift_PID.set(30, 1, 12.5);
       move(500);
       break;
     }
     case FrontLiftState::UP: {
-      FrontLift_PID.set(40, 0.2, 7.5);
+      FrontLift_PID.set(30, 1, 12.5);
       move(2000);
       break;
     }
@@ -86,14 +86,14 @@ void FrontLift::run() {
       // FrontLift Control
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
-        FrontLift_PID.set(20, 0.1, 5);
+        FrontLift_PID.set(30, 1, 12.5);
         target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
-        FrontLift_PID.set(20, 0.01, 5);
+        FrontLift_PID.set(15, 0.01, 5);
         target = 50;
       } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) {
-        FrontLift_PID.set(20, 0.2, 7.5);
+        FrontLift_PID.set(30, 1, 12.5);
         target = 750;
       } else {
         if(checkFrontLift){

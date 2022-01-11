@@ -51,6 +51,7 @@ void autonomous() {
 
 void opcontrol() {
   Chassis chassis;
+	chassis.reset();
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
 
@@ -64,8 +65,9 @@ void opcontrol() {
 
   while (true) {
 		double time = pros::c::millis() - offset;
-		double delay = ( 75000 - time ) / 7500;
+		double delay = ( 75000 - time ) / 7.5;
+		macro::print("DELAY ", delay);
 		pros::delay(delay);
-		master.rumble("..");
+		if(delay > 0) master.rumble("..");
  	}
 }

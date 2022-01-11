@@ -8,7 +8,7 @@ pros::c::gps_status_s_t Position::gpsData;
 
 double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
 
-double Position::currentL = 0, Position::currentR = 0, Position::deltaL = 0, Position::deltaR = 0, Position::lastL = 0, Position::lastR = 0;
+double Position::currentL = 0, Position::currentR = 0, Position::deltaL = 0, Position::deltaR = 0, Position::lastL = 0, Position::lastR = 0, Position::offset = 0;
 
 PositionTracker PositionTrackerState = PositionTracker::RELATIVE;
 
@@ -34,6 +34,10 @@ double * Position::getError() {
 
 double * Position::getRotation() {
   return &rotation;
+}
+
+void Position::setThetaOffset(double offset_){
+  offset = offset_;
 }
 
 Position& Position::setState(PositionTracker s){
@@ -74,10 +78,10 @@ void Position::run() {
 
     switch (PositionTrackerState) {
     case PositionTracker::RELATIVE: {
-      if(L_Imu.get_heading() > 357 || R_Imu.get_heading() > 357){ // Account for imu drift.
+      if(L_Imu.get_heading() > 359 || R_Imu.get_heading() > 359){ // Account for imu drift.
         thetaDeg = 0;
       }else{
-        thetaDeg = ( L_Imu.get_heading() + R_Imu.get_heading() )/2;
+        thetaDeg = ( ( L_Imu.get_heading() + R_Imu.get_heading() ) /2 ) + offset;
       }
 
       thetaRad = macro::toRad(thetaDeg);

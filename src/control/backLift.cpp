@@ -1,7 +1,7 @@
 #include "backLift.hpp"
 #include "misc.hpp"
 
-BackLiftState BackLiftMode = BackLiftState::UP;
+BackLiftState BackLiftMode = BackLiftState::DOWN;
 
 bool BackLift::isRunning = false;
 
@@ -32,14 +32,16 @@ void BackLift::run() {
     switch (BackLiftMode) {
     case BackLiftState::DOWN: {
       backArm.set_value(false);
-      backClamp.set_value(true);
+      backClamp.set_value(false);
       conveyer::spin(0);
       break;
     }
     case BackLiftState::UP: {
+      backClamp.set_value(true);
+      pros::delay(75);
       backArm.set_value(true);
-      backClamp.set_value(false);
       conveyer::spin(127);
+      macro::print("RINGS SCORED ", 1);
       break;
     }
     case BackLiftState::OPCONTROL: {
