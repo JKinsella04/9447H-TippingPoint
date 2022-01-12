@@ -64,6 +64,11 @@ class Position {
     */
     Position& calibrateGyro();  
 
+    /*
+    Set IMU offset.
+    */
+    Position& zero();
+
     static void start(void * ignore);
 
     void run();

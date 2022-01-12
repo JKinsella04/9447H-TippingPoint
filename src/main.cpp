@@ -19,7 +19,7 @@ void initialize() {
 	BackLift backLift;
 	
 	// Sensor and Motor  
-	robotPos.resetDriveBase().calibrateGyro().setState(PositionTracker::RELATIVE);
+	robotPos.resetDriveBase().calibrateGyro().zero().setState(PositionTracker::RELATIVE);
 	frontLift.reset();	
 
 	// Threads

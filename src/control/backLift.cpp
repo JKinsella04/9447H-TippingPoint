@@ -38,7 +38,7 @@ void BackLift::run() {
     }
     case BackLiftState::UP: {
       backClamp.set_value(true);
-      pros::delay(75);
+      pros::delay(100);
       backArm.set_value(true);
       conveyer::spin(127);
       macro::print("RINGS SCORED ", 1);
@@ -47,7 +47,7 @@ void BackLift::run() {
     case BackLiftState::OPCONTROL: {
       if (master.get_digital(DIGITAL_UP)) {
         backClamp.set_value(true);
-        pros::delay(50);
+        pros::delay(100);
         backArm.set_value(true);
         conveyer::spin(127);
       } else if (master.get_digital(DIGITAL_X)) {

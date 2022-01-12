@@ -63,6 +63,17 @@ Position& Position::calibrateGyro() {
   return *this;
 }
 
+Position& Position::zero(){
+  float left = abs( L_Imu.get_heading() - 360 ) * PI / 180;
+  float right = abs( R_Imu.get_heading() - 360 ) * PI / 180;
+
+  float x = ( cos( left + PI ) + cos( right + PI ) ) / 2;
+  float y = ( sin( left + PI ) + sin( right + PI ) ) / 2;
+
+  offset = abs( atan2f(y, x) + PI );
+  return *this;
+}
+
 void Position::start(void *ignore) {
   if(!isRunning) {
     pros::delay(500);
@@ -78,13 +89,15 @@ void Position::run() {
 
     switch (PositionTrackerState) {
     case PositionTracker::RELATIVE: {
-      if(L_Imu.get_heading() > 359 || R_Imu.get_heading() > 359){ // Account for imu drift.
-        thetaDeg = 0;
-      }else{
-        thetaDeg = ( ( L_Imu.get_heading() + R_Imu.get_heading() ) /2 ) + offset;
-      }
+    double inertL = abs( L_Imu.get_heading() ) * PI / 180;
+    double inertR = abs( R_Imu.get_heading() ) * PI / 180;
 
-      thetaRad = macro::toRad(thetaDeg);
+    float x = ( cos( inertL - offset + PI ) + cos( inertR - offset + PI ) ) / 2;
+    float y = ( sin( inertL - offset + PI ) + sin( inertR - offset + PI ) ) / 2;
+
+      thetaRad = abs( atan2f(y, x) + PI );
+      thetaDeg = macro::toDeg(thetaRad);
+      // thetaRad = macro::toRad(thetaDeg);
 
       rotation = ( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position() + RM.get_position() + RB.get_position() ) /6;
       

@@ -74,7 +74,7 @@ void FrontLift::run() {
     }
     case FrontLiftState::MIDDLE: {
       FrontLift_PID.set(30, 1, 12.5);
-      move(500);
+      move(750);
       break;
     }
     case FrontLiftState::UP: {
@@ -92,7 +92,7 @@ void FrontLift::run() {
         checkFrontLift = true;
         FrontLift_PID.set(15, 0.01, 5);
         target = 50;
-      } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) {
+      } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 15 || L_Imu.get_roll() <= -15) {
         FrontLift_PID.set(30, 1, 12.5);
         target = 750;
       } else {

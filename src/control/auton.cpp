@@ -62,30 +62,25 @@ void Autonomous::runAuton() {
 // Match Autons
 void awp() {
   backLift.setState(BackLiftState::UP);
-  pros::delay(200);
+  pros::delay(300);
   backLift.setState(BackLiftState::DOWN);
   chassis.drive(1050,75,450).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133, 0, 66).withTol(50, 5).waitUntilSettled();
   chassis.turn(0).withTurnGains(133,0,66).withTol(0,5).waitUntilSettled();
-  chassis.drive(-5050, 900, 450, 12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(266, 1, 133).withTol(50, 10).waitUntilSettled();
+  chassis.drive(-5000, 900, 450, 12000).withGains(15, 0, 6.25).withAngle(358).withTurnGains(266, 1, 133).withTol(50, 10).waitUntilSettled();
   backLift.setState(BackLiftState::UP);
   frontLift.setState(FrontLiftState::UP);
   chassis.drive(400).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();  
-  chassis.turn(90).withTurnGains(133,0,66).withTol(0,5).waitUntilSettled();
+  chassis.turn(85).withTurnGains(133,0,33).withTol(0,5).waitUntilSettled();
   chassis.drive(1500).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
+  frontLift.setState(FrontLiftState::DOWN);
   chassis.drive(-1000).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
   backLift.setState(BackLiftState::DOWN);
-  // backLift.setState(BackLiftState::DOWN);
-  // chassis.drive(3000,75,450).withAngle(100).withGains(30,0,15).withTurnGains(166,0,66).withTol(45,5).waitUntilSettled();
-  // frontLift.setClamp(true).setState(FrontLiftState::MIDDLE).waitUntilSettled();
-  // chassis.drive(-2350, 800).withGains(30,0,10).withAngle(330, 1000, 12000).withTurnGains(133,0,66).withTol(45,10).waitUntilSettled();
+  chassis.turn(75).withTurnGains(266, 0, 66).withTol(0, 5).waitUntilSettled();
+  chassis.drive(1750).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
+  frontLift.setClamp(true).setState(FrontLiftState::MIDDLE).waitUntilSettled();
+  // chassis.drive(-2000).withGains(30,0,10).withAngle(205, 322.5).withTurnGains(133,0,66).withTol(40,10).waitUntilSettled();
   // backLift.setState(BackLiftState::UP);
-  // chassis.drive(2000, 800).withGains(30,0,10).withAngle(180, 900, 12000).withTurnGains(133,0,66).withTol(45,10).waitUntilSettled();
-  // backLift.setState(BackLiftState::DOWN);
-  // chassis.drive(-200).withGains(30,0,7.5).withTol(45).waitUntilSettled();
-  // chassis.turn(0).withGains(133,0,66).waitUntilSettled();
-  // chassis.drive(-1500).withGains(30,0,7.5).withTol(45).waitUntilSettled();
-  // backLift.setState(BackLiftState::UP);
-  // chassis.drive(2000, 450).withGains(30,0,15).withAngle(270).withTurnGains(133,0,66).waitUntilSettled();
+  // chassis.drive(2000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(50,5).waitUntilSettled();
 }
 
 void elim() {
