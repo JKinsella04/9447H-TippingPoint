@@ -3,10 +3,6 @@
 #include "globals.hpp"
 #include "gif-pros/gifclass.hpp"
 
-
-//TODO: Debug Screen
-//TODO: Reset Screen
-
 LV_IMG_DECLARE(destiny) // background image is a destiny 2 emblem 
 LV_IMG_DECLARE(noAuton_IMG)
 LV_IMG_DECLARE(twoGoal_IMG)

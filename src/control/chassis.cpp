@@ -434,8 +434,8 @@ void Chassis::moveToPoint(ChassisTarget target) {
 
   turnError = (target.theta - macro::toRad(*theta));
   turnError = atan2(sin(turnError), cos(turnError));
-  // turnError = macro::toDeg(turnError) + 90;
-  if(target.reverse) turnError -= 180;
+  // turnError = macro::toDeg(turnError) + 90; // GPS
+  if(target.reverse) turnError -= 180; // ODOM
 
   // PID Calcs.
   drive_output = drive_PID.calculate(driveError);

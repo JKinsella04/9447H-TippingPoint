@@ -44,10 +44,10 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     autonomous();
     break;
   case 2: // Tab 3 control
-    chassis.reset();
+    robotPos.calibrateGyro();
     break;
   case 3:
-    robotPos.calibrateGyro().resetDriveBase().reset();
+    robotPos.resetDriveBase().reset();
     break;
   case 4:
     frontLift.reset();
@@ -59,9 +59,6 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     break;
   }
   case 6: {
-    break;
-  }
-  case 7:{
     if (chassis.getState() == ChassisState::IDLE)
       chassis.setState(ChassisState::DEBUG);
     else
@@ -197,9 +194,8 @@ void Display::tabSettings(lv_obj_t *parent) {
   lv_obj_t *resetpos = createButton(3, 0, 70, 200, 40, "Reset robotPos", parent, btn_click_action, &style_btn, &style_btn_released);
   lv_obj_t *resetLift = createButton(4, 0, 120, 200, 40, "Reset Lift", parent, btn_click_action, &style_btn, &style_btn_released);
 
-  lv_obj_t *toggleClamp = createButton(5, 250, 20, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *toggleDragger = createButton(6, 250, 70, 200, 40, "Toggle Draggers", parent, btn_click_action, &style_btn, &style_btn_released);
-  lv_obj_t *spinChassis = createButton(7, 250, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *toggleDragger = createButton(5, 250, 70, 200, 40, "Toggle Clamp", parent, btn_click_action, &style_btn, &style_btn_released);
+  lv_obj_t *spinChassis = createButton(6, 250, 120, 200, 40, "Spin Chassis", parent, btn_click_action, &style_btn, &style_btn_released);
 }
 
 void Display::start(void *ignore) {
