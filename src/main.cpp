@@ -8,9 +8,6 @@
 #include "control/frontLift.hpp"
 #include "control/positionTracking.hpp"
 #include "globals.hpp"
-#include "okapi/api/units/QTime.hpp"
-#include "okapi/impl/util/timer.hpp"
-#include "pros/rtos.h"
 
 void initialize() {
 

@@ -79,7 +79,7 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
   auton.setId(id);
 
   switch (id) {
-  case 1: lv_img_set_src(autonGraphic, &AWP_IMG); break;
+  case 1: lv_img_set_src(autonGraphic, &AWP); break;
   case 2: lv_img_set_src(autonGraphic, &twoGoal_IMG); break;
   case 3: lv_img_set_src(autonGraphic, &skills_IMG); break;
   
