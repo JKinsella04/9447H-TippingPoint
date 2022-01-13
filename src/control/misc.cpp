@@ -1,7 +1,7 @@
 #include "control/misc.hpp"
 
 namespace conveyer {
-void spin(double speed) { intake.move(speed); }
+void spin(double speed) { intake.move_velocity(speed); }
 
 void spin(double target, double speed) { intake.move_relative(target, speed); }
 } // namespace intake

@@ -40,7 +40,7 @@ void BackLift::run() {
       backClamp.set_value(true);
       pros::delay(100);
       backArm.set_value(true);
-      conveyer::spin(127);
+      conveyer::spin(600);
       macro::print("RINGS SCORED ", 1);
       break;
     }
@@ -49,14 +49,20 @@ void BackLift::run() {
         backClamp.set_value(true);
         pros::delay(100);
         backArm.set_value(true);
-        conveyer::spin(127);
+        conveyer::spin(600);
       } else if (master.get_digital(DIGITAL_X)) {
         backArm.set_value(false);
         backClamp.set_value(false);
         conveyer::spin(0);
       }
-      if(master.get_digital(DIGITAL_LEFT)) conveyer::spin(-127);
+      if(master.get_digital(DIGITAL_LEFT)) conveyer::spin(-600);
       break;
+
+      if(intake.get_actual_velocity() <= 150 && intake.get_target_velocity() == 600) {
+        conveyer::spin(-600);
+        pros::delay(300);
+        conveyer::spin(600);
+      }
     }
     }
     end:

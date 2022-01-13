@@ -7,7 +7,7 @@ struct coords {
 };
 namespace conveyer {
 /*
-Set speed for the conveyer.
+Set speed (rpm) for the conveyer.
 */
 void spin(double speed);
 
