@@ -86,14 +86,14 @@ void FrontLift::run() {
       // FrontLift Control
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
-        FrontLift_PID.set(30, 1, 12.5);
+        FrontLift_PID.set(30, 0.01, 12.5);
         target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
         FrontLift_PID.set(15, 0.01, 5);
-        target = 50;
+        target = 75;
       } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 15 || L_Imu.get_roll() <= -15) {
-        FrontLift_PID.set(30, 1, 12.5);
+        FrontLift_PID.set(30, 0.01, 12.5);
         target = 750;
       } else {
         if(checkFrontLift){

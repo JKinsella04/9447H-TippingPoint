@@ -89,8 +89,8 @@ void Position::run() {
 
     switch (PositionTrackerState) {
     case PositionTracker::RELATIVE: {
-    double inertL = abs( L_Imu.get_heading() ) * PI / 180;
-    double inertR = abs( R_Imu.get_heading() ) * PI / 180;
+    double inertL = abs( L_Imu.get_heading() - 360 ) * PI / 180;
+    double inertR = abs( R_Imu.get_heading() - 360 ) * PI / 180;
 
     float x = ( cos( inertL - offset + PI ) + cos( inertR - offset + PI ) ) / 2;
     float y = ( sin( inertL - offset + PI ) + sin( inertR - offset + PI ) ) / 2;

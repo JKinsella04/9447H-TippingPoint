@@ -239,9 +239,15 @@ void Chassis::run() {
       // Turn PID calc.
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
       if(turnComplete){
-        turn_output = turn_PID.calculate(target.thetaTwo, *theta);
+        turnError = (target.thetaTwo - *theta) * PI / 180;
+        turnError = atan2( sin( turnError ), cos( turnError ) );
+        turnError = turnError * 180 / PI;
+        turn_output = turn_PID.calculate(turnError);
       }else{
-        turn_output = turn_PID.calculate(target.theta, *theta);
+        turnError = (target.theta - *theta) * PI / 180;
+        turnError = atan2( sin( turnError ), cos( turnError ) );
+        turnError = turnError * 180 / PI;
+        turn_output = turn_PID.calculate(turnError);
       }
       if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
         turnComplete = true;
@@ -267,8 +273,8 @@ void Chassis::run() {
         left(LslewOutput);
         right(RslewOutput);
       }else{
-        left(LslewOutput + TslewOutput);
-        right(RslewOutput - TslewOutput);
+        left(LslewOutput - TslewOutput);
+        right(RslewOutput + TslewOutput);
       }
 
       if ( fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol  && checkErr) { 
@@ -315,8 +321,8 @@ void Chassis::run() {
 
       macro::print("Turn Error: ", turn_PID.getError());
 
-      left(TslewOutput);
-      right(-TslewOutput);
+      left(-TslewOutput);
+      right(TslewOutput);
 
       if ( fabs( turn_PID.getError() ) <= turn_tol ) {
         macro::print("TURN FINISHED: ", 0);
