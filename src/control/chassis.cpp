@@ -240,22 +240,19 @@ void Chassis::run() {
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
       if(turnComplete){
         turnError = (target.thetaTwo - *theta) * PI / 180;
-        turnError = atan2( sin( turnError ), cos( turnError ) );
-        turnError = turnError * 180 / PI;
-        turn_output = turn_PID.calculate(turnError);
       }else{
         turnError = (target.theta - *theta) * PI / 180;
-        turnError = atan2( sin( turnError ), cos( turnError ) );
-        turnError = turnError * 180 / PI;
-        turn_output = turn_PID.calculate(turnError);
       }
+      
+      turnError = atan2(sin(turnError), cos(turnError));
+      turnError = turnError * 180 / PI;
+      turn_output = turn_PID.calculate(turnError);
+
       if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
         turnComplete = true;
         turnSlew.reset();
         turn_PID.set(133,0,66);
       }
-      // Find quickest turn.
-      calcDir();
 
       // Turn slew calc.
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
@@ -312,10 +309,10 @@ void Chassis::run() {
 
     case ChassisState::TURN: {
       // Turn PID calc
-      turn_output = turn_PID.calculate(target.theta, *theta);
-
-      // Find quickest turn.
-      calcDir();
+      turnError = (target.theta - *theta) * PI / 180;
+      turnError = atan2(sin(turnError), cos(turnError));
+      turnError = turnError * 180 / PI;
+      turn_output = turn_PID.calculate(turnError);
 
       TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
 
@@ -408,15 +405,6 @@ void Chassis::run() {
 }
 
 // Macros
-void Chassis::calcDir() { // Find Quickest turn.
-  turnComplete ? turnError = target.thetaTwo - *theta : turnError = target.theta - *theta;
-
-  turnError = macro::toRad(turnError);
-  turnError = atan2( sin( turnError ), cos( turnError ) );
-  turnError = macro::toDeg(turnError);
-
-  turn_output = turn_PID.calculate(turnError);
-}
 
 void Chassis::left(double input){
   LF.move_voltage(input);
