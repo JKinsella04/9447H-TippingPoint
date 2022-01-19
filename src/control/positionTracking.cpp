@@ -118,8 +118,13 @@ void Position::run() {
       break;
     }
     case PositionTracker::ODOM: {
-      thetaRad = abs(L_Imu.get_heading() - 360) * (PI / 180);
-      thetaDeg = macro::toDeg(thetaRad);
+      double inertL = abs(L_Imu.get_heading() - 360) * PI / 180;
+      double inertR = abs(R_Imu.get_heading() - 360) * PI / 180;
+
+      float x = (cos(inertL - offset + PI) + cos(inertR - offset + PI)) / 2;
+      float y = (sin(inertL - offset + PI) + sin(inertR - offset + PI)) / 2;
+
+      thetaRad = abs(atan2f(y, x) + PI);
 
       currentL = ( LF.get_position() + LM.get_position()+ LB.get_position() ) / 3;
       currentR = ( RF.get_position() + RM.get_position()+ RB.get_position() ) / 3;
@@ -130,8 +135,8 @@ void Position::run() {
       posX += ((deltaL + deltaR) / 2) * cos(thetaRad);
       posY += ((deltaL + deltaR) / 2) * sin(thetaRad);
 
-      lastL = ( LF.get_position() + LB.get_position() ) / 2;
-      lastR = ( RF.get_position() + RB.get_position() ) / 2;
+      lastL = ( LF.get_position() + LM.get_position()+ LB.get_position() ) / 3;
+      lastR = ( RF.get_position() + RM.get_position()+ RB.get_position() ) / 3;
       
       break;
     }
