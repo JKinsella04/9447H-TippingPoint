@@ -40,6 +40,7 @@ void BackLift::run() {
       backClamp.set_value(true);
       pros::delay(100);
       backArm.set_value(true);
+      pros::delay(50);
       conveyer::spin(600);
       macro::print("RINGS SCORED ", 1);
       break;
