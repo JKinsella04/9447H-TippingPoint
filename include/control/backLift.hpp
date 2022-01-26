@@ -20,7 +20,7 @@ class BackLift{
   /*
   Updates BackLiftState after the delay has passed.
   */
-  BackLift& setState(BackLiftState s, double delay);
+  BackLift& setState(BackLiftState s, double delay_);
 
   static void start(void * ignore);
 
@@ -28,5 +28,6 @@ class BackLift{
 
   private:
   static bool isRunning;
+  static double delay;
 };
 

@@ -42,6 +42,8 @@ double Chassis::tempTarget = 0, Chassis::tempTheta = 0;
 
 double debugSpeed = 3000;
 
+int Chassis::oneSide = 0;
+
 Chassis::Chassis() { }
 
 Chassis::Chassis(double *rotation_, double *theta_, double *posX_, double *posY_){
@@ -109,6 +111,8 @@ void Chassis::reset(){
 
   adjustAngle = turnComplete = justTurn = checkAccel = twoAngles = false;
 
+  oneSide = 0;
+
   mode = ChassisState::IDLE;
 }
 
@@ -144,6 +148,11 @@ Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double 
   target.thetaTwo = thetaTwo;
   target.rateTurn = rate;
   target.speedTurn = speed;
+  return *this;
+}
+
+Chassis &Chassis::halfTurn(int oneSide_){
+  oneSide = oneSide_;
   return *this;
 }
 
@@ -322,8 +331,14 @@ void Chassis::run() {
 
       macro::print("Turn Error: ", turn_PID.getError());
 
-      left(-TslewOutput);
-      right(TslewOutput);
+      if (oneSide == 1) {
+        left(-TslewOutput);
+      } else if (oneSide == 2) {
+        right(TslewOutput);
+      } else {
+        left(-TslewOutput);
+        right(TslewOutput);
+      }
 
       if ( fabs( turn_PID.getError() ) <= turn_tol ) {
         macro::print("TURN FINISHED: ", 0);

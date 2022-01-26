@@ -4,6 +4,7 @@
 BackLiftState BackLiftMode = BackLiftState::DOWN;
 
 bool BackLift::isRunning = false;
+double BackLift::delay = 0;
 
 BackLiftState BackLift::getState(){
   return BackLiftMode;
@@ -11,6 +12,12 @@ BackLiftState BackLift::getState(){
 
 BackLift& BackLift::setState(BackLiftState s){
   BackLiftMode = s;
+  return *this;
+}
+
+BackLift& BackLift::setState(BackLiftState s, double delay_){
+  BackLiftMode = s;
+  delay = delay_;
   return *this;
 }
 
@@ -38,9 +45,9 @@ void BackLift::run() {
     }
     case BackLiftState::UP: {
       backClamp.set_value(true);
-      pros::delay(100);
+      pros::delay(delay);
       backArm.set_value(true);
-      pros::delay(50);
+      pros::delay(delay);
       conveyer::spin(600);
       macro::print("RINGS SCORED ", 1);
       break;

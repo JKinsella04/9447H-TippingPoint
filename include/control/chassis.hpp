@@ -5,6 +5,8 @@
 #define CONVERSION 4169.079328314997 // Convert 2.75in Wheels to Inches with V5 rotation Sensor.
 #define BASE_CONVERSION 35.2589412388  // Convert 3.25 to Inches with Motor Encoders.
 #define DRIVE_CONVERSION 94.48818897637795 // Convert joystick input to scale for voltage.
+#define LEFT 1
+#define RIGHT 2
 
 struct ChassisTarget {
     double x;
@@ -102,6 +104,11 @@ class Chassis {
     Sets Target angle to reach while driving then updates it to the second target angle after reaching the first angle.
     */
     Chassis& withAngles(double theta, double thetaTwo, double rate = 900, double speed = 9000);
+    
+    /*
+    Turn with only one side
+    */
+    Chassis& halfTurn(int oneSide);
 
     /*
     Updates ChassisState and sets target position in inches.
@@ -148,6 +155,8 @@ class Chassis {
     static double *theta, *posX, *posY, *rotation;
     static double drive_tol, turn_tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle, turnComplete, twoAngles;
+
+    static int oneSide;
     
     static double distToTarget;
     static double driveError, turnError;

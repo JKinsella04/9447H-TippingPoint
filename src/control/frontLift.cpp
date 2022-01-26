@@ -69,12 +69,12 @@ void FrontLift::run() {
     switch (FrontLiftMode) {
     case FrontLiftState::DOWN: {
       FrontLift_PID.set(15, 0.01, 5);
-      move(50);
+      move(75);
       break;
     }
     case FrontLiftState::MIDDLE: {
       FrontLift_PID.set(30, 1, 12.5);
-      move(750);
+      move(250);
       break;
     }
     case FrontLiftState::UP: {
@@ -91,7 +91,7 @@ void FrontLift::run() {
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
         FrontLift_PID.set(15, 0.01, 5);
-        target = 75;
+        target = 100;
       } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 15 || L_Imu.get_roll() <= -15) {
         FrontLift_PID.set(30, 0.01, 12.5);
         target = 750;
