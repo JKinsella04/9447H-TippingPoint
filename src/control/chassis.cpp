@@ -34,7 +34,7 @@ double Chassis::current = 0, Chassis::drive_output = 0,
        Chassis::turn_output = 0, Chassis::LslewOutput = 0,
        Chassis::RslewOutput = 0, Chassis::TslewOutput = 0;
 
-bool Chassis::adjustAngle = false, Chassis::turnComplete = false;
+bool Chassis::adjustAngle = false, Chassis::turnComplete = false, Chassis::twoAngles = false;
 
 double Chassis::distToTarget, Chassis::driveError, Chassis::turnError; 
 
@@ -107,7 +107,7 @@ void Chassis::reset(){
   RM.tare_position();
   RB.tare_position();
 
-  adjustAngle = turnComplete = justTurn = checkAccel = false;
+  adjustAngle = turnComplete = justTurn = checkAccel = twoAngles = false;
 
   mode = ChassisState::IDLE;
 }
@@ -132,7 +132,6 @@ Chassis &Chassis::withTol(double drive_tol_, double turn_tol_, bool justTurn_) {
 Chassis &Chassis::withAngle(double theta, double rate, double speed){
   adjustAngle = true;
   target.theta = theta;
-  target.thetaTwo = theta;
   target.rateTurn = rate;
   target.speedTurn = speed;
   return *this;
@@ -140,6 +139,7 @@ Chassis &Chassis::withAngle(double theta, double rate, double speed){
 
 Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double speed){
   adjustAngle = true;
+  twoAngles = true;
   target.theta = theta;
   target.thetaTwo = thetaTwo;
   target.rateTurn = rate;
@@ -238,17 +238,21 @@ void Chassis::run() {
 
       // Turn PID calc.
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
-      if(turnComplete){
-        turnError = (target.thetaTwo - *theta) * PI / 180;
-      }else{
-        turnError = (target.theta - *theta) * PI / 180;
+      if (!twoAngles) {
+        turnError = macro::toRad(target.theta - *theta);
+      } else {
+        if (turnComplete) {
+          turnError = (target.thetaTwo - *theta) * PI / 180;
+        } else {
+          turnError = (target.theta - *theta) * PI / 180;
+        }
       }
-      
+
       turnError = atan2(sin(turnError), cos(turnError));
       turnError = turnError * 180 / PI;
       turn_output = turn_PID.calculate(turnError);
 
-      if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete){ 
+      if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete && twoAngles){ 
         turnComplete = true;
         turnSlew.reset();
         turn_PID.set(133,0,66);
