@@ -59,4 +59,6 @@ class FrontLift{
 
   void move(double target);
 
+  void effMove(double target);
+
 };

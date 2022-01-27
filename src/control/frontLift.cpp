@@ -8,7 +8,7 @@ Chassis chassis;
 FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
 
 macro::PID FrontLift_PID(30, 1, 12.5);
-macro::Slew FrontLift_Slew(900,600);
+macro::Slew FrontLift_Slew(1100,600);
 
 double FrontLift::output = 0, FrontLift::target = 0, FrontLift::tol = 75,
        FrontLift::slewOutput = 0, FrontLift::current = arm.get_position();
@@ -86,7 +86,7 @@ void FrontLift::run() {
       // FrontLift Control
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
-        FrontLift_PID.set(30, 0.01, 12.5);
+        FrontLift_PID.set(40, .5, 12.5);
         target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
@@ -133,6 +133,23 @@ void FrontLift::run() {
 
 void FrontLift::move(double target) {
   current = arm.get_position();
+
+  output = FrontLift_PID.calculate(target, current);
+
+  slewOutput = FrontLift_Slew.calculate(output);
+
+  arm.move_voltage(slewOutput);
+
+  if (fabs(FrontLift_PID.getError()) < tol) {
+    if (!pros::competition::is_autonomous()) {
+      FrontLiftMode = FrontLiftState::OPCONTROL;
+    }
+    isSettled = true;
+  }
+}
+
+void FrontLift::effMove(double target) {
+  current = arm.get_efficiency();
 
   output = FrontLift_PID.calculate(target, current);
 
