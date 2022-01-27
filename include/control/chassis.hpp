@@ -108,7 +108,7 @@ class Chassis {
     /*
     Turn with only one side
     */
-    Chassis& halfTurn(int oneSide);
+    Chassis& swingTurn(int oneSide);
 
     /*
     Updates ChassisState and sets target position in inches.

@@ -151,7 +151,7 @@ Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double 
   return *this;
 }
 
-Chassis &Chassis::halfTurn(int oneSide_){
+Chassis &Chassis::swingTurn(int oneSide_){
   oneSide = oneSide_;
   return *this;
 }
