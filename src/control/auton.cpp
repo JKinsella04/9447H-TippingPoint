@@ -75,6 +75,7 @@ void awp() {
   frontLift.setState(FrontLiftState::DOWN);
   chassis.drive(-1000).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
   backLift.setState(BackLiftState::DOWN);
+  // AWP BONUS
   chassis.turn(100).withTurnGains(133, 0, 66).withTol(0, 5).waitUntilSettled();
   chassis.drive(-1000).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
   backLift.setState(BackLiftState::UP, 0);
@@ -83,7 +84,7 @@ void awp() {
   chassis.drive(1050).withGains(15, 0, 6.25).withAngle(320).withTol(50,10).waitUntilSettled();
   frontLift.setClamp(true).setState(FrontLiftState::MIDDLE).waitUntilSettled();
   chassis.drive(-2500).withGains(15, 0, 6.25).withAngle(270, 200).withTurnGains(133,0,66).withTol(40,20).waitUntilSettled();
-  // chassis.drive(2000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(50,5).waitUntilSettled();
+  // YELLOW
 }
 
 void elim() {
