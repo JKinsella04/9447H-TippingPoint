@@ -134,22 +134,7 @@ void FrontLift::run() {
 void FrontLift::move(double target) {
   current = arm.get_position();
 
-  output = FrontLift_PID.calculate(target, current);
-
-  slewOutput = FrontLift_Slew.calculate(output);
-
-  arm.move_voltage(slewOutput);
-
-  if (fabs(FrontLift_PID.getError()) < tol) {
-    if (!pros::competition::is_autonomous()) {
-      FrontLiftMode = FrontLiftState::OPCONTROL;
-    }
-    isSettled = true;
-  }
-}
-
-void FrontLift::effMove(double target) {
-  current = arm.get_efficiency();
+  FrontLift_PID.set(30, (abs(arm.get_efficiency() - 100))/100, 6.25);
 
   output = FrontLift_PID.calculate(target, current);
 
