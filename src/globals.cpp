@@ -29,4 +29,4 @@ pros::ADIDigitalOut frontClamp ('H'),
                     backClamp('F');
 
 // GPS Definition // 
-pros::Gps gps(5, 0, -0.3048); 
+pros::Gps gps(4,0.1651,0.0762); 

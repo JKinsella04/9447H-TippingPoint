@@ -101,7 +101,11 @@ void elim() {
 
 // Skills
 void skills(){
-robotPos.setState(PositionTracker::GPS);
+  chassis.setBrakeType(COAST);
+  chassis.turn(270, 900, 12000).withTurnGains(133,.25,66).swingTurn(1).withTol(0,10).waitUntilSettled();
+  chassis.drive(1500).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(50).waitUntilSettled();  
+  frontLift.setClamp(true).setState(FrontLiftState::UP);
+  chassis.drive(2000).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50).waitUntilSettled();  
 }
 
 // Testing

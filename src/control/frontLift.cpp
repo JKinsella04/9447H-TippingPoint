@@ -8,7 +8,7 @@ Chassis chassis;
 FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
 
 macro::PID FrontLift_PID(30, 1, 12.5);
-macro::Slew FrontLift_Slew(1100,600);
+macro::Slew FrontLift_Slew(1100,600, true);
 
 double FrontLift::output = 0, FrontLift::target = 0, FrontLift::tol = 75,
        FrontLift::slewOutput = 0, FrontLift::current = arm.get_position();
@@ -18,6 +18,8 @@ double tempFrontLiftPos;
 bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::isDelayingClamp = false, FrontLift::clampState = false,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
+
+double kP = 30;
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
 
@@ -134,11 +136,11 @@ void FrontLift::run() {
 void FrontLift::move(double target) {
   current = arm.get_position();
 
-  FrontLift_PID.set(30, (abs(arm.get_efficiency() - 100))/100, 6.25);
-
   output = FrontLift_PID.calculate(target, current);
 
-  slewOutput = FrontLift_Slew.calculate(output);
+  slewOutput = FrontLift_Slew.withLimit(12000).calculate(output);
+
+  macro::print("Output: ", slewOutput);
 
   arm.move_voltage(slewOutput);
 

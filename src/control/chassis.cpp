@@ -311,12 +311,13 @@ void Chassis::run() {
     }
 
     case ChassisState::POINT: {
-      for ( float t = 0; t <= 1; t += 0.01){
-      target.x = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).x;
-      target.y = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).y;
-
       moveToPoint(target);
-      }
+      // for ( float t = 0; t <= 1; t += 0.01){
+      // target.x = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).x;
+      // target.y = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).y;
+
+      // moveToPoint(target);
+      // }
       break;
     }
 
@@ -447,32 +448,28 @@ void Chassis::moveToPoint(ChassisTarget target) {
 
   turnError = (target.theta - macro::toRad(*theta));
   turnError = atan2(sin(turnError), cos(turnError));
-  // turnError = macro::toDeg(turnError) + 90; // GPS
-  if(target.reverse) turnError -= 180; // ODOM
+  turnError = macro::toDeg(turnError) + 90; // GPS
+  // if(target.reverse) turnError -= 180; // ODOM
 
   // PID Calcs.
   drive_output = drive_PID.calculate(driveError);
   turn_output = turn_PID.calculate(turnError);
 
   // Slew Calcs.
-  LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true)
-                    .withLimit(target.speedDrive)
-                    .calculate(drive_output);
-  TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true)
-                    .withLimit(target.speedTurn)
-                    .calculate(turn_output);
+  LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+  TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
 
   macro::print("Drive: ", drive_PID.getError());
-  macro::print("Turn: ", turn_PID.getError());
+  macro::print("Turn: ", turnError);
 
-  if (target.reverse) {
-    left(-LslewOutput - TslewOutput);
-    right(-LslewOutput + TslewOutput);
-  } else {
-    left(LslewOutput - TslewOutput);
-    right(LslewOutput + TslewOutput);
-  }}
-  while( fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <=turn_tol );
+  // if (target.reverse) {
+  //   left(-LslewOutput - TslewOutput);
+  //   right(-LslewOutput + TslewOutput);
+  // } else {
+  //   left(LslewOutput - TslewOutput);
+  //   right(LslewOutput + TslewOutput);
+  // }
+  }while( fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <=turn_tol );
 }
 
 void Chassis::stop() { isRunning = false; }
