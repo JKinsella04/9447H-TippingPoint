@@ -19,8 +19,6 @@ bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::isDelayingClamp = false, FrontLift::clampState = false,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
 
-double kP = 30;
-
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
 
 FrontLift &FrontLift::setState(FrontLiftState s) {
@@ -80,7 +78,7 @@ void FrontLift::run() {
       break;
     }
     case FrontLiftState::UP: {
-      FrontLift_PID.set(30, 1, 12.5);
+      FrontLift_PID.set(40, 1, 12.5);
       move(2000);
       break;
     }

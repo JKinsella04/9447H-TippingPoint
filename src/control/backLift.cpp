@@ -64,12 +64,13 @@ void BackLift::run() {
         conveyer::spin(0);
       } else if (master.get_digital(DIGITAL_LEFT)){
         conveyer::spin(-600);
-      } else if (intake.get_actual_velocity() <= 150 && intake.get_target_velocity() == 600) {
-        conveyer::spin(-600);
-        pros::delay(300);
-        conveyer::spin(600);
-      }
-
+      } 
+      // else if (intake.get_actual_velocity() <= 150 &&
+      //            intake.get_target_velocity() == 600) {
+      //   conveyer::spin(-600);
+      //   pros::delay(300);
+      //   conveyer::spin(600);
+      // }
       break;
     }
     }
