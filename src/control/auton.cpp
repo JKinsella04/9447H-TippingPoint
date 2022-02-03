@@ -128,6 +128,10 @@ void skills(){
   chassis.drive(1000).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
   chassis.drive(-750).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
   // SECOND GOAL
+  chassis.turn(310).withTurnGains(133,.25,66).withTol(0,10).waitUntilSettled();
+  chassis.drive(-4000).withGains(15, 0, 6.25).withAngle(310).withTurnGains(133,0,66).withTol(50).waitUntilSettled();
+
+
 }
 
 // Testing

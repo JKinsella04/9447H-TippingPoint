@@ -86,7 +86,7 @@ void FrontLift::run() {
       // FrontLift Control
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
-        FrontLift_PID.set(40, .5, 12.5);
+        FrontLift_PID.set(60, 1, 6);
         target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
