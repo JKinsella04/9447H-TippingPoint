@@ -38,6 +38,11 @@ FrontLift &FrontLift::delayClamp(bool state_) {
   return *this;
 }
 
+FrontLift &FrontLift::withTol(double tol_){
+  tol = tol_;
+  return *this;
+}
+
 void FrontLift::setBrakeType(pros::motor_brake_mode_e_t state) {
   arm.set_brake_mode(state);
 }
@@ -69,7 +74,7 @@ void FrontLift::run() {
     switch (FrontLiftMode) {
     case FrontLiftState::DOWN: {
       FrontLift_PID.set(15, 0.01, 5);
-      move(75);
+      move(100);
       break;
     }
     case FrontLiftState::MIDDLE: {
@@ -78,7 +83,7 @@ void FrontLift::run() {
       break;
     }
     case FrontLiftState::UP: {
-      FrontLift_PID.set(40, 1, 12.5);
+      FrontLift_PID.set(70, 1, 6);
       move(2000);
       break;
     }
@@ -86,7 +91,7 @@ void FrontLift::run() {
       // FrontLift Control
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
-        FrontLift_PID.set(60, 1, 6);
+        FrontLift_PID.set(70, 1, 6);
         target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;

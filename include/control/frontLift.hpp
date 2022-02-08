@@ -30,6 +30,12 @@ class FrontLift{
   FrontLift& delayClamp(bool state_);
 
   /*
+  Set tolerance for frontLift movement.
+  @param tol_ tolerance.
+  */
+  FrontLift& withTol(double tol_);
+
+  /*
   Sets FrontLift motor brake type.
   @param pros::motor_brake_mode_e_t brake type.
   */
