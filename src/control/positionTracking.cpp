@@ -158,7 +158,7 @@ void Position::run() {
 
     // Timer Tracking
     time = pros::c::millis() - time_offset;
-    macro::print(stamp, time);
+    // macro::print(stamp, time);
     pros::delay(10);
   }
 }

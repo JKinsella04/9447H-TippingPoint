@@ -57,7 +57,7 @@ void BackLift::run() {
         backClamp.set_value(true);
         pros::delay(100);
         backArm.set_value(true);
-        conveyer::spin(525);
+        conveyer::spin(600);
       } else if (master.get_digital(DIGITAL_X)) {
         backArm.set_value(false);
         backClamp.set_value(false);

@@ -143,7 +143,7 @@ void FrontLift::move(double target) {
 
   slewOutput = FrontLift_Slew.withLimit(12000).calculate(output);
 
-  macro::print("Output: ", slewOutput);
+  // macro::print("Output: ", slewOutput);
 
   arm.move_voltage(slewOutput);
 
