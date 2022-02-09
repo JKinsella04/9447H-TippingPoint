@@ -2,10 +2,10 @@
 #include "control/misc.hpp"
 #include "globals.hpp"
 #include "positionTracking.hpp"
-#include "frontLift.hpp"
+#include "auton.hpp"
 
 static Position robotPos;
-static FrontLift frontLift;
+static Autonomous auton;
 
 // PID Init
 macro::PID drive_PID(0.5, 0.01, 0.25);
@@ -370,7 +370,13 @@ void Chassis::run() {
       left(LslewOutput);
       right(RslewOutput);
 
-      L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10 ? setBrakeType(HOLD) : setBrakeType(COAST);
+      bool isParking;
+      if( *robotPos.getTime() > 60000 || auton.getAuton() == "Skills" && *robotPos.getTime() > 40000){
+        if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
+        if(isParking) setBrakeType(HOLD);
+      }else{
+        setBrakeType(COAST);
+      }
       break;
     }
 

@@ -40,6 +40,17 @@ class Position {
     double * getRotation();
 
     /*
+    Get current time im MS since last reset.
+    */
+    double * getTime();
+
+    /*
+    Reset timer.
+    @param string stamp
+    */
+    void resetTime(std::string stamp_);
+
+    /*
     Sets offset value for theta in Degrees.
     */
     void setThetaOffset(double offset_);
@@ -85,4 +96,7 @@ class Position {
       static double posX, posY, thetaDeg, thetaRad, error, rotation;
 
       static double currentL, currentR, deltaL, deltaR, lastL, lastR, offset;
+
+      static double time, time_offset;
+      static std::string stamp;
 };

@@ -1,5 +1,6 @@
 #include "positionTracking.hpp"
 #include "misc.hpp"
+#include "pros/rtos.h"
 
 
 bool Position::isRunning = false;
@@ -9,6 +10,10 @@ pros::c::gps_status_s_t Position::gpsData;
 double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
 
 double Position::currentL = 0, Position::currentR = 0, Position::deltaL = 0, Position::deltaR = 0, Position::lastL = 0, Position::lastR = 0, Position::offset = 0;
+
+double Position::time, Position::time_offset;
+
+std::string Position::stamp;
 
 PositionTracker PositionTrackerState = PositionTracker::RELATIVE;
 
@@ -34,6 +39,15 @@ double * Position::getError() {
 
 double * Position::getRotation() {
   return &rotation;
+}
+
+double * Position::getTime() {
+  return &time;
+}
+
+void Position::resetTime(std::string stamp_) {
+  time_offset = pros::c::millis();
+  stamp = stamp_;
 }
 
 void Position::setThetaOffset(double offset_){
@@ -141,6 +155,10 @@ void Position::run() {
       break;
     }
     }
+
+    // Timer Tracking
+    time = pros::c::millis() - time_offset;
+    macro::print(stamp, time);
     pros::delay(10);
   }
 }

@@ -47,23 +47,24 @@ void autonomous() {
 }
 
 void opcontrol() {
-  Chassis chassis;
-	chassis.reset();
+  Position robotPos;
+  robotPos.resetTime("Opcontrol");
+	
+	Chassis chassis;
+  chassis.reset();
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
 
-	FrontLift frontLift;
-	frontLift.setState(FrontLiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
+  FrontLift frontLift;
+  frontLift.setState(FrontLiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
 
-	BackLift backLift;
-	backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
-
-	double offset = pros::c::millis();
+  BackLift backLift;
+  backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
 
   while (true) {
-		double time = pros::c::millis() - offset;
-		double delay = ( 75000 - time ) / 7.5;
-		pros::delay(delay);
-		if(delay > 0) master.rumble("..");
- 	}
+    double delay = (75000 - *robotPos.getTime()) / 7.5;
+    pros::delay(delay);
+    if (delay > 0)
+      master.rumble("..");
+  }
 }
