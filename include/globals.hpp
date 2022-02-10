@@ -1,5 +1,6 @@
 #pragma once
 #include "main.h"
+#include "pros/adi.hpp"
 #include "pros/distance.hpp"
 
 #define HOLD pros::E_MOTOR_BRAKE_HOLD
@@ -20,5 +21,7 @@ extern pros::Motor LF, LM, LB, RF, RM, RB;
 extern pros::Imu L_Imu, R_Imu;
 
 extern pros::ADIDigitalOut frontClamp, backClamp, backArm;
+
+extern pros::ADIDigitalIn backLimit;
 
 extern pros::Gps gps;

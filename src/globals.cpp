@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/adi.hpp"
 #include "pros/distance.hpp"
 #include "pros/misc.h"
 
@@ -27,6 +28,8 @@ pros::Imu L_Imu(18), R_Imu(13);
 pros::ADIDigitalOut frontClamp ('H'),
                     backArm('D'),
                     backClamp('F');
+
+pros::ADIDigitalIn backLimit('B');
 
 // GPS Definition // 
 pros::Gps gps(4,0.1651,0.0762); 

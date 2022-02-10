@@ -84,7 +84,7 @@ void FrontLift::run() {
     }
     case FrontLiftState::UP: {
       FrontLift_PID.set(70, 1, 6);
-      move(2000);
+      move(1900);
       break;
     }
     case FrontLiftState::OPCONTROL: {

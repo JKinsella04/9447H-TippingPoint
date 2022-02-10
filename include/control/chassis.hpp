@@ -93,7 +93,7 @@ class Chassis {
     Sets the tolerance range for both lateral and turn movements.
     Also set whether to check dist sensor.
     */
-    Chassis& withTol(double tol_ = 20, double turn_tol_ = 2, bool justTurn_ = false);
+    Chassis& withTol(double tol_ = 20, double turn_tol_ = 2, bool checkBack_ = false);
 
     /*
     Sets Target angle to reach while driving.
@@ -150,7 +150,7 @@ class Chassis {
     private:
     static bool isSettled;
     static bool isRunning;
-    static bool checkAccel, justTurn, checkErr;
+    static bool checkBack, justTurn, checkErr;
     
     static double *theta, *posX, *posY, *rotation;
     static double drive_tol, turn_tol, current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;

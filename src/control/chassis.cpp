@@ -23,7 +23,7 @@ ChassisTarget target;
 ChassisState mode = ChassisState::IDLE;
 
 // Variable Init
-bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkAccel = false, Chassis::justTurn = false,
+bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkBack = false, Chassis::justTurn = false,
      Chassis::checkErr = false;
 
 double *Chassis::theta, *Chassis::posX, *Chassis::posY, *Chassis::rotation;
@@ -88,6 +88,7 @@ double Chassis::getTol(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
+    if(checkBack == true && backLimit.get_value() == true)isSettled = true;
     pros::delay(20);
   }
 }
@@ -109,7 +110,7 @@ void Chassis::reset(){
   RM.tare_position();
   RB.tare_position();
 
-  adjustAngle = turnComplete = justTurn = checkAccel = twoAngles = false;
+  adjustAngle = turnComplete = justTurn = checkBack = twoAngles = false;
 
   oneSide = 0;
 
@@ -126,10 +127,10 @@ Chassis &Chassis::withTurnGains(double kP_, double kI_, double kD_){
   return *this;
 }
 
-Chassis &Chassis::withTol(double drive_tol_, double turn_tol_, bool justTurn_) {
+Chassis &Chassis::withTol(double drive_tol_, double turn_tol_, bool checkBack_) {
   drive_tol = drive_tol_;
   turn_tol = turn_tol_;
-  justTurn = justTurn_;
+  checkBack = checkBack_;
   return *this;
 }
 
@@ -305,7 +306,7 @@ void Chassis::run() {
         mode = ChassisState::IDLE;
         goto end;
       }
-      checkAccel = checkErr = true;
+      checkErr = true;
 
       break;
     }
