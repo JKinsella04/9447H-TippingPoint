@@ -149,58 +149,71 @@ void skills(){
   pros::delay(250);
   chassis.drive(-425).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
   // SECOND GOAL
-  chassis.turn(180,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
-  chassis.drive(-2250, 900, 1500).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50, 2.5, true).waitUntilSettled();
-  pros::delay(200);
-  backLift.setState(BackLiftState::UP, 200);
+  chassis.turn(180,450).withTurnGains(133,0.2,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(-2100).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50, 2.5, true).waitUntilSettled();
+  pros::delay(250);
+  backLift.setState(BackLiftState::UP, 100);
+  pros::delay(250);
   chassis.drive(2700).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   chassis.drive(-250).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   frontLift.setState(FrontLiftState::DOWN).waitUntilSettled();
-  chassis.drive(650).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.drive(700).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   frontLift.setClamp(true);
   pros::delay(250);
   frontLift.setState(FrontLiftState::UP);
-  chassis.drive(3200).withGains(15, 0, 6.25).withAngle(120).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  chassis.turn(90,900).withTurnGains(166,0.25,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(3100).withGains(15, 0, 6.25).withAngle(120).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.turn(90,900).withTurnGains(166,0.25,66).withTol(0,3).waitUntilSettled();
   pros::delay(750);
-  chassis.drive(1000, 450, 1000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  chassis.drive(-1000, 450, 1000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  pros::delay(750);
-  chassis.drive(1000, 450, 1000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  chassis.drive(-1000, 450, 1000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  pros::delay(750);
-  chassis.drive(1100).withGains(15, 0, 6.25).withAngle(120).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  chassis.turn(10,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
-  chassis.drive(1050, 1500, 12000).withGains(15, 0, 6.25).withAngle(10).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  frontLift.delayClamp(false);
-  // backLift.setState(BackLiftState::DOWN);
-  // frontLift.delayClamp(false);
-  // chassis.drive(1500).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // // THIRD GOAL
-  // chassis.drive(-500).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // chassis.turn(180,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
-  // chassis.drive(500).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // frontLift.setClamp(true);
-  // pros::delay(250);
-  // frontLift.setState(FrontLiftState::UP);
-  // chassis.turn(135,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
-  // chassis.drive(-2000).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // chassis.turn(90,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
-  // chassis.drive(1500).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // // FOURTH GOAL
-  // chassis.drive(-750).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // frontLift.setState(FrontLiftState::DOWN);
-  // chassis.turn(225,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
-  // chassis.drive(2000).withGains(15, 0, 6.25).withAngle(225).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // frontLift.setClamp(true);
-  // pros::delay(250);
-  // chassis.drive(-2000).withGains(15, 0, 6.25).withAngle(225).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // chassis.turn(90,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
-  // frontLift.delayClamp(false);
-  // chassis.drive(1500).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // chassis.drive(-750).withGains(15, 0, 6.25).withAngle(225).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  // FIFTH GOAL
 
+  chassis.setBrakeType(HOLD);
+  chassis.drive(850, 450,450, 3000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.drive(-1100, 450,450, -3000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  pros::delay(750);
+  chassis.drive(1000, 450,450, 3000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.drive(-1200, 450,450, -3000).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  pros::delay(750);
+  chassis.setBrakeType(COAST);
+  chassis.drive(900).withGains(15, 0, 6.25).withAngle(120).withTurnGains(133,0,66).withTol(50,20).waitUntilSettled();
+  
+  chassis.turn(15,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
+  frontLift.delayClamp(false);
+  chassis.drive(950, 1500,900, 12000).withGains(15, 0, 6.25).withAngle(15).withTurnGains(133,0,66).withTol(100,10);
+  pros::delay(1500);
+  // THIRD GOAL
+  chassis.drive(-1000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.turn(315,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(3000).withGains(15, 0, 6.25).withAngle(0, 100).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  backLift.setState(BackLiftState::DOWN);
+  frontLift.setState(FrontLiftState::DOWN);
+  pros::delay(500);
+  chassis.drive(400).withGains(15, 0, 6.25).withAngle(0, 100).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.turn(180,450).withTurnGains(66,0.25,33).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(1000).withGains(15, 0, 6.25).withAngle(178, 100).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  frontLift.setClamp(true);
+  pros::delay(250);
+  frontLift.setState(FrontLiftState::UP);
+  chassis.drive(-800).withGains(15, 0, 6.25).withAngle(180, 100).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.turn(90,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
+  frontLift.delayClamp(false);
+  chassis.drive(400).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10);
+  pros::delay(1500);
+  // FOURTH GOAL
+  chassis.drive(-1500).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  backLift.setState(BackLiftState::UP);
+  chassis.turn(180,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(1800).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.drive(-250).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  frontLift.setState(FrontLiftState::DOWN).waitUntilSettled();
+  chassis.drive(700).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  frontLift.setClamp(true);
+  pros::delay(250);
+  frontLift.setState(FrontLiftState::UP);
+  chassis.turn(50,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(3000).withGains(15, 0, 6.25).withAngle(50).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  frontLift.setClamp(false);
+  pros::delay(500);
+  chassis.drive(-750).withGains(15, 0, 6.25).withAngle(50).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  // FIFTH GOAL
 }
 
 // Testing

@@ -54,22 +54,24 @@ void BackLift::run() {
       break;
     }
     case BackLiftState::OPCONTROL: {
-      if(backLimit.get_value()){
-        backClamp.set_value(true);
-        pros::delay(100);
-        backArm.set_value(true);
-        conveyer::spin(600);        
-      }else if (master.get_digital(DIGITAL_UP)) {
+      if (master.get_digital(DIGITAL_UP)) {
         backClamp.set_value(true);
         pros::delay(100);
         backArm.set_value(true);
         conveyer::spin(600);
       } else if (master.get_digital(DIGITAL_X)) {
         backArm.set_value(false);
+        pros::delay(100);
         backClamp.set_value(false);
         conveyer::spin(0);
+        pros::delay(250);
       } else if (master.get_digital(DIGITAL_LEFT)){
         conveyer::spin(-600);
+      }else if(backLimit.get_new_press()){
+        backClamp.set_value(true);
+        pros::delay(100);
+        backArm.set_value(true);
+        conveyer::spin(600);        
       } 
       // else if (intake.get_actual_velocity() <= 150 &&
       //            intake.get_target_velocity() == 600) {
