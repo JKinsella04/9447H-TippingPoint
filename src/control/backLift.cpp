@@ -1,4 +1,5 @@
 #include "backLift.hpp"
+#include "globals.hpp"
 #include "misc.hpp"
 
 BackLiftState BackLiftMode = BackLiftState::DOWN;
@@ -53,7 +54,12 @@ void BackLift::run() {
       break;
     }
     case BackLiftState::OPCONTROL: {
-      if (master.get_digital(DIGITAL_UP)) {
+      if(backLimit.get_value()){
+        backClamp.set_value(true);
+        pros::delay(100);
+        backArm.set_value(true);
+        conveyer::spin(600);        
+      }else if (master.get_digital(DIGITAL_UP)) {
         backClamp.set_value(true);
         pros::delay(100);
         backArm.set_value(true);

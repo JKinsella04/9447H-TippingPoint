@@ -43,6 +43,7 @@ double Chassis::tempTarget = 0, Chassis::tempTheta = 0;
 double debugSpeed = 3000;
 
 int Chassis::oneSide = 0;
+bool isParking = false;
 
 Chassis::Chassis() { }
 
@@ -371,7 +372,6 @@ void Chassis::run() {
       left(LslewOutput);
       right(RslewOutput);
 
-      bool isParking;
       if( *robotPos.getTime() > 60000 || auton.getAuton() == "Skills" && *robotPos.getTime() > 40000){
         if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
         if(isParking) setBrakeType(HOLD);
