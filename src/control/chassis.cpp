@@ -3,6 +3,7 @@
 #include "globals.hpp"
 #include "positionTracking.hpp"
 #include "auton.hpp"
+#include "pros/rtos.h"
 
 static Position robotPos;
 static Autonomous auton;
@@ -41,6 +42,9 @@ double Chassis::distToTarget, Chassis::driveError, Chassis::turnError;
 double Chassis::tempTarget = 0, Chassis::tempTheta = 0;
 
 double debugSpeed = 3000;
+
+double lastRot, brakeTime;
+bool braking = false, gotTime = true;
 
 int Chassis::oneSide = 0;
 bool isParking = false;
@@ -361,6 +365,22 @@ void Chassis::run() {
       double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
 
+      if(!gotTime && fabs( leftJoystick ) < 50 && fabs ( rightJoystick ) < 50 ){
+        brakeTime = *robotPos.getTime();
+        gotTime = true;
+      }else if ( fabs( leftJoystick ) > 50 || fabs ( rightJoystick ) > 50 && gotTime){
+        gotTime = braking = false;
+      }
+
+      if (gotTime && !braking && *robotPos.getTime() - brakeTime >= 1500) {
+        lastRot = *rotation;
+        braking = true;
+      }
+      if (braking) {
+        leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot, *rotation);
+        rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot, *rotation);
+      }
+
       if (arm.get_position() >= 500) { // Slow accel when holding a goal.
         LslewOutput = leftSlew.withGains(450, 900, true).withLimit(12000).calculate(leftJoystick);
         RslewOutput = rightSlew.withGains(450, 900, true).withLimit(12000).calculate(rightJoystick);
@@ -368,6 +388,8 @@ void Chassis::run() {
         LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
         RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
       }
+
+      macro::print("Speed: ", (LslewOutput + RslewOutput)/2);
 
       left(LslewOutput);
       right(RslewOutput);
