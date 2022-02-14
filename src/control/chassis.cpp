@@ -372,7 +372,7 @@ void Chassis::run() {
         gotTime = braking = false;
       }
 
-      if (gotTime && !braking && *robotPos.getTime() - brakeTime >= 1500) {
+      if (gotTime && !braking && *robotPos.getTime() - brakeTime >= 1500 || gotTime && !braking && isParking) {
         lastRot = *rotation;
         braking = true;
       }
