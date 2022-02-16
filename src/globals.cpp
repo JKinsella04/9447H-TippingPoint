@@ -26,8 +26,7 @@ pros::Imu L_Imu(18), R_Imu(13);
 
 // Pneumatic Definitions //
 pros::ADIDigitalOut frontClamp ('H'),
-                    backArm('D'),
-                    backClamp('F');
+                    backClamp('D');
 
 pros::ADIDigitalIn backLimit('B');
 

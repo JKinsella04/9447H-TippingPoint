@@ -1,6 +1,7 @@
 #include "backLift.hpp"
 #include "globals.hpp"
 #include "misc.hpp"
+#include "pros/rtos.hpp"
 
 BackLiftState BackLiftMode = BackLiftState::DOWN;
 
@@ -39,15 +40,12 @@ void BackLift::run() {
 
     switch (BackLiftMode) {
     case BackLiftState::DOWN: {
-      backArm.set_value(false);
       backClamp.set_value(false);
       conveyer::spin(0);
       break;
     }
     case BackLiftState::UP: {
       backClamp.set_value(true);
-      pros::delay(delay);
-      backArm.set_value(true);
       pros::delay(delay);
       conveyer::spin(600);
       macro::print("RINGS SCORED ", 1);
@@ -57,28 +55,22 @@ void BackLift::run() {
       if (master.get_digital(DIGITAL_UP)) {
         backClamp.set_value(true);
         pros::delay(100);
-        backArm.set_value(true);
         conveyer::spin(600);
       } else if (master.get_digital(DIGITAL_X)) {
-        backArm.set_value(false);
-        pros::delay(100);
         backClamp.set_value(false);
         conveyer::spin(0);
         pros::delay(250);
       } else if (master.get_digital(DIGITAL_LEFT)){
         conveyer::spin(-600);
-      }else if(backLimit.get_new_press()){
+      } else if(backLimit.get_new_press()){
         backClamp.set_value(true);
         pros::delay(100);
-        backArm.set_value(true);
         conveyer::spin(600);        
-      } 
-      // else if (intake.get_actual_velocity() <= 150 &&
-      //            intake.get_target_velocity() == 600) {
-      //   conveyer::spin(-600);
-      //   pros::delay(300);
-      //   conveyer::spin(600);
-      // }
+      } else if (intake.get_actual_velocity() <= 25 && intake.get_target_velocity() == 600) {
+        conveyer::spin(-600);
+        pros::delay(300);
+        conveyer::spin(600);
+      }
       break;
     }
     case BackLiftState::MANUAL: {
