@@ -5,7 +5,6 @@
 #include "positionTracking.hpp"
 #include "frontLift.hpp"
 #include "misc.hpp"
-#include "pros/rtos.hpp"
 
 // Class Init
 Position robotPos;
@@ -33,6 +32,15 @@ void Autonomous::setId(int id_) {
   case 3:
     name = "Skills";
     break;
+  case 4:
+    name = "Left AWP";
+    break;
+  case 5:
+    name = "Right AWP";
+    break;
+  case 6:
+    name = "One Goal";
+    break;
   default:
     name = "ERROR INVALID AUTON";
     break;
@@ -42,14 +50,29 @@ void Autonomous::setId(int id_) {
 void Autonomous::runAuton() {
   switch (id) {
   case 1: {
-    awp();
+    leftAWP();
     break;
   }
   case 2: {
-    elim();
+    rightAWP();
     break;
   }
   case 3: {
+    awp();
+    break;
+  }
+
+  case 4: {
+    oneGoal();
+    break;
+  }
+  
+  case 5: {
+    elim();
+    break;
+  }
+
+  case 6: {
     skills();
     break;
   }
@@ -60,8 +83,14 @@ void Autonomous::runAuton() {
   }
 }
 
-// Match Autons
-void awp() {
+// Autons
+void leftAWP(){ // One yellow + left AWP
+}
+
+void rightAWP(){ // One yellow + right AWP
+}
+
+void awp() { // FULL AWP
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::UP);
   pros::delay(1000);
@@ -91,7 +120,10 @@ void awp() {
   // YELLOW
 }
 
-void elim() {
+void oneGoal(){ // FWD + Backward one yellow. GOOD FOR ALL SIDES.
+}
+
+void elim() { // Right Side Two Goal
   frontLift.withTol(10).setState(FrontLiftState::DOWN);
   chassis.setBrakeType(COAST);
   chassis.drive(2275,1500, 4000, 12000).withGains(15, 0, 6.25).withAngle(359).withTurnGains(133,0,66).withTol(50,20).waitUntilSettled();
@@ -110,10 +142,9 @@ void elim() {
   chassis.drive(-500).withGains(15, 0, 6.25).withAngle(90).withTurnGains(133,0,66).withTol(40,20).waitUntilSettled();
   backLift.setState(BackLiftState::UP, 0);
   frontLift.setState(FrontLiftState::DOWN);
-  }
+}
 
-// Skills
-void skills(){
+void skills(){ // Skills
   chassis.setBrakeType(COAST);
   frontLift.setState(FrontLiftState::DOWN);
   backLift.setState(BackLiftState::UP);
@@ -216,6 +247,5 @@ void skills(){
   // FIFTH GOAL
 }
 
-// Testing
-void test() {
+void test() { // Testing
 }

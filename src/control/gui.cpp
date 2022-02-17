@@ -76,10 +76,13 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
   auton.setId(id);
 
   switch (id) {
-  case 1: lv_img_set_src(autonGraphic, &AWP); break;
-  case 2: lv_img_set_src(autonGraphic, &twoGoal_IMG); break;
-  case 3: lv_img_set_src(autonGraphic, &skills_IMG); break;
-  
+  case 1: lv_img_set_src(autonGraphic, &leftAWP_IMG); break;
+  case 2: lv_img_set_src(autonGraphic, &rightAWP_IMG); break;
+  case 3: lv_img_set_src(autonGraphic, &AWP); break;
+  case 4: lv_img_set_src(autonGraphic, &oneGoal_IMG); break;
+  case 5: lv_img_set_src(autonGraphic, &twoGoal_IMG); break;
+  case 6: lv_img_set_src(autonGraphic, &skills_IMG); break;
+
   default: break;
   }
   return LV_RES_OK;
@@ -167,9 +170,12 @@ void Display::cleanUp() {
 }
 
 void Display::tabAuton(lv_obj_t *parent) {
-  lv_obj_t *AWP = createButton(1, 0, 20, 200, 40, "AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
-  lv_obj_t *Elim = createButton(2, 0, 70, 200, 40, "Elim", parent, btn_auton_action, &style_btn, &style_btn_released);
-  lv_obj_t *skills = createButton(3, 0, 120, 200, 40, "Skills", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *leftAWP = createButton(1, 0, 20, 200, 20, "Left AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *rightAWP = createButton(2, 0, 50, 200, 20, "Right AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *AWP = createButton(3, 0, 80, 200, 20, "Full AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *oneGoal = createButton(4, 0, 110, 200, 20, "One Goal", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *Elim = createButton(5, 0, 140, 200, 20, "Two Goal", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *skills = createButton(6, 0, 170, 200, 20, "Skills", parent, btn_auton_action, &style_btn, &style_btn_released);
 
   autonGraphic = lv_img_create(parent, NULL);
   lv_obj_set_pos(autonGraphic, 250, 50);

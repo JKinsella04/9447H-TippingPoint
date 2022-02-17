@@ -5,9 +5,12 @@
 
 LV_IMG_DECLARE(destiny) // background image is a destiny 2 emblem 
 LV_IMG_DECLARE(noAuton_IMG)
+LV_IMG_DECLARE(AWP)
+LV_IMG_DECLARE(leftAWP_IMG)
+LV_IMG_DECLARE(rightAWP_IMG)
+LV_IMG_DECLARE(oneGoal_IMG)
 LV_IMG_DECLARE(twoGoal_IMG)
 LV_IMG_DECLARE(skills_IMG)
-LV_IMG_DECLARE(AWP)
 
 class Display{
     public:
