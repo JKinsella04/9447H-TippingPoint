@@ -24,22 +24,22 @@ void Autonomous::setId(int id_) {
   id = id_;
   switch (id) {
   case 1:
-    name = "AWP";
-    break;
-  case 2:
-    name = "Elim";
-    break;
-  case 3:
-    name = "Skills";
-    break;
-  case 4:
     name = "Left AWP";
     break;
-  case 5:
+  case 2:
     name = "Right AWP";
     break;
-  case 6:
+  case 3:
+    name = "AWP";
+    break;
+  case 4:
     name = "One Goal";
+    break;
+  case 5:
+    name = "Elim";
+    break;
+  case 6:
+    name = "Skills";
     break;
   default:
     name = "ERROR INVALID AUTON";
@@ -109,7 +109,7 @@ void awp() { // FULL AWP
   // AWP BONUS
   chassis.turn(285).withTurnGains(300, 0, 150).withTol(0, 5).waitUntilSettled();
   chassis.drive(1300,1500,4000,12000).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
-  frontLift.setClamp(true);
+  frontLift.toggleClamp();
   pros::delay(100);
   frontLift.setState(FrontLiftState::UP);
   chassis.turn(125, 900, 12000).withTurnGains(133,.25,66).swingTurn(RIGHT).withTol(0,10).waitUntilSettled();
@@ -127,7 +127,7 @@ void elim() { // Right Side Two Goal
   frontLift.withTol(10).setState(FrontLiftState::DOWN);
   chassis.setBrakeType(COAST);
   chassis.drive(2275,1500, 4000, 12000).withGains(15, 0, 6.25).withAngle(359).withTurnGains(133,0,66).withTol(50,20).waitUntilSettled();
-  frontLift.setClamp(true);
+  frontLift.toggleClamp();
   pros::delay(100);
   frontLift.withTol(75).setState(FrontLiftState::UP);
   chassis.turn(225, 900, 12000).withTurnGains(133,.25,66).swingTurn(RIGHT).withTol(0,10).waitUntilSettled();
@@ -150,7 +150,7 @@ void skills(){ // Skills
   backLift.setState(BackLiftState::UP);
   chassis.turn(250, 900, 12000).withTurnGains(133,.25,66).swingTurn(1).withTol(0,10).waitUntilSettled();
   chassis.drive(1950,1125,2250,9000).withGains(15, 0, 6.25).withAngle(250).withTurnGains(133,0,66).withTol(50, 5).waitUntilSettled();  
-  frontLift.setClamp(true);
+  frontLift.toggleClamp();
   pros::delay(250);
   frontLift.setState(FrontLiftState::UP).waitUntilSettled();
   chassis.drive(2900).withGains(15, 0, 6.25).withAngle(235).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();  
@@ -159,7 +159,7 @@ void skills(){ // Skills
   chassis.drive(-500).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50,5).waitUntilSettled();
   chassis.turn(270,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
   chassis.drive(700).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(50,20).waitUntilSettled();
-  frontLift.setClamp(false);
+  frontLift.toggleClamp();
   // FIRST GOAL
   chassis.drive(-500).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
   pros::delay(200);
@@ -171,7 +171,7 @@ void skills(){ // Skills
   pros::delay(250);
   chassis.turn(0,450).withTurnGains(133,0,66).withTol(0,2.5).waitUntilSettled();
   chassis.drive(1200).withGains(15, 0, 6.25).withTol(50).waitUntilSettled();
-  frontLift.setClamp(true);
+  frontLift.toggleClamp();
   pros::delay(250);
   frontLift.setState(FrontLiftState::UP).waitUntilSettled();
   chassis.turn(270,450).withTurnGains(133,0.2,33).withTol(0,2.5).waitUntilSettled();
@@ -189,7 +189,7 @@ void skills(){ // Skills
   chassis.drive(-250).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   frontLift.setState(FrontLiftState::DOWN).waitUntilSettled();
   chassis.drive(700).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  frontLift.setClamp(true);
+  frontLift.toggleClamp();
   pros::delay(250);
   frontLift.setState(FrontLiftState::UP);
   chassis.drive(3100).withGains(15, 0, 6.25).withAngle(120).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
@@ -220,7 +220,7 @@ void skills(){ // Skills
   chassis.drive(400).withGains(15, 0, 6.25).withAngle(0, 100).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   chassis.turn(180,450).withTurnGains(66,0.25,33).withTol(0,2.5).waitUntilSettled();
   chassis.drive(1000).withGains(15, 0, 6.25).withAngle(178, 100).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  frontLift.setClamp(true);
+  frontLift.toggleClamp();
   pros::delay(250);
   frontLift.setState(FrontLiftState::UP);
   chassis.drive(-800).withGains(15, 0, 6.25).withAngle(180, 100).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
@@ -236,12 +236,12 @@ void skills(){ // Skills
   chassis.drive(-250).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   frontLift.setState(FrontLiftState::DOWN).waitUntilSettled();
   chassis.drive(700).withGains(15, 0, 6.25).withAngle(180).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  frontLift.setClamp(true);
+  frontLift.toggleClamp();
   pros::delay(250);
   frontLift.setState(FrontLiftState::UP);
   chassis.turn(50,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
   chassis.drive(3000).withGains(15, 0, 6.25).withAngle(50).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
-  frontLift.setClamp(false);
+  frontLift.toggleClamp();
   pros::delay(500);
   chassis.drive(-750).withGains(15, 0, 6.25).withAngle(50).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   // FIFTH GOAL

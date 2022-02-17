@@ -27,8 +27,8 @@ FrontLift &FrontLift::setState(FrontLiftState s) {
   return *this;
 }
 
-FrontLift &FrontLift::setClamp(bool state_) {
-  clampState = state_;
+FrontLift &FrontLift::toggleClamp() {
+  clampState = !clampState;
   return *this;
 }
 
@@ -111,9 +111,9 @@ void FrontLift::run() {
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {
-        frontClamp.set_value(true);
-      } else if (master.get_digital(DIGITAL_R2)) {
         frontClamp.set_value(false);
+      } else if (master.get_digital(DIGITAL_R2)) {
+        frontClamp.set_value(true);
       }
       break;
     }

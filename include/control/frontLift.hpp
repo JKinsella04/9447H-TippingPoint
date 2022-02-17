@@ -18,10 +18,9 @@ class FrontLift{
   FrontLift& setState(FrontLiftState s);
 
   /*
-  Sets the FrontLift's clamp.
-  @param bool clamp_ True for clamped False for released.
+  Sets the FrontLift to state it isn't.
   */
-  FrontLift& setClamp(bool state_);
+  FrontLift& toggleClamp();
 
   /*
   Sets the FrontLift's clamp once the robot has moved far enough.
