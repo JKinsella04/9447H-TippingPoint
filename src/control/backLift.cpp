@@ -1,7 +1,6 @@
 #include "backLift.hpp"
 #include "globals.hpp"
 #include "misc.hpp"
-#include "pros/rtos.hpp"
 
 BackLiftState BackLiftMode = BackLiftState::DOWN;
 
@@ -52,28 +51,20 @@ void BackLift::run() {
       break;
     }
     case BackLiftState::OPCONTROL: {
-      if (master.get_digital(DIGITAL_UP)) {
+      if (master.get_digital(DIGITAL_X)) { // Drop Goal
+        backClamp.set_value(false);
+        conveyer::spin(0);
+      } else if (master.get_digital(DIGITAL_LEFT)){ // Reverse Intake
+        conveyer::spin(-600);
+      } else if (master.get_digital(DIGITAL_UP) || backLimit.get_new_press()) { // Grab Goal
         backClamp.set_value(true);
         pros::delay(100);
         conveyer::spin(600);
-      } else if (master.get_digital(DIGITAL_X)) {
-        backClamp.set_value(false);
-        conveyer::spin(0);
-        pros::delay(250);
-      } else if (master.get_digital(DIGITAL_LEFT)){
-        conveyer::spin(-600);
-      } else if(backLimit.get_new_press()){
-        backClamp.set_value(true);
-        pros::delay(100);
-        conveyer::spin(600);        
-      } else if (intake.get_actual_velocity() <= 25 && intake.get_target_velocity() == 600) {
+      } else if (intake.get_efficiency() <= 10 && intake.get_target_velocity() == 600) { // Jam Detection
         conveyer::spin(-600);
         pros::delay(300);
         conveyer::spin(600);
       }
-      break;
-    }
-    case BackLiftState::MANUAL: {
       break;
     }
     }
