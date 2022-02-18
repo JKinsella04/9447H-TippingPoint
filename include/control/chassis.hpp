@@ -116,11 +116,6 @@ class Chassis {
     Chassis& drive(double target_,  double accel_rate = 900, double decel_rate = 900, double speed = 9000);
 
     /*
-    Updates ChassisState and uses motor encoders.
-    */
-    Chassis& eDrive(double e_target_, double accel_rate = 900, double decel_rate = 900, double speed = 9000);
-
-    /*
     Updates ChassisState and sets target position from given (x,y) coords.
     */
     Chassis& drive(coords endPoint, coords controlPoint, bool reverse = false, double driveRate = 900, double driveSpeed = 9000, double turnRate = 900, double turnSpeed = 9000);

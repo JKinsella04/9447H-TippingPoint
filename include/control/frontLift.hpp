@@ -66,4 +66,6 @@ class FrontLift{
 
   void effMove(double target);
 
+  void updateClamp();
+
 };

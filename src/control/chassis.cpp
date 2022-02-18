@@ -93,7 +93,7 @@ double Chassis::getTol(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    if(checkBack == true && backLimit.get_value() == true)isSettled = true;
+    if(checkBack == true && backLimit.get_value() || backLimit.get_value() )isSettled = true;
     pros::delay(20);
   }
 }
@@ -168,19 +168,6 @@ Chassis &Chassis::drive(double target_,  double accel_rate, double decel_rate, d
   target.x = target_;
   target.accel_rate = accel_rate;
   target.decel_rate = decel_rate;
-  target.speedDrive = speed;
-  reset();
-  isSettled = false;
-  mode = ChassisState::DRIVE;
-  return *this;
-}
-
-Chassis &Chassis::eDrive(double e_target_, double accel_rate, double decel_rate, double speed) {
-  
-  macro::print("DRIVE ", 0);
-  target.x = e_target_ * BASE_CONVERSION;
-  target.accel_rate = accel_rate;
-  target.decel_rate =  decel_rate; 
   target.speedDrive = speed;
   reset();
   isSettled = false;

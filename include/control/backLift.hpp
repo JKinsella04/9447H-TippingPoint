@@ -3,13 +3,19 @@
 #include "misc.hpp"
 
 enum class BackLiftState { 
-    DOWN, UP, OPCONTROL
+    AUTON, OPCONTROL
 }; 
 
 class BackLift{
   public:
 
-  BackLiftState getState();  
+  BackLiftState getState();
+
+  /*
+  Return current clamp state.
+  @return clampState
+  */
+  bool getClampState();  
   
   /*
   Updates BackLiftState to either ZERO, UP, OPCONTROL.
@@ -18,16 +24,18 @@ class BackLift{
   BackLift& setState(BackLiftState s);
 
   /*
-  Updates BackLiftState after the delay has passed.
+  Swap BackClamp to other state.
   */
-  BackLift& setState(BackLiftState s, double delay_);
+  BackLift& toggleClamp();
 
   static void start(void * ignore);
 
   void run();
 
   private:
-  static bool isRunning;
+  static bool isRunning, clampState, lastClampState;
   static double delay;
+
+  void updateClamp();
 };
 

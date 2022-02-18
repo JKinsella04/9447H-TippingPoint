@@ -2,13 +2,17 @@
 #include "globals.hpp"
 #include "misc.hpp"
 
-BackLiftState BackLiftMode = BackLiftState::DOWN;
+BackLiftState BackLiftMode = BackLiftState::AUTON;
 
-bool BackLift::isRunning = false;
+bool BackLift::isRunning = false, BackLift::clampState = false, BackLift::lastClampState = !clampState;
 double BackLift::delay = 0;
 
 BackLiftState BackLift::getState(){
   return BackLiftMode;
+}
+
+bool BackLift::getClampState(){
+  return clampState;
 }
 
 BackLift& BackLift::setState(BackLiftState s){
@@ -16,9 +20,8 @@ BackLift& BackLift::setState(BackLiftState s){
   return *this;
 }
 
-BackLift& BackLift::setState(BackLiftState s, double delay_){
-  BackLiftMode = s;
-  delay = delay_;
+BackLift& BackLift::toggleClamp(){
+  clampState = !clampState;
   return *this;
 }
 
@@ -38,28 +41,15 @@ void BackLift::run() {
     if(pros::competition::is_disabled()) goto end;
 
     switch (BackLiftMode) {
-    case BackLiftState::DOWN: {
-      backClamp.set_value(false);
-      conveyer::spin(0);
-      break;
-    }
-    case BackLiftState::UP: {
-      backClamp.set_value(true);
-      pros::delay(delay);
-      conveyer::spin(600);
-      macro::print("RINGS SCORED ", 1);
+    case BackLiftState::AUTON: {
+      updateClamp();
       break;
     }
     case BackLiftState::OPCONTROL: {
-      if (master.get_digital(DIGITAL_X)) { // Drop Goal
-        backClamp.set_value(false);
-        conveyer::spin(0);
-      } else if (master.get_digital(DIGITAL_LEFT)){ // Reverse Intake
+      if (master.get_digital(DIGITAL_LEFT)){ // Reverse Intake
         conveyer::spin(-600);
-      } else if (master.get_digital(DIGITAL_UP) || backLimit.get_new_press()) { // Grab Goal
-        backClamp.set_value(true);
-        pros::delay(100);
-        conveyer::spin(600);
+      } else if (master.get_digital(DIGITAL_R2) || backLimit.get_new_press()) { // Grab Goal
+        toggleClamp().updateClamp();
       } else if (intake.get_efficiency() <= 10 && intake.get_target_velocity() == 600) { // Jam Detection
         conveyer::spin(-600);
         pros::delay(300);
@@ -68,8 +58,17 @@ void BackLift::run() {
       break;
     }
     }
+    updateClamp();
     end:
 
     pros::delay(10);
+  }
+}
+
+void BackLift::updateClamp() {
+  if (clampState != lastClampState) {
+    backClamp.set_value(clampState);
+    pros::delay(100);
+    clampState ? conveyer::spin(600) : conveyer::spin(0);
   }
 }

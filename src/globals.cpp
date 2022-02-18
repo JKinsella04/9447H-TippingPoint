@@ -28,7 +28,8 @@ pros::Imu L_Imu(18), R_Imu(13);
 pros::ADIDigitalOut frontClamp ('H'),
                     backClamp('D');
 
-pros::ADIDigitalIn backLimit('B');
+pros::ADIDigitalIn backLimit('B'),
+                   frontLImit('C');
 
 // GPS Definition // 
 pros::Gps gps(4,0.1651,0.0762); 

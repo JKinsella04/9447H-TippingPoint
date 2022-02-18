@@ -2,7 +2,6 @@
 #include "chassis.hpp"
 #include "misc.hpp"
 
-
 Chassis chassis;
 
 FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
@@ -18,6 +17,8 @@ double tempFrontLiftPos;
 bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::isDelayingClamp = false, FrontLift::clampState = false,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
+
+PID_constants up{70, 1, 6}, mid{30, 0.01, 12.5}, down{15, 0.01, 5};
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
 
@@ -73,17 +74,17 @@ void FrontLift::run() {
 
     switch (FrontLiftMode) {
     case FrontLiftState::DOWN: {
-      FrontLift_PID.set(15, 0.01, 5);
+      FrontLift_PID.set(down.kP, down.kI, down.kD);
       move(100);
       break;
     }
     case FrontLiftState::MIDDLE: {
-      FrontLift_PID.set(30, 1, 12.5);
+      FrontLift_PID.set(mid.kP, mid.kI, mid.kD);
       move(250);
       break;
     }
     case FrontLiftState::UP: {
-      FrontLift_PID.set(70, 1, 6);
+      FrontLift_PID.set(up.kP, up.kI, up.kD);
       move(1900);
       break;
     }
@@ -91,45 +92,32 @@ void FrontLift::run() {
       // FrontLift Control
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
-        FrontLift_PID.set(70, 1, 6);
+        FrontLift_PID.set(up.kP, up.kI, up.kD);
         target = 2000;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
-        FrontLift_PID.set(15, 0.01, 5);
-        target = 100;
+        FrontLift_PID.set(down.kP, down.kI, down.kD);
+        target = 200;
       } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 15 || L_Imu.get_roll() <= -15) {
-        FrontLift_PID.set(30, 0.01, 12.5);
+        FrontLift_PID.set(mid.kP, mid.kI, mid.kD);
         target = 750;
       } else {
-        if(checkFrontLift){
-        FrontLift_Slew.reset();
-        target = arm.get_position();
-        checkFrontLift = false;
+        if (checkFrontLift) {
+          FrontLift_Slew.reset();
+          target = arm.get_position();
+          checkFrontLift = false;
         }
       }
       move(target);
 
       // Clamp Control
       if (master.get_digital(DIGITAL_R1)) {
-        frontClamp.set_value(false);
-      } else if (master.get_digital(DIGITAL_R2)) {
-        frontClamp.set_value(true);
+        toggleClamp().updateClamp();
       }
       break;
     }
     }
-
-    // Delayed Clamp Control
-    if (clampState != lastClampState && isDelayingClamp) {
-      if (abs(chassis.getDriveError()) < chassis.getTol() * 2) {
-        frontClamp.set_value(clampState);
-        lastClampState = clampState;
-      }
-    } else if (clampState != lastClampState) {
-      frontClamp.set_value(clampState);
-      lastClampState = clampState;
-    }
-
+    updateClamp();
   end:
 
     pros::delay(10);
@@ -152,5 +140,18 @@ void FrontLift::move(double target) {
       FrontLiftMode = FrontLiftState::OPCONTROL;
     }
     isSettled = true;
+  }
+  
+}
+
+void FrontLift::updateClamp() {
+  if (clampState != lastClampState && isDelayingClamp) {
+    if (abs(chassis.getDriveError()) < chassis.getTol() * 2) {
+      frontClamp.set_value(clampState);
+      lastClampState = clampState;
+    }
+  } else if (clampState != lastClampState) {
+    frontClamp.set_value(clampState);
+    lastClampState = clampState;
   }
 }

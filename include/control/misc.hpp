@@ -5,6 +5,13 @@ struct coords {
     double x;
     double y;
 };
+
+struct PID_constants{
+  double kP;
+  double kI;
+  double kD;
+};
+
 namespace conveyer {
 /*
 Set speed (rpm) for the conveyer.
