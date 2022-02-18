@@ -36,7 +36,7 @@ void Autonomous::setId(int id_) {
     name = "One Goal";
     break;
   case 5:
-    name = "Elim";
+    name = "Two Goal";
     break;
   case 6:
     name = "Skills";
