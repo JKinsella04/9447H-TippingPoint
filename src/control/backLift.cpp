@@ -58,7 +58,6 @@ void BackLift::run() {
       break;
     }
     }
-    updateClamp();
     end:
 
     pros::delay(10);
