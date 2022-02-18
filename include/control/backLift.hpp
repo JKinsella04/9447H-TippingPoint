@@ -8,7 +8,9 @@ enum class BackLiftState {
 
 class BackLift{
   public:
-
+  /*
+  Return current Back lift state.
+  */
   BackLiftState getState();
 
   /*
@@ -24,7 +26,7 @@ class BackLift{
   BackLift& setState(BackLiftState s);
 
   /*
-  Swap BackClamp to other state.
+  Toggle Back clamp to opposite state.
   */
   BackLift& toggleClamp();
 
@@ -36,6 +38,9 @@ class BackLift{
   static bool isRunning, clampState, lastClampState;
   static double delay;
 
+  /*
+  Check current clampState to lastClampState and update if needed.
+  */
   void updateClamp();
 };
 
