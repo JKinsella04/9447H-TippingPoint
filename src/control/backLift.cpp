@@ -48,9 +48,12 @@ void BackLift::run() {
     case BackLiftState::OPCONTROL: {
       if (master.get_digital(DIGITAL_LEFT)){ // Reverse Intake
         conveyer::spin(-600);
-      } else if (master.get_digital(DIGITAL_R2) || backLimit.get_new_press()) { // Grab Goal
+      } else if (master.get_digital(DIGITAL_R2) ) { // Grab Goal
         toggleClamp().updateClamp();
-      } else if (intake.get_efficiency() <= 10 && intake.get_target_velocity() == 600) { // Jam Detection
+      }else if( backLimit.get_new_press()){
+        clampState = true;
+        updateClamp();
+      }else if (intake.get_efficiency() <= 10 && intake.get_target_velocity() == 600) { // Jam Detection
         conveyer::spin(-600);
         pros::delay(300);
         conveyer::spin(600);
