@@ -69,5 +69,6 @@ void BackLift::updateClamp() {
     backClamp.set_value(clampState);
     pros::delay(100);
     clampState ? conveyer::spin(600) : conveyer::spin(0);
+    lastClampState = clampState;
   }
 }

@@ -31,10 +31,10 @@ class Autonomous{
   AUTON DECLARATIONS
 ===========================================*/
 
-void awp();
 void leftAWP();
 void rightAWP();
-void elim();
+void awp();
 void oneGoal();
+void elim();
 void skills();
 void test();
