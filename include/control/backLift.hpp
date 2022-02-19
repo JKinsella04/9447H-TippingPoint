@@ -35,7 +35,7 @@ class BackLift{
   void run();
 
   private:
-  static bool isRunning, clampState, lastClampState;
+  static bool isRunning, clampState, lastClampState, checkDist;
   static double delay;
 
   /*
