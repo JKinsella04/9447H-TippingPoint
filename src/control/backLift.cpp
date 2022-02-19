@@ -7,6 +7,8 @@ BackLiftState BackLiftMode = BackLiftState::AUTON;
 bool BackLift::isRunning = false, BackLift::clampState = false, BackLift::lastClampState = !clampState;
 double BackLift::delay = 0;
 
+bool checkDist = true;
+
 BackLiftState BackLift::getState(){
   return BackLiftMode;
 }
@@ -50,9 +52,12 @@ void BackLift::run() {
         conveyer::spin(-600);
       } else if (master.get_digital_new_press(DIGITAL_R2) ) { // Grab Goal
         toggleClamp().updateClamp();
-      }else if( backDist.get() <= 30 && backDist.get() != 0){
+      }else if( checkDist && backDist.get() <= 30 && backDist.get() != 0){
         clampState = true;
         updateClamp();
+        checkDist = false;
+      }else if(backDist.get() >= 30 || backDist.get() == 0){
+        checkDist = true;
       }else if (intake.get_efficiency() <= 5 && intake.get_target_velocity() == 600) { // Jam Detection
         conveyer::spin(-600);
         pros::delay(300);
