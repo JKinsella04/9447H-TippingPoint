@@ -8,7 +8,7 @@
 
 // Class Init
 Position robotPos;
-Chassis chassis;
+static Chassis chassis;
 BackLift backLift;
 FrontLift frontLift;
 

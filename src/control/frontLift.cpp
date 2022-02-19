@@ -111,7 +111,7 @@ void FrontLift::run() {
       move(target);
 
       // Clamp Control
-      if (master.get_digital(DIGITAL_R1)) {
+      if (master.get_digital_new_press(DIGITAL_R1)) {
         toggleClamp().updateClamp();
       }
       break;

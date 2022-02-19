@@ -48,7 +48,7 @@ void BackLift::run() {
     case BackLiftState::OPCONTROL: {
       if (master.get_digital(DIGITAL_LEFT)){ // Reverse Intake
         conveyer::spin(-600);
-      } else if (master.get_digital(DIGITAL_R2) ) { // Grab Goal
+      } else if (master.get_digital_new_press(DIGITAL_R2) ) { // Grab Goal
         toggleClamp().updateClamp();
       }else if( backDist.get() <= 30 && backDist.get() != 0){
         clampState = true;
