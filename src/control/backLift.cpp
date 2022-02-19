@@ -50,12 +50,12 @@ void BackLift::run() {
         conveyer::spin(-600);
       } else if ( master.get_digital_new_press(DIGITAL_R2) ) { // Grab Goal
         toggleClamp().updateClamp();
+      } else if( backDist.get() >= 30){
+        checkDist = true;
       } else if( checkDist && backDist.get() <= 30 && backDist.get() != 0 ){
         clampState = true;
         updateClamp();
         checkDist = false;
-      } else if( backDist.get() >= 30){
-        checkDist = true;
       } else if ( intake.get_efficiency() <= 5 && intake.get_target_velocity() == 600 ) { // Jam Detection
         conveyer::spin(-600);
         pros::delay(300);
