@@ -53,7 +53,7 @@ void BackLift::run() {
       }else if( backLimit.get_new_press()){
         clampState = true;
         updateClamp();
-      }else if (intake.get_efficiency() <= 10 && intake.get_target_velocity() == 600) { // Jam Detection
+      }else if (intake.get_efficiency() <= 5 && intake.get_target_velocity() == 600) { // Jam Detection
         conveyer::spin(-600);
         pros::delay(300);
         conveyer::spin(600);
