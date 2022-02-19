@@ -19,7 +19,7 @@ pros::Motor LF(20, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             LB(10, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             RF(11, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             RM(3, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-            RB(2, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
+            RB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS); // 2
 
 // Inertial sensor Definitions //
 pros::Imu L_Imu(18), R_Imu(13);
@@ -33,3 +33,6 @@ pros::ADIDigitalIn backLimit('B'),
 
 // GPS Definition // 
 pros::Gps gps(4,0.1651,0.0762); 
+
+// Distance Sensor Definitions //
+pros::Distance backDist(2);
