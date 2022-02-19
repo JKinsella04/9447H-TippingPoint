@@ -46,7 +46,7 @@ void BackLift::run() {
       break;
     }
     case BackLiftState::OPCONTROL: {
-      if( backDist.get() >= 30 || backDist.get() == 0){
+      if( backDist.get() >= 45 || backDist.get() == 0){
         checkDist = true;
       }
       
