@@ -53,9 +53,8 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     frontLift.reset();
     break;
   case 5:{
-    clampIsToggled = !clampIsToggled;
-    frontClamp.set_value(clampIsToggled);
-    backClamp.set_value(clampIsToggled);
+    frontLift.toggleClamp();
+    backLift.toggleClamp();
     break;
   }
   case 6: {
@@ -79,7 +78,7 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
   case 1: lv_img_set_src(autonGraphic, &leftAWP_IMG); break;
   case 2: lv_img_set_src(autonGraphic, &rightAWP_IMG); break;
   case 3: lv_img_set_src(autonGraphic, &AWP); break;
-  case 4: lv_img_set_src(autonGraphic, &oneGoal_IMG); break;
+  case 4: lv_img_set_src(autonGraphic, &middleGoal_IMG); break;
   case 5: lv_img_set_src(autonGraphic, &twoGoal_IMG); break;
   case 6: lv_img_set_src(autonGraphic, &skills_IMG); break;
 
@@ -173,7 +172,7 @@ void Display::tabAuton(lv_obj_t *parent) {
   lv_obj_t *leftAWP = createButton(1, 0, 20, 200, 20, "Left AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
   lv_obj_t *rightAWP = createButton(2, 0, 50, 200, 20, "Right AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
   lv_obj_t *AWP = createButton(3, 0, 80, 200, 20, "Full AWP", parent, btn_auton_action, &style_btn, &style_btn_released);
-  lv_obj_t *oneGoal = createButton(4, 0, 110, 200, 20, "One Goal", parent, btn_auton_action, &style_btn, &style_btn_released);
+  lv_obj_t *oneGoal = createButton(4, 0, 110, 200, 20, "Middle Goal", parent, btn_auton_action, &style_btn, &style_btn_released);
   lv_obj_t *Elim = createButton(5, 0, 140, 200, 20, "Two Goal", parent, btn_auton_action, &style_btn, &style_btn_released);
   lv_obj_t *skills = createButton(6, 0, 170, 200, 20, "Skills", parent, btn_auton_action, &style_btn, &style_btn_released);
 

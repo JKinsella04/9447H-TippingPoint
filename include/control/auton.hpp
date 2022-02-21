@@ -34,7 +34,7 @@ class Autonomous{
 void leftAWP();
 void rightAWP();
 void awp();
-void oneGoal();
+void middleGoal();
 void elim();
 void skills();
 void test();

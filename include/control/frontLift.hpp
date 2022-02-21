@@ -18,7 +18,14 @@ class FrontLift{
   FrontLift& setState(FrontLiftState s);
 
   /*
-  Sets the FrontLift to state it isn't.
+  Updates FrontLiftState to either ZERO, UP, OPCONTROL.
+  @param FrontLiftState s wanted state.
+  @param double delay wanted delay in MS.
+  */
+  FrontLift& setState(FrontLiftState s, double delay_);
+
+  /*
+  Toggle Front clamp to opposite state.
   */
   FrontLift& toggleClamp();
 
@@ -61,6 +68,7 @@ class FrontLift{
   static bool isDelayingClamp, clampState, lastClampState, checkFrontLift;
 
   static double output, target, current, tol, slewOutput;
+  static double downPos, midPos, upPos, delay;
 
   void move(double target);
 

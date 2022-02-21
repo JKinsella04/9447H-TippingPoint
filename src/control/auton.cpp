@@ -33,7 +33,7 @@ void Autonomous::setId(int id_) {
     name = "AWP";
     break;
   case 4:
-    name = "One Goal";
+    name = "Middle Goal";
     break;
   case 5:
     name = "Two Goal";
@@ -63,7 +63,7 @@ void Autonomous::runAuton() {
   }
 
   case 4: {
-    oneGoal();
+    middleGoal();
     break;
   }
   
@@ -84,10 +84,39 @@ void Autonomous::runAuton() {
 }
 
 // Autons
-void leftAWP(){ // One yellow + left AWP
+void leftAWP() { // One yellow + left AWP
+  chassis.setBrakeType(COAST);
+  backLift.setState(BackLiftState::AUTON);
+  frontLift.setState(FrontLiftState::DOWN);
+  chassis.drive(2200, 1500, 3000, 12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  frontLift.toggleClamp().setState(FrontLiftState::UP, 100);
+  pros::delay(100);
+  chassis.drive(-2200, 1500, 3000, -12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.turn(315,450).withTurnGains(133,0.2,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(-1500, 900, 900, -9000).withGains(15, 0, 6.25).withAngle(315).withTurnGains(133,0,66).withTol(40,5, true).waitUntilSettled();
+  backLift.toggleClamp();
+  chassis.turn(270,450).withTurnGains(66,0.2,33).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(1500, 900, 900, 3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.drive(-1500, 900, 900, -3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.drive(1500, 900, 900, 3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.drive(-1500, 900, 900, -3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.drive(1500, 900, 900, 3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
 }
 
 void rightAWP(){ // One yellow + right AWP
+  chassis.setBrakeType(COAST);
+  backLift.setState(BackLiftState::AUTON);
+  frontLift.setState(FrontLiftState::DOWN);
+  chassis.drive(2200, 1500, 3000, 12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  frontLift.toggleClamp().setState(FrontLiftState::UP, 100);
+  chassis.drive(-2200, 1500, 3000, -12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.turn(270,450).withTurnGains(133,0.2,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(-1500, 900, 900, -9000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5, true).waitUntilSettled();
+  backLift.toggleClamp();
+  chassis.drive(750).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.turn(0,450).withTurnGains(133,0.2,66).withTol(0,2.5).waitUntilSettled();
+  chassis.drive(2000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.drive(-2500, 1500, 3000, -12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
 }
 
 void awp() { // FULL AWP
@@ -120,7 +149,13 @@ void awp() { // FULL AWP
   // YELLOW
 }
 
-void oneGoal(){ // FWD + Backward one yellow. GOOD FOR ALL SIDES.
+void middleGoal(){ 
+  chassis.setBrakeType(COAST);
+  backLift.setState(BackLiftState::AUTON);
+  frontLift.setState(FrontLiftState::DOWN);
+  chassis.drive(2500, 1500, 3000, 12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  frontLift.toggleClamp().setState(FrontLiftState::UP, 100);
+  chassis.drive(-2200, 1500, 3000, -12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
 }
 
 void elim() { // Right Side Two Goal

@@ -1,5 +1,6 @@
 #include "frontLift.hpp"
 #include "chassis.hpp"
+#include "display/lv_misc/lv_symbol_def.h"
 #include "misc.hpp"
 
 Chassis chassis;
@@ -19,12 +20,20 @@ bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
 
 PID_constants up{70, 1, 6}, mid{30, 0.01, 12.5}, down{15, 0.01, 5};
+double FrontLift::downPos = 200, FrontLift::midPos = 750, FrontLift::upPos = 2000, FrontLift::delay = 100; 
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
 
 FrontLift &FrontLift::setState(FrontLiftState s) {
   isSettled = false;
   FrontLiftMode = s;
+  return *this;
+}
+
+FrontLift &FrontLift::setState(FrontLiftState s, double delay_) {
+  isSettled = false;
+  FrontLiftMode = s;
+  delay = delay_;
   return *this;
 }
 
@@ -75,17 +84,18 @@ void FrontLift::run() {
     switch (FrontLiftMode) {
     case FrontLiftState::DOWN: {
       FrontLift_PID.set(down.kP, down.kI, down.kD);
-      move(100);
+      move(downPos);
       break;
     }
     case FrontLiftState::MIDDLE: {
       FrontLift_PID.set(mid.kP, mid.kI, mid.kD);
-      move(250);
+      move(midPos);
       break;
     }
     case FrontLiftState::UP: {
+      if(!clampState) pros::delay(delay); // If grabbing goal delay moving to ensure goal is grabbed.
       FrontLift_PID.set(up.kP, up.kI, up.kD);
-      move(1900);
+      move(upPos - 100);
       break;
     }
     case FrontLiftState::OPCONTROL: {
@@ -93,14 +103,14 @@ void FrontLift::run() {
       if (master.get_digital(DIGITAL_L1)) {
         checkFrontLift = true;
         FrontLift_PID.set(up.kP, up.kI, up.kD);
-        target = 2000;
+        target = upPos;
       } else if (master.get_digital(DIGITAL_L2)) {
         checkFrontLift = true;
         FrontLift_PID.set(down.kP, down.kI, down.kD);
-        target = 200;
+        target = downPos;
       } else if (arm.get_position() <= 500 && L_Imu.get_roll() >= 15 || L_Imu.get_roll() <= -15) {
         FrontLift_PID.set(mid.kP, mid.kI, mid.kD);
-        target = 750;
+        target = midPos;
       } else {
         if (checkFrontLift) {
           FrontLift_Slew.reset();

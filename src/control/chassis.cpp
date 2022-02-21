@@ -93,7 +93,7 @@ double Chassis::getTol(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    if(checkBack == true && backLimit.get_value() || backLimit.get_value() )isSettled = true;
+    if( checkBack == true && backDist.get() <= 30 && backDist.get() != 0 )isSettled = true;
     pros::delay(20);
   }
 }
