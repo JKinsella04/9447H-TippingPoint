@@ -55,6 +55,7 @@ void opcontrol() {
 
   FrontLift frontLift;
   frontLift.setState(FrontLiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
+	if ( !frontLift.getClampState() ) frontLift.toggleClamp(); // If clamped Unclamp.
 
   BackLift backLift;
   backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.

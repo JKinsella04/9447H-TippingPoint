@@ -1,11 +1,14 @@
 #include "backLift.hpp"
 #include "globals.hpp"
 #include "misc.hpp"
+#include "pros/rtos.hpp"
 
 BackLiftState BackLiftMode = BackLiftState::AUTON;
 
 bool BackLift::isRunning = false, BackLift::clampState = false, BackLift::lastClampState = !clampState, BackLift::checkDist = true;
 double BackLift::delay = 0;
+
+bool checkJam = false;
 
 BackLiftState BackLift::getState(){
   return BackLiftMode;
@@ -58,11 +61,14 @@ void BackLift::run() {
         clampState = true;
         updateClamp();
         checkDist = false;
-      } else if ( intake.get_efficiency() <= 5 && intake.get_target_velocity() == 600 ) { // Jam Detection
-        conveyer::spin(-600);
-        pros::delay(300);
-        conveyer::spin(600);
       }
+          if(checkJam && intake.get_efficiency() == 0){
+            conveyer::spin(-600);
+            pros::delay(300);
+            conveyer::spin(600);
+        }
+      if(intake.get_actual_velocity() == 600) checkJam = clampState;
+      if(!clampState) checkJam = false;
       break;
     }
     }
@@ -73,10 +79,8 @@ void BackLift::run() {
 }
 
 void BackLift::updateClamp() {
-  if (clampState != lastClampState) {
     backClamp.set_value(clampState);
     pros::delay(100);
     clampState ? conveyer::spin(600) : conveyer::spin(0);
     lastClampState = clampState;
-  }
 }

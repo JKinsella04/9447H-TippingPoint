@@ -17,9 +17,11 @@ bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
 
 PID_constants up{70, 1, 6}, mid{30, 0.01, 12.5}, down{15, 0.01, 5};
-double FrontLift::downPos = 200, FrontLift::midPos = 750, FrontLift::upPos = 2000, FrontLift::delay = 100; 
+double FrontLift::downPos = 50, FrontLift::midPos = 750, FrontLift::upPos = 2000, FrontLift::delay = 100; 
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
+
+bool FrontLift::getClampState(){ return clampState; }
 
 FrontLift &FrontLift::setState(FrontLiftState s) {
   isSettled = false;
@@ -152,12 +154,12 @@ void FrontLift::move(double target) {
 }
 
 void FrontLift::updateClamp() {
-  if (clampState != lastClampState && isDelayingClamp) {
+  if (isDelayingClamp) {
     if (abs(chassis.getDriveError()) < chassis.getTol() * 2) {
       frontClamp.set_value(clampState);
       lastClampState = clampState;
     }
-  } else if (clampState != lastClampState) {
+  } else {
     frontClamp.set_value(clampState);
     lastClampState = clampState;
   }

@@ -44,7 +44,7 @@ double Chassis::lastRot, Chassis::brakeTime;
 bool Chassis::isBraking = false, Chassis::gotTime = true;
 
 int Chassis::oneSide = 0;
-bool isParking = false;
+bool Chassis::isParking = false;
 
 Chassis::Chassis() { }
 

@@ -9,7 +9,12 @@ enum class FrontLiftState {
 class FrontLift{
   public:
   
-  FrontLiftState getState();  
+  FrontLiftState getState();
+
+  /*
+  Return current clampState;
+  */
+  bool getClampState();  
   
   /*
   Updates FrontLiftState to either ZERO, UP, OPCONTROL.
