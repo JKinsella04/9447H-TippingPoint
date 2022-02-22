@@ -1,9 +1,8 @@
-#include "control/chassis.hpp"
-#include "control/misc.hpp"
+#include "chassis.hpp"
+#include "misc.hpp"
 #include "globals.hpp"
 #include "positionTracking.hpp"
 #include "auton.hpp"
-#include "pros/rtos.h"
 
 static Position robotPos;
 static Autonomous auton;

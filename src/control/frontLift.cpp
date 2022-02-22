@@ -1,6 +1,5 @@
 #include "frontLift.hpp"
 #include "chassis.hpp"
-#include "display/lv_misc/lv_symbol_def.h"
 #include "misc.hpp"
 
 static Chassis chassis;

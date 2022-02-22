@@ -1,5 +1,3 @@
-#include "main.h"
-
 #include "gui.hpp"
 #include "auton.hpp"
 #include "chassis.hpp"

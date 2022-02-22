@@ -1,6 +1,5 @@
 #include "positionTracking.hpp"
 #include "misc.hpp"
-#include "pros/rtos.h"
 
 
 bool Position::isRunning = false;

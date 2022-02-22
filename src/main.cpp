@@ -1,5 +1,4 @@
-#include "main.h"
-
+#include "globals.hpp"
 #include "control/misc.hpp"
 #include "control/chassis.hpp"
 #include "control/gui.hpp"
@@ -7,7 +6,6 @@
 #include "control/backLift.hpp"
 #include "control/frontLift.hpp"
 #include "control/positionTracking.hpp"
-#include "globals.hpp"
 
 void initialize() {
 
