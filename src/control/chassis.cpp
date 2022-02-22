@@ -37,14 +37,12 @@ double Chassis::current = 0, Chassis::drive_output = 0,
 
 bool Chassis::adjustAngle = false, Chassis::turnComplete = false, Chassis::twoAngles = false;
 
-double Chassis::distToTarget, Chassis::driveError, Chassis::turnError; 
-
-double Chassis::tempTarget = 0, Chassis::tempTheta = 0;
+double Chassis::driveError, Chassis::turnError; 
 
 double debugSpeed = 3000;
 
-double lastRot, brakeTime;
-bool braking = false, gotTime = true;
+double Chassis::lastRot, Chassis::brakeTime;
+bool Chassis::isBraking = false, Chassis::gotTime = true;
 
 int Chassis::oneSide = 0;
 bool isParking = false;
@@ -356,14 +354,14 @@ void Chassis::run() {
         brakeTime = *robotPos.getTime();
         gotTime = true;
       }else if ( fabs( leftJoystick ) > 50 || fabs ( rightJoystick ) > 50 && gotTime){
-        gotTime = braking = false;
+        gotTime = isBraking = false;
       }
 
-      if (gotTime && !braking && *robotPos.getTime() - brakeTime >= 1500 || gotTime && !braking && isParking) {
+      if (gotTime && !isBraking && *robotPos.getTime() - brakeTime >= 1500 || gotTime && !isBraking && isParking) {
         lastRot = *rotation;
-        braking = true;
+        isBraking = true;
       }
-      if (braking) {
+      if (isBraking) {
         leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot, *rotation);
         rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot, *rotation);
       }

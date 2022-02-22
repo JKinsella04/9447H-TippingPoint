@@ -7,10 +7,10 @@
 #include "misc.hpp"
 
 // Class Init
-Position robotPos;
+static Position robotPos;
 static Chassis chassis;
-BackLift backLift;
-FrontLift frontLift;
+static BackLift backLift;
+static FrontLift frontLift;
 
 std::string Autonomous::name;
 
@@ -30,7 +30,7 @@ void Autonomous::setId(int id_) {
     name = "Right AWP";
     break;
   case 3:
-    name = "AWP";
+    name = "Full AWP";
     break;
   case 4:
     name = "Middle Goal";
@@ -58,7 +58,7 @@ void Autonomous::runAuton() {
     break;
   }
   case 3: {
-    awp();
+    fullAwp();
     break;
   }
 
@@ -101,6 +101,7 @@ void leftAWP() { // One yellow + left AWP
   chassis.drive(1500, 900, 900, 3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
   chassis.drive(-1500, 900, 900, -3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
   chassis.drive(1500, 900, 900, 3000).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
+  chassis.drive(-1500).withGains(15, 0, 6.25).withAngle(270).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
 }
 
 void rightAWP(){ // One yellow + right AWP
@@ -119,7 +120,7 @@ void rightAWP(){ // One yellow + right AWP
   chassis.drive(-2500, 1500, 3000, -12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
 }
 
-void awp() { // FULL AWP
+void fullAwp() { // FULL AWP
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   pros::delay(1000);
@@ -149,7 +150,7 @@ void awp() { // FULL AWP
   // YELLOW
 }
 
-void middleGoal(){ 
+void middleGoal(){ // Gets Middle Neutral Goal.
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   frontLift.setState(FrontLiftState::DOWN);
@@ -158,7 +159,7 @@ void middleGoal(){
   chassis.drive(-2200, 1500, 3000, -12000).withGains(15, 0, 6.25).withAngle(0).withTurnGains(133,0,66).withTol(40,5).waitUntilSettled();
 }
 
-void elim() { // Right Side Two Goal
+void elim() { // Right Side Neutral Goals.
   frontLift.withTol(10).setState(FrontLiftState::DOWN);
   chassis.setBrakeType(COAST);
   chassis.drive(2275,1500, 4000, 12000).withGains(15, 0, 6.25).withAngle(359).withTurnGains(133,0,66).withTol(50,20).waitUntilSettled();

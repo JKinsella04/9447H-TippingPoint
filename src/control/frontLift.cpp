@@ -3,7 +3,7 @@
 #include "display/lv_misc/lv_symbol_def.h"
 #include "misc.hpp"
 
-Chassis chassis;
+static Chassis chassis;
 
 FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
 
@@ -12,8 +12,6 @@ macro::Slew FrontLift_Slew(1100,600, true);
 
 double FrontLift::output = 0, FrontLift::target = 0, FrontLift::tol = 75,
        FrontLift::slewOutput = 0, FrontLift::current = arm.get_position();
-
-double tempFrontLiftPos;
 
 bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::isDelayingClamp = false, FrontLift::clampState = false,

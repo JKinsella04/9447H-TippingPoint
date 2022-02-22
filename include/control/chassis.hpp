@@ -153,8 +153,8 @@ class Chassis {
 
     static int oneSide;
     
-    static double distToTarget;
     static double driveError, turnError;
 
-    static double tempTarget, tempTheta;
+    static double lastRot, brakeTime;
+    static bool isBraking, gotTime, isParking;
 };
