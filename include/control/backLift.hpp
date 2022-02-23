@@ -30,12 +30,18 @@ class BackLift{
   */
   BackLift& toggleClamp();
 
+  /*
+  Delay clamp for specified amount of time.
+  @param delay_ time in seconds.
+  */
+  BackLift& delayClamp(double delay_);
+
   static void start(void * ignore);
 
   void run();
 
   private:
-  static bool isRunning, clampState, lastClampState, checkDist;
+  static bool isRunning, clampState, lastClampState, checkDist, isDelayingClamp;
   static double delay;
 
   /*
