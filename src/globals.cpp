@@ -1,7 +1,4 @@
 #include "main.h"
-#include "pros/adi.hpp"
-#include "pros/distance.hpp"
-#include "pros/misc.h"
 
 //Controller Definition
 pros::Controller master(CONTROLLER_MASTER);

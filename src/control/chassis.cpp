@@ -72,6 +72,15 @@ void Chassis::setBrakeType(pros::motor_brake_mode_e_t state){
   RB.set_brake_mode(state);
 }
 
+void Chassis::setVoltLimit(double limit){
+  LF.set_voltage_limit(limit);
+  LM.set_voltage_limit(limit);
+  LB.set_voltage_limit(limit);
+  LF.set_voltage_limit(limit);
+  RM.set_voltage_limit(limit);
+  RB.set_voltage_limit(limit);
+}
+
 ChassisState Chassis::getState(){
   return mode;
 }
