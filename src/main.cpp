@@ -65,7 +65,5 @@ void opcontrol() {
     pros::delay(delay);
     if (delay > 0)
       master.rumble("..");
-
-		if(master.get_digital(DIGITAL_DOWN)) exit(1);
   }
 }
