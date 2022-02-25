@@ -92,9 +92,8 @@ void FrontLift::run() {
       break;
     }
     case FrontLiftState::UP: {
-      if(!clampState) pros::delay(delay); // If grabbing goal delay moving to ensure goal is grabbed.
       FrontLift_PID.set(up.kP, up.kI, up.kD);
-      move(upPos - 100);
+      move(upPos);
       break;
     }
     case FrontLiftState::OPCONTROL: {
