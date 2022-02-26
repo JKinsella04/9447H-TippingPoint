@@ -58,6 +58,11 @@ class FrontLift{
   void waitUntilSettled();
 
   /*
+  Delay calling thread until the front clamp clamps.
+  */
+  void waitUntilClamped();
+
+  /*
   tares position of FrontLift motors.
   */
   void reset();

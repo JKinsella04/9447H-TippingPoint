@@ -62,6 +62,12 @@ void FrontLift::waitUntilSettled() {
   }
 }
 
+void FrontLift::waitUntilClamped() {
+  while (lastClampState != clampState) { // Delay until clamp is toggled.
+    pros::delay(20);
+  }
+}
+
 void FrontLift::reset() { arm.tare_position(); }
 
 void FrontLift::start(void *ignore) {
@@ -87,11 +93,13 @@ void FrontLift::run() {
       break;
     }
     case FrontLiftState::MIDDLE: {
+      if(!clampState) pros::delay(delay);  
       FrontLift_PID.set(mid.kP, mid.kI, mid.kD);
       move(midPos);
       break;
     }
     case FrontLiftState::UP: {
+      if(!clampState) pros::delay(delay);  
       FrontLift_PID.set(up.kP, up.kI, up.kD);
       move(upPos);
       break;
