@@ -41,9 +41,9 @@ FrontLift &FrontLift::toggleClamp() {
   return *this;
 }
 
-FrontLift &FrontLift::delayClamp(bool state_) {
+FrontLift &FrontLift::delayClamp() {
   isDelayingClamp = true;
-  clampState = state_;
+  clampState = !clampState;
   return *this;
 }
 
@@ -93,13 +93,13 @@ void FrontLift::run() {
       break;
     }
     case FrontLiftState::MIDDLE: {
-      if(!clampState) pros::delay(delay);  
+      if(clampState) pros::delay(delay);  
       FrontLift_PID.set(mid.kP, mid.kI, mid.kD);
       move(midPos);
       break;
     }
     case FrontLiftState::UP: {
-      if(!clampState) pros::delay(delay);  
+      if(clampState) pros::delay(delay);  
       FrontLift_PID.set(up.kP, up.kI, up.kD);
       move(upPos);
       break;
