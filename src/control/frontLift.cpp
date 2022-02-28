@@ -162,7 +162,7 @@ void FrontLift::move(double target) {
 
 void FrontLift::updateClamp() {
   if (isDelayingClamp) {
-    if (abs(chassis.getDriveError()) < chassis.getTol() * 2) {
+    if (abs(chassis.getDriveError()) < chassis.getTol() * 1.5) {
       frontClamp.set_value(clampState);
       lastClampState = clampState;
     }
