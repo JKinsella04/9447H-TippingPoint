@@ -38,7 +38,7 @@ class FrontLift{
   Sets the FrontLift's clamp once the robot has moved far enough.
   @param bool clamp_ True for clamped False for released.
   */
-  FrontLift& delayClamp();
+  FrontLift& delayClamp(double delay_);
 
   /*
   Set tolerance for frontLift movement.

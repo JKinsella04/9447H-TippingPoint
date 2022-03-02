@@ -14,6 +14,8 @@ double BackLift::delay = 25;
 double lastTimeCheck = 0;
 bool checkJam = false;
 
+double intakeSpeed = 600;
+
 BackLiftState BackLift::getState(){
   return BackLiftMode;
 }
@@ -60,14 +62,13 @@ void BackLift::run() {
     switch (BackLiftMode) {
     case BackLiftState::AUTON: {
       if (checkJam && intake.get_efficiency() == 0) {
-        conveyer::spin(-500);
+        conveyer::spin(-intakeSpeed);
         pros::delay(300);
-        conveyer::spin(500);
-      }
-      if (intake.get_actual_velocity() == 500)
-        checkJam = clampState;
-      if (!clampState)
+        conveyer::spin(intakeSpeed);
         checkJam = false;
+      }
+      if (intake.get_actual_velocity() == intakeSpeed)
+        checkJam = clampState;
       updateClamp();
       break;
     }
@@ -86,12 +87,16 @@ void BackLift::run() {
         checkDist = false;
       }
           if(checkJam && intake.get_efficiency() == 0){
-            conveyer::spin(-500);
+            conveyer::spin(-intakeSpeed);
             pros::delay(300);
-            conveyer::spin(500);
+            conveyer::spin(intakeSpeed);
+            checkJam = false;
         }
-      if(intake.get_actual_velocity() == 500) checkJam = clampState;
+      if(intake.get_actual_velocity() == intakeSpeed) checkJam = clampState;
       if(!clampState) checkJam = false;
+      break;
+    }
+    case BackLiftState::IDLE:{
       break;
     }
     }
@@ -107,12 +112,12 @@ void BackLift::updateClamp() {
     if (*robotPos.getTime() - lastTimeCheck >= delay) {
       backClamp.set_value(clampState);
       pros::delay(delay);
-      clampState ? conveyer::spin(500): conveyer::spin(0);
+      clampState ? conveyer::spin(intakeSpeed): conveyer::spin(0);
       isDelayingClamp = false;
     }
   } else {
     backClamp.set_value(clampState);
     pros::delay(delay);
-    clampState ? conveyer::spin(500) : conveyer::spin(0);
+    clampState ? conveyer::spin(intakeSpeed) : conveyer::spin(0);
   }
 }

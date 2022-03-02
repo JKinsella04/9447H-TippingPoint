@@ -99,7 +99,7 @@ double Chassis::getTol(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    if( checkBack == true && backDist.get() <= 30 && backDist.get() != 0 )isSettled = true;
+    if( checkBack == true && backDist.get() <= 25 && backDist.get() != 0 )isSettled = true;
     pros::delay(20);
   }
 }
@@ -377,7 +377,11 @@ void Chassis::run() {
       if (arm.get_position() >= 500) { // Slow accel when holding a goal.
         LslewOutput = leftSlew.withGains(450, 900, true).withLimit(12000).calculate(leftJoystick);
         RslewOutput = rightSlew.withGains(450, 900, true).withLimit(12000).calculate(rightJoystick);
-      } else {
+      }else if (isParking){
+        LslewOutput = leftSlew.withGains(900, 900, true).withLimit(8400).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(900, 900, true).withLimit(8400).calculate(rightJoystick);
+      } 
+      else {
         LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
         RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
       }

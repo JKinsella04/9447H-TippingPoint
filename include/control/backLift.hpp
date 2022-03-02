@@ -3,7 +3,7 @@
 #include "misc.hpp"
 
 enum class BackLiftState { 
-    AUTON, OPCONTROL
+    AUTON, OPCONTROL, IDLE
 }; 
 
 class BackLift{

@@ -50,7 +50,6 @@ void opcontrol() {
   robotPos.resetTime("Opcontrol");
 	
 	Chassis chassis;
-  chassis.reset();
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
 
