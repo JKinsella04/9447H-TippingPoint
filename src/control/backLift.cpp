@@ -77,9 +77,7 @@ void BackLift::run() {
         checkDist = true;
       }
       
-      if ( master.get_digital(DIGITAL_LEFT) ){ // Reverse Intake
-        conveyer::spin(-600);
-      } else if ( master.get_digital_new_press(DIGITAL_R2) ) { // Grab Goal
+      if ( master.get_digital_new_press(DIGITAL_R2) ) { // Grab Goal
         toggleClamp().updateClamp();
       } else if( checkDist && backDist.get() <= 30 && backDist.get() != 0 ){
         clampState = true;
@@ -119,5 +117,6 @@ void BackLift::updateClamp() {
     backClamp.set_value(clampState);
     pros::delay(delay);
     clampState ? conveyer::spin(intakeSpeed) : conveyer::spin(0);
+    if ( master.get_digital(DIGITAL_LEFT) ) conveyer::spin(-600);
   }
 }
