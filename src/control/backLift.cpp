@@ -117,6 +117,6 @@ void BackLift::updateClamp() {
     backClamp.set_value(clampState);
     pros::delay(delay);
     clampState ? conveyer::spin(intakeSpeed) : conveyer::spin(0);
-    if ( master.get_digital(DIGITAL_LEFT) ) conveyer::spin(-600);
+    if ( master.get_digital(DIGITAL_LEFT) ) conveyer::spin(-intakeSpeed);
   }
 }

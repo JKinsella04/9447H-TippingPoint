@@ -230,7 +230,7 @@ void skills(){ // Skills
   pros::delay(400);
   frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 100).waitUntilClamped();
   pros::delay(250);
-  chassis.drive(3100).withGains(15, 0, 6.25).withAngle(130).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
+  chassis.drive(3100).withGains(15, 0, 6.25).withAngle(135).withTurnGains(133,0,66).withTol(50,10).waitUntilSettled();
   chassis.turn(90,900).withTurnGains(166,0.25,66).withTol(0,3).waitUntilSettled();
   pros::delay(750);
   // MATCH LOADS  
