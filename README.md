@@ -14,5 +14,7 @@ Other stuff
 
 also heres our [notebook link](https://psaschool.github.io/stunning-telegram/intro.html) 
 
+Heres a [playlist](https://youtube.com/playlist?list=PLtQlsj9lcNmOyxPI8CKklyPGk1IMtSRZo) of a bunch of videos of our robot this season
+
 
  
