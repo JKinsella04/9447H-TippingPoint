@@ -1,7 +1,8 @@
 #pragma once
 #include "main.h"
-#include "pros/adi.hpp"
-#include "pros/distance.hpp"
+#include "control/units.hpp"
+
+using namespace okapi;
 
 #define HOLD pros::E_MOTOR_BRAKE_HOLD
 #define BRAKE pros::E_MOTOR_BRAKE_BRAKE

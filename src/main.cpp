@@ -11,7 +11,7 @@ void initialize() {
 
 	// Class Init
 	Position robotPos;	 
-	Chassis chassis(robotPos.getRotation(), robotPos.getThetaDeg(), robotPos.getX(), robotPos.getY());
+	Chassis chassis(robotPos.getRotation(), robotPos.getTheta(), robotPos.getX(), robotPos.getY());
  	Display display;
 	FrontLift frontLift;
 	BackLift backLift;

@@ -1,12 +1,19 @@
 #include "positionTracking.hpp"
 #include "misc.hpp"
+#include "okapi/api/units/QAngle.hpp"
+#include "okapi/api/units/QLength.hpp"
+#include "okapi/api/units/RQuantity.hpp"
+#include "units.hpp"
 
 
 bool Position::isRunning = false;
 
 pros::c::gps_status_s_t Position::gpsData;
 
-double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
+double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0;
+
+QAngle Position::theta;
+QLength Position::rotation;
 
 double Position::currentL = 0, Position::currentR = 0, Position::deltaL = 0, Position::deltaR = 0, Position::lastL = 0, Position::lastR = 0, Position::offset = 0;
 
@@ -28,15 +35,15 @@ double * Position::getThetaRad() {
   return &thetaRad;
 }
 
-double * Position::getThetaDeg() {
-  return &thetaDeg;
+QAngle * Position::getTheta() {
+  return &theta;
 }
 
 double * Position::getError() {
   return &error;
 }
 
-double * Position::getRotation() {
+QLength * Position::getRotation() {
   return &rotation;
 }
 
@@ -110,9 +117,9 @@ void Position::run() {
 
       thetaRad = abs(atan2f(y, x) + PI);
       thetaDeg = macro::toDeg(thetaRad);
-      // thetaRad = macro::toRad(thetaDeg);
+      theta = thetaDeg * degree;
 
-      rotation = ( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position() + RM.get_position() + RB.get_position() ) /6;
+      rotation = (( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position() + RM.get_position() + RB.get_position() ) /6) * inch;
       
       // macro::print("Theta: ", thetaDeg); // Debug
       break;
