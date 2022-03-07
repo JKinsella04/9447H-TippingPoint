@@ -281,5 +281,5 @@ void skills(){ // Skills
 
 void test() { // Testing
 chassis.drive(2.5_ft, .5_ftps2, .5_ftps2, 4.87_ftps).withTol(1_in).waitUntilSettled();
-chassis.turn(90_deg, 1_radps2, 2_radps).withTurnTol(1_deg).waitUntilSettled();
+chassis.turn(90_deg, .5_radps2, 4.87_radps).withTurnTol(1_deg).waitUntilSettled();
 }

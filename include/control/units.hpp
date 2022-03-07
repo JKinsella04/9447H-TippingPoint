@@ -1,5 +1,8 @@
 #pragma once
 #include "globals.hpp"
+#include "okapi/api/units/QAcceleration.hpp"
+#include "okapi/api/units/QAngularSpeed.hpp"
+#include "okapi/api/units/QSpeed.hpp"
 
 /*
  * The unit library we uses allows us to check our math during compile time
@@ -27,9 +30,14 @@ constexpr QCurvature radpm = radian / meter;
 
 // Predefined Speed Unit
 constexpr QSpeed ftps = foot / second;
+constexpr QSpeed tps = tick / second;
+constexpr QSpeed mV = ftps * 12000 / 4.78;
+
+constexpr QAngularSpeed AmV = radps * 12000 / 4.78;
 
 // Predefined Acceleration Unit
 constexpr QAcceleration ftps2 = ftps / second;
+constexpr QAcceleration tps2 = tps / second;
 
 // Predefined Angular Acceleration Unit
 constexpr QAngularAcceleration radps2 = radps / second;
@@ -65,13 +73,25 @@ constexpr QCurvature operator"" _radpm(unsigned long long int x) { return static
 constexpr QSpeed operator"" _ftps(long double x) { return static_cast<double>(x)*ftps; }
 constexpr QSpeed operator"" _ftps(unsigned long long int x) { return static_cast<double>(x)*ftps; }
 
+constexpr QSpeed operator"" _tps(long double x) { return static_cast<double>(x)*tps; }
+constexpr QSpeed operator"" _tps(unsigned long long int x) { return static_cast<double>(x)*tps; }
+
+constexpr QSpeed operator"" _mV(long double x) { return static_cast<double>(x)*mV; }
+constexpr QSpeed operator"" _mV(unsigned long long int x) { return static_cast<double>(x)*mV; }
+
 // Angular Speed literals
 constexpr QAngularSpeed operator"" _radps(long double x) { return static_cast<double>(x)*radps; }
 constexpr QAngularSpeed operator"" _radps(unsigned long long int x) { return static_cast<double>(x)*radps; }
 
+constexpr QAngularSpeed operator"" _AmV(long double x) { return static_cast<double>(x)*AmV; }
+constexpr QAngularSpeed operator"" _AmV(unsigned long long int x) { return static_cast<double>(x)*AmV; }
+
 // Predefined Acceleration Unit
 constexpr QAcceleration operator"" _ftps2(long double x) { return static_cast<double>(x)*ftps2; }
 constexpr QAcceleration operator"" _ftps2(unsigned long long int x) { return static_cast<double>(x)*ftps2; }
+
+constexpr QAcceleration operator"" _tps2(long double x) { return static_cast<double>(x)*tps2; }
+constexpr QAcceleration operator"" _tps2(unsigned long long int x) { return static_cast<double>(x)*tps2; }
 
 // Angular Acceleration literals
 constexpr QAngularAcceleration operator"" _radps2(long double x) { return static_cast<double>(x)*radps2; }

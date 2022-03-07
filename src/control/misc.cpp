@@ -58,15 +58,15 @@ Slew::Slew(double accel_, double decel_, bool reversible_) : accel(accel_), dece
 }
 
 Slew &Slew::withGains(double accel_, double decel_, bool reversible_){
-  accel = accel_ * 12000/4.78;
-  decel = decel_ * 12000/4.78;
+  accel = accel_;
+  decel = decel_; 
   isReversible = reversible_;
   return *this;
 }
 
 Slew &Slew::withLimit(double limit_) {
   isLimited = true;
-  limit = limit_ * 12000/4.78;
+  limit = limit_;
   return *this;
 }
 

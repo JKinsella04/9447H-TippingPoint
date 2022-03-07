@@ -2,6 +2,8 @@
 #include "misc.hpp"
 #include "globals.hpp"
 #include "okapi/api/units/QAngle.hpp"
+#include "okapi/api/units/QAngularSpeed.hpp"
+#include "okapi/api/units/QSpeed.hpp"
 #include "positionTracking.hpp"
 #include "auton.hpp"
 
@@ -282,12 +284,16 @@ void Chassis::run() {
       macro::print("VOLTAGE: ", LF.get_voltage());
       // macro::print("TURN ERR", turn_PID.getError());
 
+      QSpeed leftSpeed = LslewOutput * mV; // Convert to voltage range
+      QSpeed rightSpeed = RslewOutput * mV;
+      QAngularSpeed turnSpeed = TslewOutput * AmV;
+
       if(!adjustAngle){
-        left(LslewOutput);
-        right(RslewOutput);
+        left(leftSpeed.convert(mV));
+        right(rightSpeed.convert(mV));
       }else{
-        left(LslewOutput - TslewOutput);
-        right(RslewOutput + TslewOutput);
+        left(leftSpeed.convert(mV) - turnSpeed.convert(AmV));
+        right(rightSpeed.convert(mV) + turnSpeed.convert(AmV));
       }
 
       if ( fabs(drive_PID.getError()) < drive_tol.convert(tick) && fabs(turn_PID.getError()) < turn_tol.convert(degree)  && checkErr) { 
@@ -334,6 +340,8 @@ void Chassis::run() {
       TslewOutput = turnSlew.withGains(target.rateTurn.convert(radps2), target.rateTurn.convert(radps2), true).withLimit(target.speedTurn.convert(radps)).calculate(turn_output);
 
       macro::print("Turn Error: ", turn_PID.getError());
+
+      QAngularSpeed turnSpeed = TslewOutput * AmV;
 
       if (oneSide == 1) {
         left(-TslewOutput);
@@ -412,8 +420,11 @@ void Chassis::run() {
       LslewOutput = leftSlew.withGains(target.accel_rate.convert(ftps2), target.decel_rate.convert(ftps2), true).withLimit(target.speedDrive.convert(ftps)).calculate(drive_output);
       RslewOutput = rightSlew.withGains(target.accel_rate.convert(ftps2), target.decel_rate.convert(ftps2), true).withLimit(target.speedDrive.convert(ftps)).calculate(drive_output);
 
-      left(LslewOutput);
-      right(RslewOutput);
+      QSpeed leftSpeed = LslewOutput * mV; // Convert to voltage range
+      QSpeed rightSpeed = RslewOutput * mV;
+
+      left(leftSpeed.convert(mV));
+      right(rightSpeed.convert(mV));
       macro::print("Speed: ", LslewOutput);
 
       if (fabs(drive_PID.getError()) < drive_tol.convert(tick)) {
