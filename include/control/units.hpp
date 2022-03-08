@@ -33,7 +33,7 @@ constexpr QSpeed ftps = foot / second;
 constexpr QSpeed tps = tick / second;
 constexpr QSpeed mV = ftps * 12000 / 4.78;
 
-constexpr QAngularSpeed AmV = radps * 12000 / 4.78;
+constexpr QAngularSpeed AmV = radps * 12000 / 28.68;
 
 // Predefined Acceleration Unit
 constexpr QAcceleration ftps2 = ftps / second;

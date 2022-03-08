@@ -334,7 +334,7 @@ void Chassis::run() {
       // Turn PID calc
       turnError = target.theta.convert(radian) - theta->convert(radian);
       turnError = atan2(sin(turnError), cos(turnError));
-      turnError = turnError * 180 / PI;
+      turnError = macro::toDeg(turnError);
       turn_output = turn_PID.calculate(turnError);
 
       TslewOutput = turnSlew.withGains(target.rateTurn.convert(radps2), target.rateTurn.convert(radps2), true).withLimit(target.speedTurn.convert(radps)).calculate(turn_output);
