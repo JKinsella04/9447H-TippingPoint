@@ -182,11 +182,11 @@ Chassis &Chassis::swingTurn(int oneSide_){
 
 Chassis &Chassis::drive(QLength target_,  QAcceleration accel_rate, QAcceleration decel_rate,  QSpeed speed) {
   macro::print("DRIVE ", 0);
+  reset();
   target.x = target_;
   target.accel_rate = accel_rate;
   target.decel_rate = decel_rate;
   target.speedDrive = speed;
-  reset();
   isSettled = false;
   mode = ChassisState::DRIVE;
   return *this;
@@ -213,10 +213,10 @@ Chassis &Chassis::drive(QLength target_,  QAcceleration accel_rate, QAcceleratio
 Chassis &Chassis::turn(QAngle theta, QAngularAcceleration rate, QAngularSpeed speed) {
   
   macro::print("TURN ", 0);
+  reset();
   target.theta = theta;
   target.rateTurn = rate;
   target.speedTurn = speed;
-  reset();
   isSettled = false;
   mode = ChassisState::TURN;
   return *this;
@@ -308,7 +308,7 @@ void Chassis::run() {
         right(RslewOutput + TslewOutput);
       }
 
-      if ( fabs(drive_PID.getError()) < drive_tol.convert(foot) && fabs(turn_PID.getError()) < turn_tol.convert(degree)  && checkErr) { 
+      if ( fabs(drive_PID.getError()) < drive_tol.convert(foot) && fabs(turn_PID.getError()) < turn_tol.convert(radian) || !adjustAngle && fabs(drive_PID.getError()) < drive_tol.convert(foot)) { 
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
@@ -317,17 +317,6 @@ void Chassis::run() {
         mode = ChassisState::IDLE;
         goto end;
       }
-      if( turnComplete && justTurn && fabs ( turn_PID.getError() < turn_tol.convert(radian)) ){
-        left(0);
-        right(0);
-        withGains().withTurnGains().withTol();
-        reset();
-        isSettled = true;
-        mode = ChassisState::IDLE;
-        goto end;
-      }
-      checkErr = true;
-
       break;
     }
 

@@ -90,18 +90,18 @@ void leftAWP() { // One yellow + left AWP
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   frontLift.withTol(10).setState(FrontLiftState::DOWN);
-  chassis.drive(45_in).withAngle(355_deg).waitUntilSettled(); //2200
-  frontLift.toggleClamp().setState(FrontLiftState::UP, 100).waitUntilClamped();
-  chassis.drive(-45_in).withAngle(15_deg).waitUntilSettled();
-  chassis.turn(95_deg).waitUntilSettled();
-  chassis.drive(-15_in).withAngle(95_deg).withTol(1_in, true).waitUntilSettled();
+  chassis.drive(42_in, 2.5_ftps2).withAngle(355_deg, 28_radps2).withGains(3.5, 0, .5).withTurnGains(30).withTol(2_in).withTurnTol(10_deg).waitUntilSettled();
+  frontLift.toggleClamp().setState(FrontLiftState::UP, 50).waitUntilClamped();
+  chassis.drive(-52_in).withAngle(15_deg).withTol(3_in).withTurnTol(5_deg).withTurnGains(30).waitUntilSettled();
+  chassis.turn(95_deg, 1.1_radps2, 14_radps).waitUntilSettled();
+  chassis.drive(-30_in, .2_ftps2, .2_ftps2, -2.75_ftps).withAngle(90_deg).withTol(1_in, true).waitUntilSettled();
   backLift.toggleClamp();
-  chassis.drive(24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
-  chassis.drive(-24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
-  chassis.drive(24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
-  chassis.drive(-24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
-  chassis.drive(24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
-  chassis.drive(-24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
+  chassis.drive(27_in, 0.05_ftps2, 0.05_ftps2, 1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
+  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
+  chassis.drive(19_in, 0.05_ftps2, 0.05_ftps2, 1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
+  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
+  chassis.drive(19_in, 0.05_ftps2, 0.05_ftps2, 1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
+  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
 }
 
 void rightAWP(){ // One yellow + right AWP
@@ -109,17 +109,17 @@ void rightAWP(){ // One yellow + right AWP
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   frontLift.withTol(10).setState(FrontLiftState::DOWN);
-  chassis.drive(45_in).withAngle(350_deg).waitUntilSettled();
-  frontLift.toggleClamp().setState(FrontLiftState::UP, 100).waitUntilClamped();
-  chassis.drive(-20_in).withAngle(358_deg).waitUntilSettled();
-  chassis.turn(90_deg).waitUntilSettled();
-  chassis.drive(-17_in).withAngle(90_deg).withTol(1_in, true).waitUntilSettled();
+  chassis.drive(42_in, 2.5_ftps2).withAngle(350_deg, 28_radps2).withGains(3.5, 0, .5).withTurnGains(30).withTol(2_in).withTurnTol(10_deg).waitUntilSettled();
+  frontLift.toggleClamp().setState(FrontLiftState::UP, 50).waitUntilClamped();
+  chassis.drive(-33_in).withGains(3,0,0.75).withAngle(0_deg).waitUntilSettled();
+  chassis.turn(85_deg, 1.1_radps2, 14_radps).withTurnGains(20,0,10).waitUntilSettled();
+  chassis.drive(-29_in, .37_ftps2, .37_ftps2, -2_ftps).withGains(3,0,0.75).withAngle(90_deg).withTol(1_in, true).waitUntilSettled();
   backLift.toggleClamp();
   pros::delay(150);
-  chassis.drive(5_in).withAngle(90_deg).waitUntilSettled();
+  chassis.drive(2_in).withGains(10).withAngle(90_deg).waitUntilSettled();
   chassis.turn(0_deg).waitUntilSettled();
-  chassis.drive(25_in).withAngle(0_deg).waitUntilSettled();
-  chassis.drive(-30_in).withAngle(0_deg).waitUntilSettled();
+  chassis.drive(40_in, 0.135_ftps2, 0.135_ftps2, 2_ftps).withGains(3).withAngle(0_deg).waitUntilSettled();
+  chassis.drive(-45_in).withAngle(0_deg).waitUntilSettled();
 }
 
 void fullAwp() { // FULL AWP
@@ -281,6 +281,6 @@ void skills(){ // Skills
 
 void test() { // Testing
 chassis.setBrakeType(COAST);
-chassis.drive(24_in, 0.37_ftps2, 0.37_ftps2, 4.78_ftps).waitUntilSettled(); // test
+chassis.drive(24_in).withGains(2.75, 0, 0.5).waitUntilSettled(); // test
 chassis.turn(90_deg).withTurnGains(18).waitUntilSettled();
 }

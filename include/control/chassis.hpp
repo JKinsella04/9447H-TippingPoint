@@ -90,18 +90,18 @@ class Chassis {
     /*
     Sets drive PID constants.
     */
-    Chassis& withGains(double kP_ = 2, double kI_ = 0, double kD_ = 0);
+    Chassis& withGains(double kP_ = 2.75, double kI_ = 0, double kD_ = 0.5);
 
     /*
     Sets turn PID constants.
     */
-    Chassis& withTurnGains(double kP_ = 1, double kI_ = 0, double kD_ = 0);
+    Chassis& withTurnGains(double kP_ = 18, double kI_ = 0, double kD_ = 4.5);
 
     /*
     Sets the tolerance range for lateral movements.
     Also set whether to check dist sensor.
     */
-    Chassis& withTol(QLength tol_ = 1_in, bool checkBack_ = false);
+    Chassis& withTol(QLength tol_ = 1.5_in, bool checkBack_ = false);
 
 
     /*
@@ -112,12 +112,12 @@ class Chassis {
     /*
     Sets Target angle to reach while driving.
     */
-    Chassis& withAngle(QAngle theta, QAngularAcceleration rate = 2_radps2, QAngularSpeed speed = 2_radps);
+    Chassis& withAngle(QAngle theta, QAngularAcceleration rate = 2.2_radps2, QAngularSpeed speed = 27.643373493975904_radps);
 
     /*
     Sets Target angle to reach while driving then updates it to the second target angle after reaching the first angle.
     */
-    Chassis& withAngles(QAngle theta, QAngle thetaTwo, QAngularAcceleration rate = 2_radps2, QAngularSpeed speed = 2_radps);
+    Chassis& withAngles(QAngle theta, QAngle thetaTwo, QAngularAcceleration rate = 2_radps2, QAngularSpeed speed = 27.643373493975904_radps);
     
     /*
     Turn with only one side
@@ -127,7 +127,7 @@ class Chassis {
     /*
     Updates ChassisState and sets target position in inches.
     */
-    Chassis& drive(QLength target_,  QAcceleration accel_rate = 0.37_ftps2, QAcceleration decel_rate = -0.37_ftps2,  QSpeed speed = 4.87_ftps);
+    Chassis& drive(QLength target_,  QAcceleration accel_rate = 0.37_ftps2, QAcceleration decel_rate = 0.37_ftps2,  QSpeed speed = 4.87_ftps);
 
     /*
     Updates ChassisState and sets target position from given (x,y) coords.

@@ -39,6 +39,8 @@ Position::Position(double diameter_, double gearSet_, std::tuple<double, double>
   if(ratio < 1) ratio = std::get<1>(gearRatio_) / std::get<0>(gearRatio_);
 }
 
+Position::Position(){}
+
 double * Position::getX() {
   return &posX;
 }
