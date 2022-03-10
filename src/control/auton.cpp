@@ -281,6 +281,6 @@ void skills(){ // Skills
 
 void test() { // Testing
 chassis.setBrakeType(COAST);
-chassis.drive(24_in, 0.37_ftps2, 0.37_ftps2, 4.78_ftps).waitUntilSettled();
+chassis.drive(24_in, 0.37_ftps2, 0.37_ftps2, 4.78_ftps).waitUntilSettled(); // test
 chassis.turn(90_deg).withTurnGains(18).waitUntilSettled();
 }
