@@ -10,7 +10,7 @@
 void initialize() {
 
 	// Class Init
-	Position robotPos;	 
+	Position robotPos(4.15, 200, {5,7});	 
 	Chassis chassis(robotPos.getRotation(), robotPos.getTheta(), robotPos.getX(), robotPos.getY());
  	Display display;
 	FrontLift frontLift;

@@ -19,9 +19,25 @@ double Position::currentL = 0, Position::currentR = 0, Position::deltaL = 0, Pos
 
 double Position::time, Position::time_offset;
 
+double Position::diameter, Position::gearSet, Position::ticks, Position::ratio;
+
+std::tuple<double, double> gearRatio;
+
 std::string Position::stamp;
 
 PositionTracker PositionTrackerState = PositionTracker::RELATIVE;
+
+Position::Position(double diameter_, double gearSet_, std::tuple<double, double> gearRatio_){
+  diameter = diameter_;
+
+  gearSet = gearSet_;
+  if(gearSet == 100) ticks = 1800;
+  else if(gearSet  == 200) ticks = 900;
+  else ticks = 300;
+
+  ratio = std::get<0>(gearRatio_) / std::get<1>(gearRatio_); 
+  if(ratio < 1) ratio = std::get<1>(gearRatio_) / std::get<0>(gearRatio_);
+}
 
 double * Position::getX() {
   return &posX;
@@ -118,11 +134,11 @@ void Position::run() {
       theta = ( abs(atan2f(y, x) + PI) ) * radian;
       
       rotation = (( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position() + RM.get_position() + RB.get_position() ) /6) * tick;
-      double tempRot = (rotation.convert(tick) / 900) * 1.7142857142857143;
+      double tempRot = (rotation.convert(tick) / ticks) * ratio;
 
       rotation = tempRot * revolution;
       
-      rotation = ( rotation.convert(revolution) * (4.15*PI) ) * inch;
+      rotation = ( rotation.convert(revolution) * (diameter * PI) ) * inch;
       // macro::print("inches: " , rotation.convert(foot)); // Debug
       break;
     }

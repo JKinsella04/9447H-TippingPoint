@@ -86,40 +86,40 @@ void Autonomous::runAuton() {
 
 // Autons
 void leftAWP() { // One yellow + left AWP
-  // frontLift.toggleClamp();
-  // chassis.setBrakeType(COAST);
-  // backLift.setState(BackLiftState::AUTON);
-  // frontLift.withTol(10).setState(FrontLiftState::DOWN);
-  // chassis.drive(2200, 1500, 450, 12000).withAngle(355_deg, 900, 12000).withTol(40,5).waitUntilSettled();
-  // frontLift.toggleClamp().setState(FrontLiftState::UP, 100).waitUntilClamped();
-  // chassis.drive(-2500, 1500, 900, -12000).withAngle(15).withTol(40,5).waitUntilSettled();
-  // chassis.turn(95,450, -4500).withTurnGains(100,0.2,50).withTol(0,2.5).waitUntilSettled();
-  // chassis.drive(-1500, 900, 900, -5500).withAngle(95).withTol(40,5, true).waitUntilSettled();
-  // backLift.toggleClamp();
-  // chassis.drive(1150, 900, 900, 3000).withAngle(105).withTol(40,10).waitUntilSettled();
-  // chassis.drive(-900, 900, 900, -3000).withAngle(105).withTol(40,5).waitUntilSettled();
-  // chassis.drive(1000, 900, 900, 3000).withAngle(105).withTol(40,5).waitUntilSettled();
-  // chassis.drive(-1000, 900, 900, -3000).withAngle(105).withTol(40,5).waitUntilSettled();
-  // chassis.drive(1000, 900, 900, 3000).withAngle(105).withTol(40,5).waitUntilSettled();
-  // chassis.drive(-1000).withAngle(90).withTol(40,5).waitUntilSettled();
+  frontLift.toggleClamp();
+  chassis.setBrakeType(COAST);
+  backLift.setState(BackLiftState::AUTON);
+  frontLift.withTol(10).setState(FrontLiftState::DOWN);
+  chassis.drive(45_in).withAngle(355_deg).waitUntilSettled(); //2200
+  frontLift.toggleClamp().setState(FrontLiftState::UP, 100).waitUntilClamped();
+  chassis.drive(-45_in).withAngle(15_deg).waitUntilSettled();
+  chassis.turn(95_deg).waitUntilSettled();
+  chassis.drive(-15_in).withAngle(95_deg).withTol(1_in, true).waitUntilSettled();
+  backLift.toggleClamp();
+  chassis.drive(24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
+  chassis.drive(-24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
+  chassis.drive(24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
+  chassis.drive(-24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
+  chassis.drive(24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
+  chassis.drive(-24_in, 0.05_ftps2, 0.05_ftps2, 1_ftps).withAngle(105_deg).waitUntilSettled();
 }
 
 void rightAWP(){ // One yellow + right AWP
-  // frontLift.toggleClamp();
-  // chassis.setBrakeType(COAST);
-  // backLift.setState(BackLiftState::AUTON);
-  // frontLift.withTol(10).setState(FrontLiftState::DOWN);
-  // chassis.drive(2000, 1500, 450, 12000).withAngle(350, 1500, 12000).withTol(40,5).waitUntilSettled();
-  // frontLift.toggleClamp().setState(FrontLiftState::UP, 100).waitUntilClamped();
-  // chassis.drive(-1600, 1500, 900, -12000).withAngle(358).withTol(40,5).waitUntilSettled();
-  // chassis.turn(90,450, -4500).withTurnGains(100,0.5,50).withTol(0,2.5).waitUntilSettled();
-  // chassis.drive(-1300, 900, 900, -6000).withAngle(90).withTol(40,5, true).waitUntilSettled();
-  // backLift.toggleClamp();
-  // pros::delay(150);
-  // chassis.drive(300).withAngle(90).withTol(40,5).waitUntilSettled();
-  // chassis.turn(0,450).withTurnGains(133,0.2,66).withTol(0,2.5).waitUntilSettled();
-  // chassis.drive(2000).withAngle(0).withTol(40,5).waitUntilSettled();
-  // chassis.drive(-2300, 1500, 3000, -12000).withAngle(0).withTol(40,5).waitUntilSettled();
+  frontLift.toggleClamp();
+  chassis.setBrakeType(COAST);
+  backLift.setState(BackLiftState::AUTON);
+  frontLift.withTol(10).setState(FrontLiftState::DOWN);
+  chassis.drive(45_in).withAngle(350_deg).waitUntilSettled();
+  frontLift.toggleClamp().setState(FrontLiftState::UP, 100).waitUntilClamped();
+  chassis.drive(-20_in).withAngle(358_deg).waitUntilSettled();
+  chassis.turn(90_deg).waitUntilSettled();
+  chassis.drive(-17_in).withAngle(90_deg).withTol(1_in, true).waitUntilSettled();
+  backLift.toggleClamp();
+  pros::delay(150);
+  chassis.drive(5_in).withAngle(90_deg).waitUntilSettled();
+  chassis.turn(0_deg).waitUntilSettled();
+  chassis.drive(25_in).withAngle(0_deg).waitUntilSettled();
+  chassis.drive(-30_in).withAngle(0_deg).waitUntilSettled();
 }
 
 void fullAwp() { // FULL AWP
