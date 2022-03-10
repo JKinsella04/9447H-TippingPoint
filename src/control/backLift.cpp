@@ -9,7 +9,7 @@ BackLiftState BackLiftMode = BackLiftState::AUTON;
 
 bool BackLift::isRunning = false, BackLift::clampState = false, 
 BackLift::lastClampState = !clampState, BackLift::checkDist = true, BackLift::isDelayingClamp = false;
-double BackLift::delay = 25;
+double BackLift::delay = 150;
 
 double lastTimeCheck = 0;
 bool checkJam = false;
@@ -73,6 +73,7 @@ void BackLift::run() {
       break;
     }
     case BackLiftState::OPCONTROL: {
+      delay = 1000;
       if( backDist.get() >= 45 || backDist.get() == 0){
         checkDist = true;
       }
@@ -98,7 +99,7 @@ void BackLift::run() {
       break;
     }
     }
-    updateClamp();
+    // updateClamp();
     end:
 
     pros::delay(10);
@@ -115,7 +116,7 @@ void BackLift::updateClamp() {
     }
   } else {
     backClamp.set_value(clampState);
-    pros::delay(delay);
+    pros::delay(250);
     clampState ? conveyer::spin(intakeSpeed) : conveyer::spin(0);
     if ( master.get_digital(DIGITAL_LEFT) ) conveyer::spin(-intakeSpeed);
   }

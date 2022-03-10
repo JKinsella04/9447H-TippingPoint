@@ -1,12 +1,19 @@
 #include "positionTracking.hpp"
 #include "misc.hpp"
+#include "okapi/api/units/QAngle.hpp"
+#include "okapi/api/units/QLength.hpp"
+#include "okapi/api/units/RQuantity.hpp"
+#include "units.hpp"
 
 
 bool Position::isRunning = false;
 
 pros::c::gps_status_s_t Position::gpsData;
 
-double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0, Position::rotation;
+double Position::posX = 0, Position::posY = 0, Position::thetaRad = 0, Position::thetaDeg = 0, Position::error = 0;
+
+QAngle Position::theta;
+QLength Position::rotation;
 
 double Position::currentL = 0, Position::currentR = 0, Position::deltaL = 0, Position::deltaR = 0, Position::lastL = 0, Position::lastR = 0, Position::offset = 0;
 
@@ -28,15 +35,15 @@ double * Position::getThetaRad() {
   return &thetaRad;
 }
 
-double * Position::getThetaDeg() {
-  return &thetaDeg;
+QAngle * Position::getTheta() {
+  return &theta;
 }
 
 double * Position::getError() {
   return &error;
 }
 
-double * Position::getRotation() {
+QLength * Position::getRotation() {
   return &rotation;
 }
 
@@ -108,13 +115,15 @@ void Position::run() {
       float x = (cos(inertL - offset + PI) + cos(inertR - offset + PI)) / 2;
       float y = (sin(inertL - offset + PI) + sin(inertR - offset + PI)) / 2;
 
-      thetaRad = abs(atan2f(y, x) + PI);
-      thetaDeg = macro::toDeg(thetaRad);
-      // thetaRad = macro::toRad(thetaDeg);
-
-      rotation = ( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position() + RM.get_position() + RB.get_position() ) /6;
+      theta = ( abs(atan2f(y, x) + PI) ) * radian;
       
-      // macro::print("Theta: ", thetaDeg); // Debug
+      rotation = (( LF.get_position() + LM.get_position() + LB.get_position() + RF.get_position() + RM.get_position() + RB.get_position() ) /6) * tick;
+      double tempRot = (rotation.convert(tick) / 900) * 1.7142857142857143;
+
+      rotation = tempRot * revolution;
+      
+      rotation = ( rotation.convert(revolution) * (4.15*PI) ) * inch;
+      // macro::print("inches: " , rotation.convert(foot)); // Debug
       break;
     }
     case PositionTracker::GPS: {

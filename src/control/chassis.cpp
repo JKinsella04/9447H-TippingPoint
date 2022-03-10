@@ -1,6 +1,10 @@
 #include "chassis.hpp"
 #include "misc.hpp"
 #include "globals.hpp"
+#include "okapi/api/units/QAngle.hpp"
+#include "okapi/api/units/QAngularSpeed.hpp"
+#include "okapi/api/units/QLength.hpp"
+#include "okapi/api/units/QSpeed.hpp"
 #include "positionTracking.hpp"
 #include "auton.hpp"
 
@@ -8,8 +12,8 @@ static Position robotPos;
 static Autonomous auton;
 
 // PID Init
-macro::PID drive_PID(0.5, 0.01, 0.25);
-macro::PID turn_PID(133, 0, 66);
+macro::PID drive_PID(2, 0, 1);
+macro::PID turn_PID(1, 0, 0);
 
 // Slew Init
 macro::Slew leftSlew(900, 900, true);
@@ -26,9 +30,9 @@ ChassisState mode = ChassisState::IDLE;
 bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkBack = false, Chassis::justTurn = false,
      Chassis::checkErr = false;
 
-double *Chassis::theta, *Chassis::posX, *Chassis::posY, *Chassis::rotation;
-
-double Chassis::drive_tol = 0, Chassis::turn_tol = 0;
+double Chassis::driveError, Chassis::turnError, *Chassis::posX, *Chassis::posY;
+QAngle *Chassis::theta, Chassis::turn_tol;
+QLength *Chassis::rotation, Chassis::drive_tol;
 
 double Chassis::current = 0, Chassis::drive_output = 0,
        Chassis::turn_output = 0, Chassis::LslewOutput = 0,
@@ -36,19 +40,21 @@ double Chassis::current = 0, Chassis::drive_output = 0,
 
 bool Chassis::adjustAngle = false, Chassis::turnComplete = false, Chassis::twoAngles = false;
 
-double Chassis::driveError, Chassis::turnError; 
+QLength Chassis::lastRot;
 
 double debugSpeed = 3000;
 
-double Chassis::lastRot, Chassis::brakeTime;
+double Chassis::brakeTime;
 bool Chassis::isBraking = false, Chassis::gotTime = true;
 
 int Chassis::oneSide = 0;
 bool Chassis::isParking = false;
 
+double lastvalue;
+
 Chassis::Chassis() { }
 
-Chassis::Chassis(double *rotation_, double *theta_, double *posX_, double *posY_){
+Chassis::Chassis(QLength *rotation_, QAngle *theta_, double *posX_, double *posY_){
   rotation = rotation_;
   theta = theta_;
   posX = posX_;
@@ -85,15 +91,15 @@ ChassisState Chassis::getState(){
   return mode;
 }
 
-double Chassis::getDriveError(){
-  return drive_PID.getError();
+QLength Chassis::getDriveError(){
+  return drive_PID.getError() * inch;
 }
 
-double Chassis::getTurnError(){
-  return turn_PID.getError();
+QAngle Chassis::getTurnError(){
+  return turn_PID.getError() * degree;
 }
 
-double Chassis::getTol(){
+QLength Chassis::getTol(){
   return drive_tol;
 }
 
@@ -113,6 +119,8 @@ void Chassis::reset(){
   // Slew values reset
   leftSlew.reset();
   rightSlew.reset();
+
+  withGains().withTol();
 
   LF.tare_position();
   LM.tare_position();
@@ -138,14 +146,18 @@ Chassis &Chassis::withTurnGains(double kP_, double kI_, double kD_){
   return *this;
 }
 
-Chassis &Chassis::withTol(double drive_tol_, double turn_tol_, bool checkBack_) {
+Chassis& Chassis::withTol(QLength drive_tol_, bool checkBack_) {
   drive_tol = drive_tol_;
-  turn_tol = turn_tol_;
   checkBack = checkBack_;
   return *this;
 }
 
-Chassis &Chassis::withAngle(double theta, double rate, double speed){
+Chassis& Chassis::withTurnTol(QAngle turn_tol_){
+  turn_tol = turn_tol_;
+  return *this;
+}
+
+Chassis &Chassis::withAngle(QAngle theta, QAngularAcceleration rate , QAngularSpeed speed){
   adjustAngle = true;
   target.theta = theta;
   target.rateTurn = rate;
@@ -153,7 +165,7 @@ Chassis &Chassis::withAngle(double theta, double rate, double speed){
   return *this;
 }
 
-Chassis &Chassis::withAngles(double theta, double thetaTwo, double rate, double speed){
+Chassis &Chassis::withAngles(QAngle theta, QAngle thetaTwo, QAngularAcceleration rate, QAngularSpeed speed){
   adjustAngle = true;
   twoAngles = true;
   target.theta = theta;
@@ -168,8 +180,7 @@ Chassis &Chassis::swingTurn(int oneSide_){
   return *this;
 }
 
-Chassis &Chassis::drive(double target_,  double accel_rate, double decel_rate, double speed) {
-  
+Chassis &Chassis::drive(QLength target_,  QAcceleration accel_rate, QAcceleration decel_rate,  QSpeed speed) {
   macro::print("DRIVE ", 0);
   target.x = target_;
   target.accel_rate = accel_rate;
@@ -181,25 +192,25 @@ Chassis &Chassis::drive(double target_,  double accel_rate, double decel_rate, d
   return *this;
 }
 
-Chassis &Chassis::drive(coords endPoint, coords controlPoint ,bool reverse, double rate, double driveSpeed, double turnRate, double turnSpeed){
+// Chassis &Chassis::drive(coords endPoint, coords controlPoint ,bool reverse, double rate, double driveSpeed, double turnRate, double turnSpeed){
   
-  macro::print("POINT ", 0);
-  target.x = endPoint.x;
-  target.y = endPoint.y;
-  target.controlX = controlPoint.x;
-  target.controlY = controlPoint.y;
-  target.accel_rate = rate;
-  target.speedDrive = driveSpeed;
-  target.rateTurn = turnRate;
-  target.speedTurn = turnSpeed;
-  target.reverse = reverse;
-  reset();
-  isSettled = false;
-  mode = ChassisState::POINT;
-  return *this;
-}
+//   macro::print("POINT ", 0);
+//   target.x = endPoint.x;
+//   target.y = endPoint.y;
+//   target.controlX = controlPoint.x;
+//   target.controlY = controlPoint.y;
+//   target.accel_rate = rate;
+//   target.speedDrive = driveSpeed;
+//   target.rateTurn = turnRate;
+//   target.speedTurn = turnSpeed;
+//   target.reverse = reverse;
+//   reset();
+//   isSettled = false;
+//   mode = ChassisState::POINT;
+//   return *this;
+// }
 
-Chassis &Chassis::turn(double theta, double rate, double speed) {
+Chassis &Chassis::turn(QAngle theta, QAngularAcceleration rate, QAngularSpeed speed) {
   
   macro::print("TURN ", 0);
   target.theta = theta;
@@ -211,7 +222,7 @@ Chassis &Chassis::turn(double theta, double rate, double speed) {
   return *this;
 }
 
-Chassis &Chassis::balance(double rate, double speed){
+Chassis &Chassis::balance(QAcceleration rate, QSpeed speed){
   
   macro::print("BALANCE ", 0);
   target.accel_rate = rate;
@@ -240,43 +251,54 @@ void Chassis::run() {
     switch (mode) {
     case ChassisState::DRIVE: {
       // Drive PID calc.
-      drive_output = drive_PID.calculate(target.x, *rotation);
-
+      drive_output = drive_PID.calculate(target.x.convert(foot), rotation->convert(foot));
+      
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 
       // Turn PID calc.
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
       if (!twoAngles) {
-        turnError = macro::toRad(target.theta - *theta);
+        turnError = target.theta.convert(radian) - theta->convert(radian);
       } else {
         if (turnComplete) {
-          turnError = (target.thetaTwo - *theta) * PI / 180;
+          turnError = target.thetaTwo.convert(radian) - theta->convert(radian);
         } else {
-          turnError = (target.theta - *theta) * PI / 180;
+          turnError = target.theta.convert(radian) - theta->convert(radian);
         }
       }
 
       turnError = atan2(sin(turnError), cos(turnError));
-      turnError = turnError * 180 / PI;
       turn_output = turn_PID.calculate(turnError);
 
-      if(fabs(turn_PID.getError()) <= turn_tol && !turnComplete && twoAngles){ 
+      if(fabs(turn_PID.getError()) <= turn_tol.convert(degree) && !turnComplete && twoAngles){ 
         turnComplete = true;
         turnSlew.reset();
-        turn_PID.set(133,0,66);
       }
 
       // Turn slew calc.
-      TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
+      TslewOutput = turnSlew.withGains(target.rateTurn.convert(radps2), target.rateTurn.convert(radps2), true).withLimit(target.speedTurn.convert(radps)).calculate(turn_output);
       
       skip:
 
       // Drive slew calc.
-      LslewOutput = leftSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
-      RslewOutput = rightSlew.withGains(target.accel_rate, target.decel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+      LslewOutput = leftSlew.withGains(target.accel_rate.convert(ftps2), target.decel_rate.convert(ftps2), true).withLimit(target.speedDrive.convert(ftps)).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target.accel_rate.convert(ftps2), target.decel_rate.convert(ftps2), true).withLimit(target.speedDrive.convert(ftps)).calculate(drive_output);
 
-      macro::print("VOLTAGE: ", LF.get_voltage());
       // macro::print("TURN ERR", turn_PID.getError());
+
+      QSpeed leftSpeed = LslewOutput * ftps; 
+      QSpeed rightSpeed = RslewOutput * ftps;
+      QAngularSpeed turnSpeed = TslewOutput * radps;
+
+      macro::print("Speed: ", LslewOutput);
+      LslewOutput = leftSpeed.convert(tps); // Convert to voltage range
+      RslewOutput = rightSpeed.convert(tps);
+      TslewOutput = turnSpeed.convert(radps) * 12000 / 27.643373493975904;
+      
+      // if(LslewOutput != lastvalue){
+      // macro::print("Error: ", );
+      // lastvalue = LslewOutput;
+      // }
 
       if(!adjustAngle){
         left(LslewOutput);
@@ -286,7 +308,7 @@ void Chassis::run() {
         right(RslewOutput + TslewOutput);
       }
 
-      if ( fabs(drive_PID.getError()) < drive_tol && fabs(turn_PID.getError()) < turn_tol  && checkErr) { 
+      if ( fabs(drive_PID.getError()) < drive_tol.convert(foot) && fabs(turn_PID.getError()) < turn_tol.convert(degree)  && checkErr) { 
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
@@ -295,7 +317,7 @@ void Chassis::run() {
         mode = ChassisState::IDLE;
         goto end;
       }
-      if( turnComplete && justTurn && fabs ( turn_PID.getError() < turn_tol) ){
+      if( turnComplete && justTurn && fabs ( turn_PID.getError() < turn_tol.convert(radian)) ){
         left(0);
         right(0);
         withGains().withTurnGains().withTol();
@@ -310,7 +332,7 @@ void Chassis::run() {
     }
 
     case ChassisState::POINT: {
-      moveToPoint(target);
+      // moveToPoint(target);
       // for ( float t = 0; t <= 1; t += 0.01){
       // target.x = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).x;
       // target.y = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).y;
@@ -322,14 +344,18 @@ void Chassis::run() {
 
     case ChassisState::TURN: {
       // Turn PID calc
-      turnError = (target.theta - *theta) * PI / 180;
+
+      turnError = target.theta.convert(radian) - theta->convert(radian);
       turnError = atan2(sin(turnError), cos(turnError));
-      turnError = turnError * 180 / PI;
       turn_output = turn_PID.calculate(turnError);
 
-      TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
+      TslewOutput = turnSlew.withGains(target.rateTurn.convert(radps2), target.rateTurn.convert(radps2), true).withLimit(target.speedTurn.convert(radps)).calculate(turn_output);
 
-      macro::print("Turn Error: ", turn_PID.getError());
+      QAngularSpeed turnSpeed = TslewOutput * radps;
+
+      TslewOutput = turnSpeed.convert(radps) * 12000/27.643373493975904;
+
+      macro::print("Output: ", turn_output);
 
       if (oneSide == 1) {
         left(-TslewOutput);
@@ -340,7 +366,7 @@ void Chassis::run() {
         right(TslewOutput);
       }
 
-      if ( fabs( turn_PID.getError() ) <= turn_tol ) {
+      if ( fabs( turn_PID.getError() ) <= turn_tol.convert(radian) ) {
         macro::print("TURN FINISHED: ", 0);
         left(0);
         right(0);
@@ -355,13 +381,13 @@ void Chassis::run() {
     }
 
     case ChassisState::OPCONTROL: {
-      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * DRIVE_CONVERSION );
-      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * DRIVE_CONVERSION );
+      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) / DRIVE_CONVERSION );
+      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) / DRIVE_CONVERSION );
 
-      if(!gotTime && fabs( leftJoystick ) < 50 && fabs ( rightJoystick ) < 50 ){
+      if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
         brakeTime = *robotPos.getTime();
         gotTime = true;
-      }else if ( fabs( leftJoystick ) > 50 || fabs ( rightJoystick ) > 50 && gotTime){
+      }else if ( fabs( master.get_analog(ANALOG_LEFT_Y) ) > 5 || fabs ( master.get_analog(ANALOG_RIGHT_Y) ) > 5 && gotTime){
         gotTime = isBraking = false;
       }
 
@@ -370,26 +396,28 @@ void Chassis::run() {
         isBraking = true;
       }
       if (isBraking) {
-        leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot, *rotation);
-        rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot, *rotation);
+        leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), rotation->convert(foot));
+        rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), rotation->convert(foot));
       }
 
       if (arm.get_position() >= 500) { // Slow accel when holding a goal.
-        LslewOutput = leftSlew.withGains(450, 900, true).withLimit(12000).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(450, 900, true).withLimit(12000).calculate(rightJoystick);
+        LslewOutput = leftSlew.withGains(1.5, 3, true).withLimit(4.78).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(1.5, 3, true).withLimit(4.78).calculate(rightJoystick);
       }else if (isParking){
-        LslewOutput = leftSlew.withGains(900, 900, true).withLimit(8400).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(900, 900, true).withLimit(8400).calculate(rightJoystick);
+        LslewOutput = leftSlew.withGains(3, 3, true).withLimit(3.585).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(3, 3, true).withLimit(3.585).calculate(rightJoystick);
       } 
       else {
-        LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
+        LslewOutput = leftSlew.withGains(3, 3, true).withLimit(4.78).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(3, 3, true).withLimit(4.78).calculate(rightJoystick);
       }
 
       macro::print("Speed: ", (LslewOutput + RslewOutput)/2);
+      QSpeed leftDriveSpeed = LslewOutput * ftps;
+      QSpeed rightDriveSpeed = RslewOutput * ftps;
 
-      left(LslewOutput);
-      right(RslewOutput);
+      left(leftDriveSpeed.convert(tps));
+      right(rightDriveSpeed.convert(tps));
 
       if( *robotPos.getTime() > 60000 || auton.getAuton() == "Skills" && *robotPos.getTime() > 40000){
         if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
@@ -405,14 +433,17 @@ void Chassis::run() {
       current = L_Imu.get_roll();
       drive_output = drive_PID.calculate(0, current);
 
-      LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
-      RslewOutput = rightSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+      LslewOutput = leftSlew.withGains(target.accel_rate.convert(ftps2), target.decel_rate.convert(ftps2), true).withLimit(target.speedDrive.convert(ftps)).calculate(drive_output);
+      RslewOutput = rightSlew.withGains(target.accel_rate.convert(ftps2), target.decel_rate.convert(ftps2), true).withLimit(target.speedDrive.convert(ftps)).calculate(drive_output);
 
-      left(LslewOutput);
-      right(RslewOutput);
+      // QSpeed leftSpeed = LslewOutput * mV; // Convert to voltage range
+      // QSpeed rightSpeed = RslewOutput * mV;
+
+      // left(leftSpeed.convert(mV));
+      // right(rightSpeed.convert(mV));
       macro::print("Speed: ", LslewOutput);
 
-      if (fabs(drive_PID.getError()) < drive_tol) {
+      if (fabs(drive_PID.getError()) < drive_tol.convert(tick)) {
         left(0);
         right(0);
         withGains().withTol();
@@ -461,38 +492,38 @@ void Chassis::right(double input){
   RB.move_voltage(input);
 }
 
-void Chassis::moveToPoint(ChassisTarget target) {
-  do{
-  // Drive part.
-  driveError = hypot(target.x - *posX, target.y - *posY);
+// void Chassis::moveToPoint(ChassisTarget target) {
+//   do{
+//   // Drive part.
+//   driveError = hypot(target.x - *posX, target.y - *posY);
 
-  // Turn part.
-  target.theta = atan2(target.y - *posY, target.x - *posX);
+//   // Turn part.
+//   target.theta = atan2(target.y - *posY, target.x - *posX);
 
-  turnError = (target.theta - macro::toRad(*theta));
-  turnError = atan2(sin(turnError), cos(turnError));
-  turnError = macro::toDeg(turnError) + 90; // GPS
-  // if(target.reverse) turnError -= 180; // ODOM
+//   turnError = (target.theta - macro::toRad(*theta));
+//   turnError = atan2(sin(turnError), cos(turnError));
+//   turnError = macro::toDeg(turnError) + 90; // GPS
+//   // if(target.reverse) turnError -= 180; // ODOM
 
-  // PID Calcs.
-  drive_output = drive_PID.calculate(driveError);
-  turn_output = turn_PID.calculate(turnError);
+//   // PID Calcs.
+//   drive_output = drive_PID.calculate(driveError);
+//   turn_output = turn_PID.calculate(turnError);
 
-  // Slew Calcs.
-  LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
-  TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
+//   // Slew Calcs.
+//   LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
+//   TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
 
-  macro::print("Drive: ", drive_PID.getError());
-  macro::print("Turn: ", turnError);
+//   macro::print("Drive: ", drive_PID.getError());
+//   macro::print("Turn: ", turnError);
 
-  // if (target.reverse) {
-  //   left(-LslewOutput - TslewOutput);
-  //   right(-LslewOutput + TslewOutput);
-  // } else {
-  //   left(LslewOutput - TslewOutput);
-  //   right(LslewOutput + TslewOutput);
-  // }
-  }while( fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <=turn_tol );
-}
+//   // if (target.reverse) {
+//   //   left(-LslewOutput - TslewOutput);
+//   //   right(-LslewOutput + TslewOutput);
+//   // } else {
+//   //   left(LslewOutput - TslewOutput);
+//   //   right(LslewOutput + TslewOutput);
+//   // }
+//   }while( fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <=turn_tol );
+// }
 
 void Chassis::stop() { isRunning = false; }

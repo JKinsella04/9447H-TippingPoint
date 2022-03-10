@@ -1,5 +1,6 @@
 #pragma once
 #include "globals.hpp"
+#include "okapi/api/units/QLength.hpp"
 
 struct coords {
     double x;

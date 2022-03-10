@@ -234,7 +234,7 @@ void Display::run() {
 
     // Placeholder for quickly adding a sensor value to screen.
     std::ostringstream value;
-    value << floor( *robotPos.getThetaDeg() * 100) /100;
+    value << floor( robotPos.getTheta()->convert(degree) * 100) /100;
     std::string tempValue = "IMU: " + value.str();
     lv_label_set_text(printValue, tempValue.c_str());
 

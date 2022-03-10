@@ -59,7 +59,7 @@ Slew::Slew(double accel_, double decel_, bool reversible_) : accel(accel_), dece
 
 Slew &Slew::withGains(double accel_, double decel_, bool reversible_){
   accel = accel_;
-  decel = decel_;
+  decel = decel_; 
   isReversible = reversible_;
   return *this;
 }

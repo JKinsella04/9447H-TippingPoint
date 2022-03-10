@@ -1,6 +1,8 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
+#include "okapi/api/units/QAngle.hpp"
+#include "okapi/api/units/QLength.hpp"
 
 enum class PositionTracker{
   RELATIVE, GPS, ODOM
@@ -22,7 +24,7 @@ class Position {
     /*
     Return current heading in Degrees.
     */
-    double * getThetaDeg();
+    QAngle * getTheta();
 
     /*
     Return current heading in Radians.
@@ -37,7 +39,7 @@ class Position {
     /*
     Return current average drive base position.
     */
-    double * getRotation();
+    QLength * getRotation();
 
     /*
     Get current time im MS since last reset.
@@ -93,7 +95,11 @@ class Position {
       
       static pros::c::gps_status_s_t gpsData;
 
-      static double posX, posY, thetaDeg, thetaRad, error, rotation;
+      static double posX, posY, thetaDeg, thetaRad, error;
+
+      static QAngle theta;
+
+      static QLength rotation;
 
       static double currentL, currentR, deltaL, deltaR, lastL, lastR, offset;
 

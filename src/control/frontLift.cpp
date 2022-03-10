@@ -16,7 +16,7 @@ bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::isDelayingClamp = false, FrontLift::clampState = false,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
 
-PID_constants up{70, 1, 6}, mid{30, 0.01, 12.5}, down{15, 0.01, 5};
+PID_constants up{70, 1.5, 45}, mid{30, 0.01, 12.5}, down{20, 0.01, 5};
 double FrontLift::downPos = 50, FrontLift::midPos = 1000, FrontLift::upPos = 2000, FrontLift::delay = 100; 
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
