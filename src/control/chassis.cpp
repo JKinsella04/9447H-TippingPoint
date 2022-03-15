@@ -270,7 +270,7 @@ void Chassis::run() {
       turnError = atan2(sin(turnError), cos(turnError));
       turn_output = turn_PID.calculate(turnError);
 
-      if(fabs(turn_PID.getError()) <= turn_tol.convert(degree) && !turnComplete && twoAngles){ 
+      if(fabs(turn_PID.getError()) <= turn_tol.convert(radian) && !turnComplete && twoAngles){ 
         turnComplete = true;
         turnSlew.reset();
       }
@@ -290,15 +290,12 @@ void Chassis::run() {
       QSpeed rightSpeed = RslewOutput * ftps;
       QAngularSpeed turnSpeed = TslewOutput * radps;
 
-      macro::print("Speed: ", LslewOutput);
       LslewOutput = leftSpeed.convert(tps); // Convert to voltage range
       RslewOutput = rightSpeed.convert(tps);
-      TslewOutput = turnSpeed.convert(radps) * 12000 / 27.643373493975904;
+      TslewOutput = turnSpeed.convert(radps) * (12000 / 27.643373493975904);
       
-      // if(LslewOutput != lastvalue){
-      // macro::print("Error: ", );
-      // lastvalue = LslewOutput;
-      // }
+      // macro::print("Lateral: ", LslewOutput);
+      // macro::print("Turn: ", TslewOutput);
 
       if(!adjustAngle){
         left(LslewOutput);

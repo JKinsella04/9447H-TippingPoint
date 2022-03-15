@@ -31,10 +31,12 @@ constexpr QCurvature radpm = radian / meter;
 // Predefined Speed Unit
 constexpr QSpeed ftps = foot / second;
 constexpr QSpeed tps = tick / second;
+constexpr QSpeed inps = inch / second;
 
 // Predefined Acceleration Unit
 constexpr QAcceleration ftps2 = ftps / second;
 constexpr QAcceleration tps2 = tps / second;
+constexpr QAcceleration inps2 = inps / second;
 
 // Predefined Angular Acceleration Unit
 constexpr QAngularAcceleration radps2 = radps / second;
@@ -73,6 +75,9 @@ constexpr QSpeed operator"" _ftps(unsigned long long int x) { return static_cast
 constexpr QSpeed operator"" _tps(long double x) { return static_cast<double>(x)*tps; }
 constexpr QSpeed operator"" _tps(unsigned long long int x) { return static_cast<double>(x)*tps; }
 
+constexpr QSpeed operator"" _inps(long double x) { return static_cast<double>(x)*inps; }
+constexpr QSpeed operator"" _inps(unsigned long long int x) { return static_cast<double>(x)*inps; }
+
 // Angular Speed literals
 constexpr QAngularSpeed operator"" _radps(long double x) { return static_cast<double>(x)*radps; }
 constexpr QAngularSpeed operator"" _radps(unsigned long long int x) { return static_cast<double>(x)*radps; }
@@ -83,6 +88,9 @@ constexpr QAcceleration operator"" _ftps2(unsigned long long int x) { return sta
 
 constexpr QAcceleration operator"" _tps2(long double x) { return static_cast<double>(x)*tps2; }
 constexpr QAcceleration operator"" _tps2(unsigned long long int x) { return static_cast<double>(x)*tps2; }
+
+constexpr QAcceleration operator"" _inps2(long double x) { return static_cast<double>(x)*inps2; }
+constexpr QAcceleration operator"" _inps2(unsigned long long int x) { return static_cast<double>(x)*inps2; }
 
 // Angular Acceleration literals
 constexpr QAngularAcceleration operator"" _radps2(long double x) { return static_cast<double>(x)*radps2; }

@@ -69,6 +69,8 @@ void BackLift::run() {
       }
       if (intake.get_actual_velocity() == intakeSpeed)
         checkJam = clampState;
+      if (!clampState)
+        checkJam = false;
       updateClamp();
       break;
     }
