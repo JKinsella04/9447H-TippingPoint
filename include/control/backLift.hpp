@@ -28,7 +28,7 @@ class BackLift{
   /*
   Toggle Back clamp to opposite state.
   */
-  BackLift& toggleClamp();
+  BackLift& toggleClamp(double delay_ = 0);
 
   /*
   Delay clamp for specified amount of time.

@@ -120,7 +120,7 @@ void Chassis::reset(){
   leftSlew.reset();
   rightSlew.reset();
 
-  withGains().withTol();
+  withGains().withTol().withTurnGains().withTurnTol();
 
   LF.tare_position();
   LM.tare_position();
@@ -272,7 +272,6 @@ void Chassis::run() {
 
       if(fabs(turn_PID.getError()) <= turn_tol.convert(radian) && !turnComplete && twoAngles){ 
         turnComplete = true;
-        turnSlew.reset();
       }
 
       // Turn slew calc.
@@ -308,7 +307,7 @@ void Chassis::run() {
       if ( fabs(drive_PID.getError()) < drive_tol.convert(foot) && fabs(turn_PID.getError()) < turn_tol.convert(radian) || !adjustAngle && fabs(drive_PID.getError()) < drive_tol.convert(foot)) { 
         left(0);
         right(0);
-        withGains().withTurnGains().withTol();
+        withGains().withTurnGains().withTol().withTurnTol();
         reset();
         isSettled = true;
         mode = ChassisState::IDLE;
@@ -356,7 +355,7 @@ void Chassis::run() {
         macro::print("TURN FINISHED: ", 0);
         left(0);
         right(0);
-        withTurnGains().withTol();
+        withTurnGains().withTurnTol();
         reset();
         isSettled = true;
         mode = ChassisState::IDLE;

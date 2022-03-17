@@ -227,14 +227,14 @@ void Display::run() {
 
     // Print (X,Y) Coordinates
     std::ostringstream posX, posY;
-    posX << chassis.getTurnError().convert(degree);
+    posX << floor(*robotPos.getX() * 100) /100;
     posY << floor(*robotPos.getY() * 100) /100;
     std::string posTemp = "Curr Pos: (" + posX.str() + "," + posY.str() + ")";
     lv_label_set_text(posVals, posTemp.c_str());
 
     // Placeholder for quickly adding a sensor value to screen.
     std::ostringstream value;
-    value << chassis.getDriveError().convert(inch);
+    value << floor(robotPos.getTheta()->convert(degree) *100) /100;
     std::string tempValue = "IMU: " + value.str();
     lv_label_set_text(printValue, tempValue.c_str());
 
