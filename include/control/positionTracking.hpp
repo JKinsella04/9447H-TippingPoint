@@ -16,7 +16,7 @@ class Position {
     @gearSet 100,200,600.
     @gearRatio {1,1}.
     */
-    Position(double diameter_, double gearSet, std::tuple<double ,double> gearRatio_={1,1});
+    Position(double diameter_, int gearSet, std::tuple<double ,double> gearRatio_={1,1});
     Position();
     /*
     Return current X coord.
@@ -110,7 +110,8 @@ class Position {
 
       static double currentL, currentR, deltaL, deltaR, lastL, lastR, offset;
 
-      static double diameter, gearSet, ticks, ratio;
+      static double diameter, ratio;
+      static int ticks;
       static std::tuple<double, double> gearRatio;
 
       static double time, time_offset;

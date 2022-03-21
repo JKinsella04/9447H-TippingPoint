@@ -188,22 +188,24 @@ void elim() { // Right Side Neutral Goals.
 }
 
 void skills(){ // Skills
-  // chassis.setBrakeType(COAST);
-  // backLift.setState(BackLiftState::AUTON);
-  // frontLift.toggleClamp().withTol(10).setState(FrontLiftState::DOWN);
-  // backLift.toggleClamp();
-  // chassis.turn(245, 900, 12000).withTurnGains(133,.25,66).swingTurn(LEFT).withTol(0,10).waitUntilSettled();
-  // chassis.drive(1950,1125,2250,9000).withAngle(245).withTol(50, 5).waitUntilSettled();  
-  // frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 100).waitUntilClamped();
-  // chassis.drive(1650).withAngle(250).withTol(50,10).waitUntilSettled();  
-  // chassis.turn(180, 900, 12000).withTurnGains(133,.25,66).withTol(0,10).waitUntilSettled();
-  // chassis.drive(4000, 450, 450, 6000).withAngle(180).withTurnGains(66,0.25,33).withTol(50,5).waitUntilSettled();
-  // chassis.drive(-2275, 450, 450, -9000).withAngle(180).withTol(50,5).waitUntilSettled();
-  // chassis.turn(270, 900, 12000).withTurnGains(133,.25,66).withTol(0,10).waitUntilSettled();
-  // chassis.drive(800).withAngle(270).withTol(50,20).waitUntilSettled();
-  // pros::delay(750);
-  // frontLift.toggleClamp().waitUntilClamped();
-  // // FIRST GOAL
+  frontLift.toggleClamp().withTol(1).setState(FrontLiftState::DOWN);
+  chassis.setBrakeType(COAST);
+  backLift.setState(BackLiftState::AUTON);
+  backLift.toggleClamp();
+  backClamp.set_value(true);
+  pros::delay(250);
+  chassis.turn(245_deg).swingTurn(LEFT).waitUntilSettled();
+  chassis.drive(28.2_in).withAngle(245_deg).withTol(2_in).waitUntilSettled();  
+  frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 100).waitUntilClamped();
+  chassis.drive(23.89_in).withAngle(250_deg).waitUntilSettled();  
+  chassis.turn(180_deg).waitUntilSettled();
+  chassis.drive(57.92_in, .15_ftps2, .15_ftps2, 2.43_ftps).withAngle(180_deg).waitUntilSettled();
+  chassis.drive(-32.93_in, .15_ftps2, 45.15_ftps2, -4.87_ftps).withAngle(180_deg).waitUntilSettled();
+  chassis.turn(270_deg).waitUntilSettled();
+  chassis.drive(11.58_in).withAngle(270_deg).waitUntilSettled();
+  pros::delay(750);
+  frontLift.toggleClamp().waitUntilClamped();
+  // FIRST GOAL ( ( tick ) / 900 ) * 13.031 = target(inches) 
 
   // chassis.drive(-500).withTol(50).waitUntilSettled();
   // pros::delay(200);
