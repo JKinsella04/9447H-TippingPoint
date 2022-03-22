@@ -246,7 +246,7 @@ void skills(){ // Skills
   chassis.drive(-14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
   chassis.drive(14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
   chassis.drive(-14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
-  // MATCH LOADS  
+  // MATCH LOADS  (target / 900) * 13.031 = target(inches)
   // chassis.drive(900).withAngle(120).withTol(50,20).waitUntilSettled();
   // chassis.turn(15,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();
   // frontLift.delayClamp(2.75);
