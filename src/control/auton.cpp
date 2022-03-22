@@ -5,6 +5,7 @@
 #include "positionTracking.hpp"
 #include "frontLift.hpp"
 #include "misc.hpp"
+#include "pros/rtos.hpp"
 
 // Class Init
 static Position robotPos;
@@ -92,16 +93,17 @@ void leftAWP() { // One yellow + left AWP
   frontLift.withTol(10).setState(FrontLiftState::DOWN);
   chassis.drive(42_in, 2.5_ftps2).withAngle(355_deg, 28_radps2).withGains(3.5, 0, .5).withTurnGains(30).withTol(2_in).withTurnTol(10_deg).waitUntilSettled();
   frontLift.toggleClamp().setState(FrontLiftState::UP, 50).waitUntilClamped();
-  chassis.drive(-52_in).withAngle(15_deg).withTol(3_in).withTurnTol(5_deg).withTurnGains(30).waitUntilSettled();
-  chassis.turn(95_deg, 1.1_radps2, 14_radps).waitUntilSettled();
-  chassis.drive(-30_in, .2_ftps2, .2_ftps2, -2.75_ftps).withAngle(90_deg).withTol(1_in, true).waitUntilSettled();
+  chassis.drive(-53_in, 2.5_ftps2, .37_ftps2, -4.87_ftps).withAngle(355_deg).withTol(4_in).withTurnTol(10_deg).withTurnGains(30).waitUntilSettled();
+  chassis.turn(90_deg, 1.1_radps2, 14_radps).waitUntilSettled();
+  chassis.drive(-30_in, .2_ftps2, .2_ftps2, -2_ftps).withAngle(90_deg).withTol(1_in, true).waitUntilSettled();
   backLift.toggleClamp();
-  chassis.drive(27_in, 0.05_ftps2, 0.05_ftps2, 1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
-  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
-  chassis.drive(19_in, 0.05_ftps2, 0.05_ftps2, 1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
-  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
-  chassis.drive(19_in, 0.05_ftps2, 0.05_ftps2, 1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
-  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -1.5_ftps).withGains(3).withAngle(105_deg).withTol(2_in).waitUntilSettled();
+  pros::delay(250);
+  chassis.drive(27_in, 0.05_ftps2, 0.05_ftps2, 2_ftps).withGains(3).withAngle(105_deg).withTol(3_in).withTurnTol(5_deg).waitUntilSettled();
+  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -2_ftps).withGains(3).withAngle(105_deg).withTol(3_in).withTurnTol(5_deg).waitUntilSettled();
+  chassis.drive(19_in, 0.05_ftps2, 0.05_ftps2, 2_ftps).withGains(3).withAngle(105_deg).withTol(3_in).withTurnTol(5_deg).waitUntilSettled();
+  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -2_ftps).withGains(3).withAngle(105_deg).withTol(3_in).withTurnTol(5_deg).waitUntilSettled();
+  chassis.drive(19_in, 0.05_ftps2, 0.05_ftps2, 2_ftps).withGains(3).withAngle(105_deg).withTol(3_in).withTurnTol(5_deg).waitUntilSettled();
+  chassis.drive(-20_in, 0.05_ftps2, 0.05_ftps2, -2_ftps).withGains(3).withAngle(105_deg).withTol(3_in).withTurnTol(5_deg).waitUntilSettled();
 }
 
 void rightAWP(){ // One yellow + right AWP
@@ -109,7 +111,7 @@ void rightAWP(){ // One yellow + right AWP
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   frontLift.withTol(1).setState(FrontLiftState::DOWN);
-  chassis.drive(42.5_in, 2.5_ftps2).withAngle(360_deg, 28_radps2).withGains(3.5, 0, .5).withTurnGains(30).withTol(2_in).withTurnTol(10_deg).waitUntilSettled();
+  chassis.drive(42.5_in, 2.5_ftps2).withAngle(355_deg, 28_radps2).withGains(3.5, 0, .5).withTurnGains(30).withTol(2_in).withTurnTol(10_deg).waitUntilSettled();
   frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 50).waitUntilClamped();
   chassis.drive(-30_in, 0.37_ftps2, 0.37_ftps2, -4.87_ftps).withAngle(360_deg).waitUntilSettled();
   chassis.turn(85_deg, 1.1_radps2, 14_radps).withTurnGains(20,0,10).waitUntilSettled();
@@ -194,58 +196,57 @@ void skills(){ // Skills
   backLift.toggleClamp();
   backClamp.set_value(true);
   pros::delay(250);
-  chassis.turn(245_deg).swingTurn(LEFT).waitUntilSettled();
-  chassis.drive(28.2_in).withAngle(245_deg).waitUntilSettled();  
+  chassis.turn(250_deg).withTurnGains(36).swingTurn(LEFT).waitUntilSettled();
+  chassis.drive(40_in).withAngle(250_deg).withTurnGains(36,0,10).waitUntilSettled();  
   frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 100).waitUntilClamped();
-  chassis.drive(23.89_in).withAngle(250_deg).waitUntilSettled();  
+  chassis.drive(30_in).withAngle(250_deg).withTurnGains(36,0,10).waitUntilSettled();  
   chassis.turn(180_deg).waitUntilSettled();
-  chassis.drive(57.92_in, .15_ftps2, .15_ftps2, 2.43_ftps).withAngle(180_deg).waitUntilSettled();
-  chassis.drive(-32.93_in, .15_ftps2, 45.15_ftps2, -4.87_ftps).withAngle(180_deg).waitUntilSettled();
+  chassis.drive(70_in, .15_ftps2, .37_ftps2, 1.75_ftps).withGains(5,0,1).withAngle(180_deg).withTurnGains(36,0,10).waitUntilSettled();
+  chassis.drive(-37_in, .15_ftps2, 45.15_ftps2, -4_ftps).withAngle(180_deg).withTurnGains(36,0,10).waitUntilSettled();
   chassis.turn(270_deg).waitUntilSettled();
-  chassis.drive(11.58_in).withAngle(270_deg).waitUntilSettled();
+  chassis.drive(17_in).withGains(5,0,1).withAngle(270_deg).withTurnGains(36,0,10).waitUntilSettled();
   pros::delay(750);
   frontLift.toggleClamp().waitUntilClamped();
   // FIRST GOAL ( ( tick ) / 900 ) * 13.031 = target(inches) 
 
-  chassis.drive(-7.239_in).waitUntilSettled();
+  chassis.drive(-8_in).withGains(5,0,1).waitUntilSettled();
   pros::delay(200);
-  chassis.turn(0_deg,1_radps2).withTurnGains(9).waitUntilSettled();
+  chassis.turn(0_deg).waitUntilSettled();
   backLift.toggleClamp();
   frontLift.setState(FrontLiftState::DOWN);
   pros::delay(650);
-  chassis.drive(7.239_in);
-  pros::delay(250);
-  chassis.turn(180_deg,1.1_radps2).withTurnGains(9).waitUntilSettled();
-  chassis.drive(15.92_in).withAngle(178_deg).waitUntilSettled();
+  chassis.drive(7_in).withGains(5,0,1).withAngle(0_deg).withTurnGains(36,0,10).waitUntilSettled();
+  chassis.turn(190_deg).withTurnGains(14).waitUntilSettled();
+  chassis.drive(27_in).withGains(5,0,1).withAngle(190_deg).withTurnGains(36,0,10).waitUntilSettled();
   frontLift.toggleClamp().setState(FrontLiftState::UP, 100).waitUntilSettled();
   chassis.turn(270_deg,1.1_radps2).waitUntilSettled();
-  chassis.drive(12.31_in).withAngle(270_deg).waitUntilSettled();
+  chassis.drive(17_in).withGains(5,0,1).withAngle(270_deg).withTurnGains(36,0,10).waitUntilSettled();
   frontLift.toggleClamp();
   pros::delay(250);
-  chassis.drive(-4.343_in).waitUntilSettled();
+  chassis.drive(-5_in).waitUntilSettled();
   // SECOND GOAL
   
-  chassis.turn(180_deg, 1.1_radps2).waitUntilSettled();
-  backLift.setState(BackLiftState::IDLE); conveyer::spin(-600);
-  chassis.drive(-41.26_in, .37_ftps2, .15_ftps2, -2.43_ftps).withAngle(180_deg, 2.2_radps2, 18_radps).withTol(1.5_in, true).waitUntilSettled();
-  backLift.setState(BackLiftState::AUTON).toggleClamp();
-  pros::delay(500);
-  chassis.drive(36.197_in).withAngle(140_deg).waitUntilSettled();
-  chassis.drive(-3.619_in).withAngle(140_deg).waitUntilSettled();
-  frontLift.withTol(100).setState(FrontLiftState::DOWN, 0).waitUntilSettled();
-  pros::delay(700);
-  chassis.drive(10.135_in).withAngle(140_deg).waitUntilSettled();
-  pros::delay(400);
-  frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 100).waitUntilClamped();
-  pros::delay(250);
-  chassis.drive(44.884_in).withAngle(135_deg).waitUntilSettled();
-  chassis.turn(90_deg).waitUntilSettled();
-  pros::delay(750);
-  // MATCH LOADS  
-  chassis.drive(14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
-  chassis.drive(-14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
-  chassis.drive(14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
-  chassis.drive(-14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
+  // chassis.turn(180_deg, 1.1_radps2).waitUntilSettled();
+  // backLift.setState(BackLiftState::IDLE); conveyer::spin(-600);
+  // chassis.drive(-41.26_in, .37_ftps2, .15_ftps2, -2.43_ftps).withAngle(180_deg, 2.2_radps2, 18_radps).withTol(1.5_in, true).waitUntilSettled();
+  // backLift.setState(BackLiftState::AUTON).toggleClamp();
+  // pros::delay(500);
+  // chassis.drive(36.197_in).withAngle(140_deg).waitUntilSettled();
+  // chassis.drive(-3.619_in).withAngle(140_deg).waitUntilSettled();
+  // frontLift.withTol(100).setState(FrontLiftState::DOWN, 0).waitUntilSettled();
+  // pros::delay(700);
+  // chassis.drive(10.135_in).withAngle(140_deg).waitUntilSettled();
+  // pros::delay(400);
+  // frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 100).waitUntilClamped();
+  // pros::delay(250);
+  // chassis.drive(44.884_in).withAngle(135_deg).waitUntilSettled();
+  // chassis.turn(90_deg).waitUntilSettled();
+  // pros::delay(750);
+  // // MATCH LOADS  
+  // chassis.drive(14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
+  // chassis.drive(-14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
+  // chassis.drive(14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
+  // chassis.drive(-14.478_in, .15_ftps2, .15_ftps2, 1.5_ftps).withAngle(90_deg).waitUntilSettled();
   // MATCH LOADS  (target / 900) * 13.031 = target(inches)
   // chassis.drive(900).withAngle(120).withTol(50,20).waitUntilSettled();
   // chassis.turn(15,900).withTurnGains(133,0.25,66).withTol(0,2.5).waitUntilSettled();

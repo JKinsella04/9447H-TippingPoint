@@ -92,11 +92,11 @@ ChassisState Chassis::getState(){
 }
 
 QLength Chassis::getDriveError(){
-  return drive_PID.getError() * inch;
+  return drive_PID.getError() * foot;
 }
 
 QAngle Chassis::getTurnError(){
-  return turn_PID.getError() * degree;
+  return turn_PID.getError() * radian;
 }
 
 QLength Chassis::getTol(){
@@ -293,8 +293,8 @@ void Chassis::run() {
       RslewOutput = rightSpeed.convert(tps);
       TslewOutput = turnSpeed.convert(radps) * (12000 / 27.643373493975904);
       
-      // macro::print("Lateral: ", LslewOutput);
-      // macro::print("Turn: ", TslewOutput);
+      macro::print("Lateral: ", drive_PID.getError());
+      macro::print("Turn: ", turn_PID.getError());
 
       if(!adjustAngle){
         left(LslewOutput);

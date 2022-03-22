@@ -29,6 +29,8 @@ static lv_obj_t *autonGraphic;
 static lv_obj_t *posVals;
 static lv_obj_t *chassisVals;
 static lv_obj_t *printValue;
+static lv_obj_t *driveErr;
+static lv_obj_t *turnErr;
 
 bool clampIsToggled = false, draggerIsToggled = false;
 
@@ -190,6 +192,14 @@ void Display::tabDebug(lv_obj_t *parent) {
 
   printValue = createLabel(10, 120, "Value: NONE", parent);
   lv_label_set_style(printValue, &style_btn);
+
+  driveErr = createLabel(10, 140, "Value: NONE", parent);
+  lv_label_set_style(driveErr, &style_btn);
+
+  turnErr = createLabel(10, 160, "Value: NONE", parent);
+  lv_label_set_style(turnErr, &style_btn);
+
+
  }
 
 void Display::tabSettings(lv_obj_t *parent) {
@@ -237,6 +247,18 @@ void Display::run() {
     value << floor(robotPos.getTheta()->convert(degree) *100) /100;
     std::string tempValue = "IMU: " + value.str();
     lv_label_set_text(printValue, tempValue.c_str());
+
+    // Print Current drive Error.
+    std::ostringstream driveErrValue;
+    driveErrValue << floor(chassis.getDriveError().convert(inch) *100) / 100;
+    std::string tempDriveErr = "Drive Error: " + driveErrValue.str();
+    lv_label_set_text(driveErr, tempDriveErr.c_str());
+
+    // Print Current Turn Error.
+    std::ostringstream turnErrValue;
+    turnErrValue << floor(chassis.getTurnError().convert(degree) *100) / 100;
+    std::string tempTurnErr = "Turn Error: " + turnErrValue.str();
+    lv_label_set_text(turnErr, tempTurnErr.c_str());
 
     std::string cstate;
     switch(chassis.getState()){

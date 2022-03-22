@@ -107,7 +107,7 @@ class Chassis {
     /*
     Sets the tolerance for turning.
     */
-    Chassis& withTurnTol(QAngle turn_tol_ = 1_deg);
+    Chassis& withTurnTol(QAngle turn_tol_ = 1.5_deg);
 
     /*
     Sets Target angle to reach while driving.

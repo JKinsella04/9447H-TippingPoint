@@ -61,17 +61,16 @@ void BackLift::run() {
 
     switch (BackLiftMode) {
     case BackLiftState::AUTON: {
-      // if (checkJam && intake.get_efficiency() == 0) {
-      //   conveyer::spin(-intakeSpeed);
-      //   pros::delay(300);
-      //   conveyer::spin(intakeSpeed);
-      //   checkJam = false;
-      // }
-      // if (intake.get_actual_velocity() == intakeSpeed)
-      //   checkJam = clampState;
-      // if (!clampState)
-      //   checkJam = false;
-      // updateClamp();
+      if (checkJam && intake.get_efficiency() == 0) {
+        conveyer::spin(-intakeSpeed);
+        pros::delay(300);
+        conveyer::spin(intakeSpeed);
+        checkJam = false;
+      }
+      if (intake.get_actual_velocity() == intakeSpeed)
+        checkJam = clampState;
+      if (!clampState)
+        checkJam = false;
       if(clampState != lastClampState) pros::delay(delay);
       backClamp.set_value(clampState);
       clampState ? conveyer::spin(600) : conveyer::spin(0);
