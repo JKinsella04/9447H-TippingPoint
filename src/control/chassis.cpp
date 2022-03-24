@@ -5,11 +5,12 @@
 #include "okapi/api/units/QAngularSpeed.hpp"
 #include "okapi/api/units/QLength.hpp"
 #include "okapi/api/units/QSpeed.hpp"
+#include "okapi/api/units/QTime.hpp"
 #include "positionTracking.hpp"
 #include "auton.hpp"
 
-static Position robotPos;
 static Autonomous auton;
+PositionTracker *Chassis::robot;
 
 // PID Init
 macro::PID drive_PID(2, 0, 1);
@@ -30,9 +31,9 @@ ChassisState mode = ChassisState::IDLE;
 bool Chassis::isRunning = false, Chassis::isSettled = true, Chassis::checkBack = false, Chassis::justTurn = false,
      Chassis::checkErr = false;
 
-double Chassis::driveError, Chassis::turnError, *Chassis::posX, *Chassis::posY;
-QAngle *Chassis::theta, Chassis::turn_tol;
-QLength *Chassis::rotation, Chassis::drive_tol;
+double Chassis::driveError, Chassis::turnError;
+QAngle Chassis::turn_tol;
+QLength Chassis::drive_tol;
 
 double Chassis::current = 0, Chassis::drive_output = 0,
        Chassis::turn_output = 0, Chassis::LslewOutput = 0,
@@ -53,13 +54,6 @@ bool Chassis::isParking = false;
 double lastvalue;
 
 Chassis::Chassis() { }
-
-Chassis::Chassis(QLength *rotation_, QAngle *theta_, double *posX_, double *posY_){
-  rotation = rotation_;
-  theta = theta_;
-  posX = posX_;
-  posY = posY_;
-}
 
 Chassis::~Chassis() {
   reset();
@@ -251,19 +245,19 @@ void Chassis::run() {
     switch (mode) {
     case ChassisState::DRIVE: {
       // Drive PID calc.
-      drive_output = drive_PID.calculate(target.x.convert(foot), rotation->convert(foot));
+      drive_output = drive_PID.calculate(target.x.convert(foot), robot->Odom::getRotation().convert(foot));
       
       if (!adjustAngle) goto skip; // Skip turn calculation if withAngle wasn't called.
 
       // Turn PID calc.
       // If two turns during movement check firt turn's completion then turn to second angle if first turn is finished.
       if (!twoAngles) {
-        turnError = target.theta.convert(radian) - theta->convert(radian);
+        turnError = target.theta.convert(radian) - robot->Odom::getTheta().convert(radian);
       } else {
         if (turnComplete) {
-          turnError = target.thetaTwo.convert(radian) - theta->convert(radian);
+          turnError = target.thetaTwo.convert(radian) - robot->Odom::getTheta().convert(radian);
         } else {
-          turnError = target.theta.convert(radian) - theta->convert(radian);
+          turnError = target.theta.convert(radian) - robot->Odom::getTheta().convert(radian);
         }
       }
 
@@ -330,7 +324,7 @@ void Chassis::run() {
     case ChassisState::TURN: {
       // Turn PID calc
 
-      turnError = target.theta.convert(radian) - theta->convert(radian);
+      turnError = target.theta.convert(radian) - robot->Odom::getTheta().convert(radian);
       turnError = atan2(sin(turnError), cos(turnError));
       turn_output = turn_PID.calculate(turnError);
 
@@ -370,19 +364,19 @@ void Chassis::run() {
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) / DRIVE_CONVERSION );
 
       if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
-        brakeTime = *robotPos.getTime();
+        brakeTime = robot->getTime().convert(millisecond);
         gotTime = true;
       }else if ( fabs( master.get_analog(ANALOG_LEFT_Y) ) > 5 || fabs ( master.get_analog(ANALOG_RIGHT_Y) ) > 5 && gotTime){
         gotTime = isBraking = false;
       }
 
-      if (gotTime && !isBraking && *robotPos.getTime() - brakeTime >= 1500 || gotTime && !isBraking && isParking) {
-        lastRot = *rotation;
+      if (gotTime && !isBraking && robot->getTime().convert(millisecond) - brakeTime >= 1500 || gotTime && !isBraking && isParking) {
+        lastRot = robot->Odom::getRotation();
         isBraking = true;
       }
       if (isBraking) {
-        leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), rotation->convert(foot));
-        rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), rotation->convert(foot));
+        leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
+        rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
       }
 
       if (arm.get_position() >= 500) { // Slow accel when holding a goal.
@@ -404,7 +398,7 @@ void Chassis::run() {
       left(leftDriveSpeed.convert(tps));
       right(rightDriveSpeed.convert(tps));
 
-      if( *robotPos.getTime() > 60000 || auton.getAuton() == "Skills" && *robotPos.getTime() > 40000){
+      if( robot->getTime().convert(millisecond) > 60000 || auton.getAuton() == "Skills" && robot->getTime().convert(millisecond) > 40000){
         if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
         if(isParking) setBrakeType(HOLD);
         master.print(2, 0, "Parking Time");

@@ -1,8 +1,7 @@
 #pragma once
 #include "globals.hpp"
 #include "misc.hpp"
-#include "okapi/api/units/QAngularSpeed.hpp"
-#include "okapi/api/units/QSpeed.hpp"
+#include "positionTracking.hpp"
 
 #define CONVERSION 4169.079328314997 // Convert 2.75in Wheels to Inches with V5 rotation Sensor.
 #define CIRCUMFERENCE 0.1016  // Circumference in meters.
@@ -36,7 +35,6 @@ class Chassis {
     Constructors.
     */
     Chassis();
-    Chassis(QLength *rotation_, QAngle *theta_, double *posX_, double *posY_);
     
     /*
     Destructor.
@@ -158,18 +156,19 @@ class Chassis {
     void stop();
 
     private:
+    static PositionTracker * robot;
     static bool isSettled;
     static bool isRunning;
     static bool checkBack, justTurn, checkErr;
     
-    static double turnError, driveError, *posX, *posY;
+    static double turnError, driveError;
     static double current, drive_output, turn_output, LslewOutput, RslewOutput, TslewOutput;
     static bool adjustAngle, turnComplete, twoAngles;
 
     static int oneSide;
     
-    static QLength *rotation, lastRot, drive_tol;
-    static QAngle *theta, turn_tol;
+    static QLength lastRot, drive_tol;
+    static QAngle turn_tol;
 
     static double brakeTime;
     static bool isBraking, gotTime, isParking;

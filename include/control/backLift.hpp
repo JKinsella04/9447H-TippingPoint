@@ -1,6 +1,7 @@
 #pragma once
 #include "globals.hpp"
 #include "misc.hpp"
+#include "positionTracking.hpp"
 
 enum class BackLiftState { 
     AUTON, OPCONTROL, IDLE
@@ -28,21 +29,23 @@ class BackLift{
   /*
   Toggle Back clamp to opposite state.
   */
-  BackLift& toggleClamp(double delay_ = 0);
+  BackLift& toggleClamp(QTime delay_ = 0_ms);
 
   /*
   Delay clamp for specified amount of time.
   @param delay_ time in seconds.
   */
-  BackLift& delayClamp(double delay_);
+  BackLift& delayClamp(QTime delay_);
 
   static void start(void * ignore);
 
   void run();
 
   private:
+  static PositionTracker * robot;
+  
   static bool isRunning, clampState, lastClampState, checkDist, isDelayingClamp;
-  static double delay;
+  static QTime delay, lastTimeCheck;
 
   /*
   Check current clampState to lastClampState and update if needed.

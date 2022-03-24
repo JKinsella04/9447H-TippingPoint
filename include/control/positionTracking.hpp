@@ -1,119 +1,70 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
-#include "okapi/api/units/QAngle.hpp"
-#include "okapi/api/units/QLength.hpp"
 
-enum class PositionTracker{
-  RELATIVE, GPS, ODOM
+class Odom{
+  public:
+  Odom();
+  /*
+  Return current X coord.
+  */
+  QLength& getRotation();
+  QLength& getX();
+  QLength& getY();
+  QAngle& getTheta();
+
+  Odom *zero();
+  Odom *calibrateGyro();
+  Odom *tarePosition();
+  
+  void run();
+  void reset();
+  void stop();
+  
+  private:
+  static QLength currentL, currentR, deltaL, deltaR, lastL, lastR;
+  static QLength rotation, posX, posY;
+  static QAngle theta, offset;
+  static bool isRunning;
+  static const double diameter, ratio, ticks;
+
 };
 
-class Position {
+
+class GPS{
   public:
-    /*
-    Set Chassis standards.
-    @param diameter in inches.
-    @gearSet 100,200,600.
-    @gearRatio {1,1}.
-    */
-    Position(double diameter_, int gearSet, std::tuple<double ,double> gearRatio_={1,1});
-    Position();
-    /*
-    Return current X coord.
-    */
-    double * getX();
+  GPS();
+  /*
+  Return current GPS X coord.
+  */
+  QLength& getX();
+  QLength& getY();
+  QAngle& getTheta();
+  double& getError();  
+  
+  void run();
+  void stop();
+  
+  private:
+  static QLength posX, posY;
+  static QAngle theta;
+  static bool isRunning;
+  static pros::c::gps_status_s_t gpsData;
+  static double error;
+};
 
-    /*
-    Return current Y coord.
-    */
-    double * getY();
+class PositionTracker : public Odom, public GPS {
+  public:
 
-    /*
-    Return current heading in Degrees.
-    */
-    QAngle * getTheta();
+  QTime getTime();
 
-    /*
-    Return current heading in Radians.
-    */
-    double * getThetaRad();
-    
-    /*
-    Return GPS sensor error.
-    */
-    double * getError();
-
-    /*
-    Return current average drive base position.
-    */
-    QLength * getRotation();
-
-    /*
-    Get current time im MS since last reset.
-    */
-    double * getTime();
-
-    /*
-    Reset timer.
-    @param string stamp
-    */
-    void resetTime(std::string stamp_);
-
-    /*
-    Sets offset value for theta in Degrees.
-    */
-    void setThetaOffset(double offset_);
-
-    /*
-    Return current state.
-    */
-    PositionTracker getState();
-
-    /*
-    Set state between RELATIVE, GPS, and ODOM.
-    */
-    Position& setState(PositionTracker s);
-
-    /*
-    Reset drive base encoders.
-    */
-    Position& resetDriveBase();
-
-    /*
-    Reset IMUs.
-    */
-    Position& calibrateGyro();  
-
-    /*
-    Set IMU offset.
-    */
-    Position& zero();
-
-    static void start(void * ignore);
-
-    void run();
-
-    void reset();
-
-    void stop();
-
-    private:
-      static bool isRunning;
-      
-      static pros::c::gps_status_s_t gpsData;
-
-      static double posX, posY, thetaDeg, thetaRad, error;
-
-      static QAngle theta;
-
-      static QLength rotation;
-
-      static double currentL, currentR, deltaL, deltaR, lastL, lastR, offset;
-
-      static double diameter, ratio;
-      static int ticks;
-      static std::tuple<double, double> gearRatio;
-
-      static double time, time_offset;
-      static std::string stamp;
+  void resetTime();
+  
+  static void start(void* ignore);
+  void run();
+  
+  private:
+  static std::string stamp;
+  static QTime time, prevTime;
+  static bool isRunning;
 };

@@ -10,18 +10,18 @@
 void initialize() {
 
 	// Class Init
-	Position robotPos(4.15, 200, {5,7});	 
-	Chassis chassis(robotPos.getRotation(), robotPos.getTheta(), robotPos.getX(), robotPos.getY());
+	static PositionTracker *robot;
+	Chassis chassis;
  	Display display;
 	FrontLift frontLift;
 	BackLift backLift;
 	
-	// Sensor and Motor  
-	robotPos.resetDriveBase().calibrateGyro().zero().setState(PositionTracker::RELATIVE);
-	frontLift.reset();	
+	// Sensor and Motor Reset  
+	frontLift.reset();
+	robot->Odom::tarePosition()->Odom::calibrateGyro()->Odom::zero();
 
 	// Threads
-	pros::Task PositionController(robotPos.start, NULL, "Position Controller");
+	pros::Task PositionController(robot->start, NULL, "Position Controller");
 
 	pros::Task ChassisController(chassis.start, NULL, "Chassis Controller");
 	chassis.setBrakeType(HOLD);
@@ -46,8 +46,8 @@ void autonomous() {
 
 void opcontrol() {
 	Autonomous auton;
-  Position robotPos;
-  robotPos.resetTime("Opcontrol");
+  static PositionTracker * robot;
+  robot->resetTime();
 	
 	Chassis chassis;
 	chassis.reset();
@@ -62,7 +62,7 @@ void opcontrol() {
   backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
 
   while (true) {
-    double delay = (75000 - *robotPos.getTime()) / 7.5;
+    double delay = (75 - robot->getTime().convert(second)) / 7.5;
     pros::delay(delay);
     if (delay > 0)
       master.rumble("..");

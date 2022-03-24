@@ -8,9 +8,9 @@
 
 static Autonomous auton;
 static Chassis chassis;
-static Position robotPos;
 static FrontLift frontLift;
 static BackLift backLift;
+PositionTracker *Display::robot;
 
 bool Display::isRunning = false, Display::isInitalized = false;
 
@@ -36,7 +36,7 @@ bool clampIsToggled = false, draggerIsToggled = false;
 
 double chassisSpeed = 0;
 
-static lv_res_t btn_click_action(lv_obj_t *btn) {
+lv_res_t Display::btn_click_action(lv_obj_t *btn) {
   int id = lv_obj_get_free_num(btn);
   switch (id) { // Controls both tab 2 + 3.
   case 1:       // Tab 2 control
@@ -44,10 +44,10 @@ static lv_res_t btn_click_action(lv_obj_t *btn) {
     autonomous();
     break;
   case 2: // Tab 3 control
-    robotPos.calibrateGyro();
+    robot->Odom::calibrateGyro()->Odom::zero();
     break;
   case 3:
-    robotPos.resetDriveBase().reset();
+    robot->Odom::tarePosition()->Odom::reset();
     break;
   case 4:
     frontLift.reset();
@@ -184,7 +184,7 @@ void Display::tabAuton(lv_obj_t *parent) {
 void Display::tabDebug(lv_obj_t *parent) {
   lv_obj_t *startAuton = createButton(1, 0, 20, 200, 40, "Start Auton", parent, btn_click_action, &style_btn, &style_btn_released);
   
-  posVals = createLabel(10, 70, "Robot robotPos = (0,0) ", parent);
+  posVals = createLabel(10, 70, "RobotPos = (0,0) ", parent);
   lv_label_set_style(posVals, &style_btn);
 
   chassisVals = createLabel(10, 90, "Chassis State: ", parent);
@@ -237,14 +237,14 @@ void Display::run() {
 
     // Print (X,Y) Coordinates
     std::ostringstream posX, posY;
-    posX << floor(*robotPos.getX() * 100) /100;
-    posY << floor(*robotPos.getY() * 100) /100;
+    posX << floor(robot->Odom::getX().convert(inch) * 100) /100;
+    posY << floor(robot->Odom::getY().convert(inch) * 100) /100;
     std::string posTemp = "Curr Pos: (" + posX.str() + "," + posY.str() + ")";
     lv_label_set_text(posVals, posTemp.c_str());
 
     // Placeholder for quickly adding a sensor value to screen.
     std::ostringstream value;
-    value << floor(robotPos.getTheta()->convert(degree) *100) /100;
+    value << floor(robot->Odom::getTheta().convert(degree) *100) /100;
     std::string tempValue = "IMU: " + value.str();
     lv_label_set_text(printValue, tempValue.c_str());
 

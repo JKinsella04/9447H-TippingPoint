@@ -8,7 +8,6 @@
 #include "pros/rtos.hpp"
 
 // Class Init
-static Position robotPos;
 static Chassis chassis;
 static BackLift backLift;
 static FrontLift frontLift;
@@ -132,7 +131,7 @@ void fullAwp() { // FULL AWP
   backLift.toggleClamp();
   backClamp.set_value(true);
   pros::delay(250);
-  backLift.delayClamp(0.5); //0.05576_ftps2
+  backLift.delayClamp(0.5_s); //0.05576_ftps2
   chassis.drive(4_tile, 0.09_ftps2, 0.239_ftps2, 3_ftps).withAngles(270_deg, 180_deg, 1_radps2).withTurnGains(28).withTol(3_in).withTurnTol(20_deg).waitUntilSettled();
   chassis.turn(0_deg).withTurnGains(14).waitUntilSettled();
   chassis.drive(-30_in, .37_ftps2, .37_ftps2, -2_ftps).withTol(2_in, true).waitUntilSettled();  
