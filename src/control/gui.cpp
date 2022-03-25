@@ -5,6 +5,7 @@
 #include "backLift.hpp"
 #include "positionTracking.hpp"
 #include "misc.hpp"
+#include "units.hpp"
 
 static Autonomous auton;
 static Chassis chassis;

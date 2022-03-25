@@ -77,6 +77,7 @@ void Odom::run(){
   lastR = ((RF.get_position() + RM.get_position() + RB.get_position()) / 3) * tick;
 
   // Convert drive base ticks to inches traveled.
+  rotation = (currentL + currentR)/2;
   rotation = ( (rotation.convert(revolution) / ratio) * (diameter * PI)) * inch; 
 }
 

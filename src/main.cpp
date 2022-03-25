@@ -6,6 +6,7 @@
 #include "control/backLift.hpp"
 #include "control/frontLift.hpp"
 #include "control/positionTracking.hpp"
+#include "okapi/api/units/QTime.hpp"
 
 void initialize() {
 
@@ -62,7 +63,7 @@ void opcontrol() {
   backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
 
   while (true) {
-    double delay = (75 - robot->getTime().convert(second)) / 7.5;
+    double delay = (75000 - robot->getTime().convert(millisecond)) / 7.5;
     pros::delay(delay);
     if (delay > 0)
       master.rumble("..");

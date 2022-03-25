@@ -13,7 +13,7 @@ BackLift::lastClampState = true, BackLift::checkDist = true, BackLift::isDelayin
 QTime BackLift::lastTimeCheck, BackLift::delay = 250 * millisecond;
 bool checkJam = false;
 
-double intakeSpeed = 600;
+double intakeSpeed = 12000;
 
 BackLiftState BackLift::getState(){
   return BackLiftMode;
@@ -72,7 +72,7 @@ void BackLift::run() {
         checkJam = false;
       if(clampState != lastClampState) pros::delay(delay.convert(millisecond));
       backClamp.set_value(clampState);
-      clampState ? conveyer::spin(600) : conveyer::spin(0);
+      clampState ? conveyer::spin(intakeSpeed) : conveyer::spin(0);
       lastClampState = clampState;
       break;
     }
