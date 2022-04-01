@@ -3,9 +3,6 @@
 #include "misc.hpp"
 #include "positionTracking.hpp"
 
-#define CONVERSION 4169.079328314997 // Convert 2.75in Wheels to Inches with V5 rotation Sensor.
-#define CIRCUMFERENCE 0.1016  // Circumference in meters.
-#define DRIVE_CONVERSION 26.56903765690377 // Convert joystick input to scale for voltage.
 #define LEFT 1
 #define RIGHT 2
 
@@ -172,5 +169,7 @@ class Chassis {
 
     static double brakeTime;
     static bool isBraking, gotTime, isParking;
+
+    static double driveSpeed, driveConversion;
     
 };

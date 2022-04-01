@@ -51,6 +51,8 @@ bool Chassis::isBraking = false, Chassis::gotTime = true;
 int Chassis::oneSide = 0;
 bool Chassis::isParking = false;
 
+double Chassis::driveSpeed = 7.2, Chassis::driveConversion = 127 / driveSpeed;
+
 double lastvalue;
 
 Chassis::Chassis() { }
@@ -360,8 +362,8 @@ void Chassis::run() {
     }
 
     case ChassisState::OPCONTROL: {
-      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) / DRIVE_CONVERSION );
-      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) / DRIVE_CONVERSION );
+      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) / driveConversion );
+      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) / driveConversion );
 
       if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
         brakeTime = robot->getTime().convert(millisecond);
@@ -380,15 +382,15 @@ void Chassis::run() {
       }
 
       if (arm.get_position() >= 500) { // Slow accel when holding a goal.
-        LslewOutput = leftSlew.withGains(1.5, 3, true).withLimit(4.78).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(1.5, 3, true).withLimit(4.78).calculate(rightJoystick);
+        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
       }else if (isParking){
-        LslewOutput = leftSlew.withGains(3, 3, true).withLimit(3.585).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(3, 3, true).withLimit(3.585).calculate(rightJoystick);
+        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(rightJoystick);
       } 
       else {
-        LslewOutput = leftSlew.withGains(3, 3, true).withLimit(4.78).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(3, 3, true).withLimit(4.78).calculate(rightJoystick);
+        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
       }
 
       macro::print("Speed: ", (LslewOutput + RslewOutput)/2);

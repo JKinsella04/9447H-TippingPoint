@@ -12,8 +12,8 @@
   QAngle Odom::theta, Odom::offset;
   bool Odom::isRunning;
 
-  const double Odom::diameter = 4.15, Odom::ratio = 5.0 / 7.0,
-               Odom::ticks = 900;
+  const double Odom::diameter = 3.25, Odom::ratio = 1.0 / 1.0,
+               Odom::ticks = 300;
 
   Odom::Odom(){}
 
