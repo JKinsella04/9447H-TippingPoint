@@ -38,7 +38,7 @@ BackLift& BackLift::toggleClamp(QTime delay_){
 BackLift& BackLift::delayClamp(QTime delay_){
   clampState = !clampState;
   isDelayingClamp = true;
-  delay = delay_ * 1000;
+  delay = delay_;
   lastTimeCheck = robot->getTime();
   return *this;
 }

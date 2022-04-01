@@ -63,9 +63,9 @@ void opcontrol() {
   backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
 
   while (true) {
-    double delay = (75000 - robot->getTime().convert(millisecond)) / 7.5;
+	  double delay = (75000 - robot->getTime().convert(millisecond)) / 7.5;
     pros::delay(delay);
     if (delay > 0)
       master.rumble("..");
-  }
+	}
 }
