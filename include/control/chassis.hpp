@@ -122,7 +122,7 @@ class Chassis {
     /*
     Updates ChassisState and sets target position in inches.
     */
-    Chassis& drive(QLength target_,  QAcceleration accel_rate = 0.37_ftps2, QAcceleration decel_rate = 0.37_ftps2,  QSpeed speed = 4.87_ftps);
+    Chassis& drive(QLength target_,  QAcceleration accel_rate = 0.63825_ftps2, QAcceleration decel_rate = 0.63825_ftps2,  QSpeed speed = 8.51_ftps);
 
     /*
     Updates ChassisState and sets target position from given (x,y) coords.

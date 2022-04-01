@@ -108,7 +108,7 @@ void rightAWP(){ // One yellow + right AWP
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   frontLift.withTol(75).setState(FrontLiftState::DOWN);
-  chassis.drive(42.5_in, 2.5_ftps2, .1_ftps2).withAngle(355_deg, 28_radps2).withGains(3.5, 0, .5).withTurnGains(36,0,10).withTol(2_in).withTurnTol(10_deg).waitUntilSettled();
+  chassis.drive(42.5_in, 4_ftps2, .1_ftps2).withAngle(355_deg, 28_radps2).withGains(3.5, 0, .5).withTurnGains(36,0,10).withTol(2_in).withTurnTol(10_deg).waitUntilSettled();
   frontLift.toggleClamp().withTol(75).setState(FrontLiftState::UP, 50).waitUntilClamped();
   chassis.drive(-30_in, -4.87_ftps2, 0.37_ftps2, -4.87_ftps).withGains(5,0,1).withAngle(360_deg).withTurnGains(36,0,10).withTol(2_in).withTurnTol(2_deg).waitUntilSettled();
   chassis.turn(85_deg, 1.1_radps2, 14_radps).withTurnGains(20,0,10).waitUntilSettled();
