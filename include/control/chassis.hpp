@@ -48,7 +48,6 @@ class Chassis {
 
     /*
     Set voltage limit for the drive base motors.
-    @param limit voltage limit in mV.
     */
     void setVoltLimit(double limit = 12000);
 
