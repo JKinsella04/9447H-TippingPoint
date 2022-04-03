@@ -27,7 +27,7 @@ class BackLift{
   BackLift& setState(BackLiftState s);
 
   /*
-  Toggle Back clamp to opposite state.
+  Toggle Back clamp to opposite state and delay intake spinning.
   */
   BackLift& toggleClamp(QTime delay_ = 0_ms);
 

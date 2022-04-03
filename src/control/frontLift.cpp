@@ -1,8 +1,10 @@
 #include "frontLift.hpp"
 #include "chassis.hpp"
 #include "misc.hpp"
+#include "positionTracking.hpp"
 
 static Chassis chassis;
+PositionTracker *FrontLift::robot;
 
 FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
 
@@ -17,7 +19,8 @@ bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
 
 PID_constants up{70, 1.5, 45}, mid{30, 0.01, 12.5}, down{20, 0.01, 5};
-double FrontLift::downPos = 100, FrontLift::midPos = 1000, FrontLift::upPos = 2100, FrontLift::delay = 100; 
+double FrontLift::downPos = 100, FrontLift::midPos = 1000, FrontLift::upPos = 2100;
+QTime FrontLift::delay = 100_ms, FrontLift::lastTimeCheck; 
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
 
@@ -29,10 +32,11 @@ FrontLift &FrontLift::setState(FrontLiftState s) {
   return *this;
 }
 
-FrontLift &FrontLift::setState(FrontLiftState s, double delay_) {
+FrontLift &FrontLift::setState(FrontLiftState s, QTime delay_) {
   isSettled = false;
   FrontLiftMode = s;
   delay = delay_;
+  lastTimeCheck = robot->getTime();
   return *this;
 }
 
@@ -41,10 +45,11 @@ FrontLift &FrontLift::toggleClamp() {
   return *this;
 }
 
-FrontLift &FrontLift::delayClamp(double delay_) {
+FrontLift &FrontLift::delayClamp(QTime delay_) {
   isDelayingClamp = true;
   clampState = !clampState;
   delay = delay_;
+  lastTimeCheck = robot->getTime();
   return *this;
 }
 
@@ -94,13 +99,13 @@ void FrontLift::run() {
       break;
     }
     case FrontLiftState::MIDDLE: {
-      if(clampState) pros::delay(delay);  
+      if(clampState) pros::delay(delay.convert(millisecond));  
       FrontLift_PID.set(mid.kP, mid.kI, mid.kD);
       move(midPos);
       break;
     }
     case FrontLiftState::UP: {
-      if(clampState) pros::delay(delay);  
+      if(clampState) pros::delay(delay.convert(millisecond));  
       FrontLift_PID.set(up.kP, up.kI, up.kD);
       move(upPos);
       break;
@@ -163,10 +168,10 @@ void FrontLift::move(double target) {
 
 void FrontLift::updateClamp() {
   if (isDelayingClamp) {
-    if (abs(chassis.getDriveError()) < chassis.getTol() * delay) {
+    if (robot->getTime() - lastTimeCheck >= delay) {
       frontClamp.set_value(clampState);
       lastClampState = clampState;
-      delay = 75;
+      delay = 75_ms;
     }
   } else {
     frontClamp.set_value(clampState);

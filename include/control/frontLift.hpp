@@ -1,6 +1,7 @@
 #pragma once
 #include "main.h"
 #include "globals.hpp"
+#include "positionTracking.hpp"
 
 enum class FrontLiftState { 
     DOWN, MIDDLE, UP, OPCONTROL
@@ -27,7 +28,7 @@ class FrontLift{
   @param FrontLiftState s wanted state.
   @param double delay wanted delay in MS.
   */
-  FrontLift& setState(FrontLiftState s, double delay_);
+  FrontLift& setState(FrontLiftState s, QTime delay_);
 
   /*
   Toggle Front clamp to opposite state.
@@ -38,7 +39,7 @@ class FrontLift{
   Sets the FrontLift's clamp once the robot has moved far enough.
   @param bool clamp_ True for clamped False for released.
   */
-  FrontLift& delayClamp(double delay_);
+  FrontLift& delayClamp(QTime delay_);
 
   /*
   Set tolerance for frontLift movement.
@@ -73,16 +74,17 @@ class FrontLift{
   void run();
 
   private:
+  static PositionTracker * robot;
+
   static bool isRunning;
   static bool isSettled;
   static bool isDelayingClamp, clampState, lastClampState, checkFrontLift;
 
   static double output, target, current, tol, slewOutput;
-  static double downPos, midPos, upPos, delay;
+  static double downPos, midPos, upPos;
+  static QTime delay, lastTimeCheck;
 
   void move(double target);
-
-  void effMove(double target);
 
   void updateClamp();
 
