@@ -1,11 +1,6 @@
 #include "chassis.hpp"
 #include "misc.hpp"
 #include "globals.hpp"
-#include "okapi/api/units/QAngle.hpp"
-#include "okapi/api/units/QAngularSpeed.hpp"
-#include "okapi/api/units/QLength.hpp"
-#include "okapi/api/units/QSpeed.hpp"
-#include "okapi/api/units/QTime.hpp"
 #include "positionTracking.hpp"
 #include "auton.hpp"
 
@@ -313,7 +308,7 @@ void Chassis::run() {
     }
 
     case ChassisState::POINT: {
-      // moveToPoint(target);
+      moveToPoint(target);
       // for ( float t = 0; t <= 1; t += 0.01){
       // target.x = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).x;
       // target.y = macro::quadracticBezier({*posX, *posY}, {target.controlX, target.controlY}, {target.x, target.y}, t).y;
@@ -473,38 +468,41 @@ void Chassis::right(double input){
   RB.move_voltage(input);
 }
 
-// void Chassis::moveToPoint(ChassisTarget target) {
-//   do{
-//   // Drive part.
-//   driveError = hypot(target.x - *posX, target.y - *posY);
+void Chassis::moveToPoint(ChassisTarget target) {
+  do{
+  // Drive part.
+  driveError = hypot(target.x.convert(foot) - robot->GPS::getX().convert(foot),
+                     target.y.convert(foot) - robot->GPS::getY().convert(foot));
 
-//   // Turn part.
-//   target.theta = atan2(target.y - *posY, target.x - *posX);
+  // Turn part.
+  target.theta = atan2(target.y.convert(foot) - robot->GPS::getY().convert(foot),
+                       target.x.convert(foot) - robot->GPS::getX().convert(foot)) *radian;
 
-//   turnError = (target.theta - macro::toRad(*theta));
-//   turnError = atan2(sin(turnError), cos(turnError));
-//   turnError = macro::toDeg(turnError) + 90; // GPS
-//   // if(target.reverse) turnError -= 180; // ODOM
+  turnError = (target.theta.convert(radian) - robot->GPS::getTheta().convert(radian));
+  turnError = atan2(sin(turnError), cos(turnError));
+  turnError = macro::toDeg(turnError) + 90; // GPS
+  // if(target.reverse) turnError -= 180; // ODOM
 
-//   // PID Calcs.
-//   drive_output = drive_PID.calculate(driveError);
-//   turn_output = turn_PID.calculate(turnError);
 
-//   // Slew Calcs.
-//   LslewOutput = leftSlew.withGains(target.accel_rate, target.accel_rate, true).withLimit(target.speedDrive).calculate(drive_output);
-//   TslewOutput = turnSlew.withGains(target.rateTurn, target.rateTurn, true).withLimit(target.speedTurn).calculate(turn_output);
+  // PID Calcs.
+  drive_output = drive_PID.calculate(driveError);
+  turn_output = turn_PID.calculate(turnError);
 
-//   macro::print("Drive: ", drive_PID.getError());
-//   macro::print("Turn: ", turnError);
+  // Slew Calcs.
+  LslewOutput = leftSlew.withGains(target.accel_rate.convert(ftps2),target.accel_rate.convert(ftps2), true).withLimit(target.speedDrive.convert(ftps)).calculate(drive_output);
+  TslewOutput = turnSlew.withGains(target.rateTurn.convert(radps2),target.rateTurn.convert(radps2), true).withLimit(target.speedTurn.convert(radps)).calculate(turn_output);
 
-//   // if (target.reverse) {
-//   //   left(-LslewOutput - TslewOutput);
-//   //   right(-LslewOutput + TslewOutput);
-//   // } else {
-//   //   left(LslewOutput - TslewOutput);
-//   //   right(LslewOutput + TslewOutput);
-//   // }
-//   }while( fabs(drive_PID.getError()) <= drive_tol && fabs(turn_PID.getError()) <=turn_tol );
-// }
+  macro::print("Drive: ", drive_PID.getError());
+  macro::print("Turn: ", turnError);
+
+  if (target.reverse) {
+    left(-LslewOutput - TslewOutput);
+    right(-LslewOutput + TslewOutput);
+  } else {
+    left(LslewOutput - TslewOutput);
+    right(LslewOutput + TslewOutput);
+  }
+  }while( fabs(drive_PID.getError()) <= drive_tol.convert(foot) && fabs(turn_PID.getError()) <= turn_tol.convert(radian) );
+}
 
 void Chassis::stop() { isRunning = false; }

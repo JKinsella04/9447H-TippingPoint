@@ -105,8 +105,8 @@ void GPS::run(){
 
   theta = abs(gps.get_heading() - 360) * degree;
 
-  posX = (gpsData.x * 1000) * millimeter;
-  posY = (gpsData.y * 1000) * millimeter;
+  posX = gpsData.x * meter;
+  posY = gpsData.y * meter;
 
   // GPS Error
   error = gps.get_error();

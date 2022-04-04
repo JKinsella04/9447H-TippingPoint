@@ -147,7 +147,7 @@ class Chassis {
     void right(double input);
 
 
-    // void moveToPoint(ChassisTarget target);
+    void moveToPoint(ChassisTarget target);
 
     void stop();
 
