@@ -301,5 +301,6 @@ void test() { // Testing
   chassis.right(12000);
   while (avgVelo < 600) {
     fputs(str.c_str(), file);
+    pros::delay(20);
   }
 }

@@ -46,7 +46,7 @@ bool Chassis::isBraking = false, Chassis::gotTime = true;
 int Chassis::oneSide = 0;
 bool Chassis::isParking = false;
 
-double Chassis::driveSpeed = 7.2, Chassis::driveConversion = 127 / driveSpeed;
+double Chassis::driveSpeed = 8.51, Chassis::driveConversion = 127 / driveSpeed;
 
 double lastvalue;
 
@@ -384,24 +384,24 @@ void Chassis::run() {
         RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(rightJoystick);
       } 
       else {
-        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
+        LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
       }
 
-      macro::print("Speed: ", (LslewOutput + RslewOutput)/2);
-      QSpeed leftDriveSpeed = LslewOutput * ftps;
-      QSpeed rightDriveSpeed = RslewOutput * ftps;
+      // QSpeed leftDriveSpeed = LslewOutput * 1666.6666666666666666666666666667 * tps;
+      // QSpeed rightDriveSpeed = RslewOutput * 1666.6666666666666666666666666667 * tps;
+      macro::print("Speed: ", LslewOutput);
 
-      left(leftDriveSpeed.convert(tps));
-      right(rightDriveSpeed.convert(tps));
+      left(LslewOutput);
+      right(RslewOutput);
 
-      if( robot->getTime().convert(millisecond) > 60000 || auton.getAuton() == "Skills" && robot->getTime().convert(millisecond) > 40000){
-        if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
-        if(isParking) setBrakeType(HOLD);
-        master.print(2, 0, "Parking Time");
-      }else{
-        setBrakeType(COAST);
-      }
+      // if( robot->getTime().convert(millisecond) > 60000 || auton.getAuton() == "Skills" && robot->getTime().convert(millisecond) > 40000){
+        // if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
+      //   if(isParking) setBrakeType(HOLD);
+      //   master.print(2, 0, "Parking Time");
+      // }else{
+      //   setBrakeType(COAST);
+      // }
       break;
     }
 
