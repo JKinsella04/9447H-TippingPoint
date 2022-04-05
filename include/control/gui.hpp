@@ -26,6 +26,9 @@ class Display{
 
     void stop();
 
+    // Macros From 7K - Tower Takeover
+    lv_obj_t * createLabel(int x, int y, std::string text, lv_obj_t * parent);
+    lv_obj_t * createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action, lv_style_t * btn_pr = nullptr, lv_style_t * btn_rel = nullptr);
     private:
 
     static PositionTracker * robot;
@@ -43,8 +46,4 @@ class Display{
     void tabSettings(lv_obj_t * parent);
 
     static lv_res_t btn_click_action(lv_obj_t *btn);
-
-    // Macros From 7K - Tower Takeover
-    lv_obj_t * createLabel(int x, int y, std::string text, lv_obj_t * parent);
-    lv_obj_t * createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action, lv_style_t * btn_pr = nullptr, lv_style_t * btn_rel = nullptr);
 };
