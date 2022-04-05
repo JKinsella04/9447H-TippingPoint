@@ -357,8 +357,8 @@ void Chassis::run() {
     }
 
     case ChassisState::OPCONTROL: {
-      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) / driveConversion );
-      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) / driveConversion );
+      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * driveConversion );
+      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * driveConversion );
 
       // if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
       //   brakeTime = robot->getTime().convert(millisecond);
@@ -376,17 +376,17 @@ void Chassis::run() {
       //   rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
       // }
 
-      if (arm.get_position() >= 500) { // Slow accel when holding a goal.
-        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
-      }else if (isParking){
-        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(rightJoystick);
-      } 
-      else {
+      // if (arm.get_position() >= 500) { // Slow accel when holding a goal.
+      //   LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
+      //   RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
+      // }else if (isParking){
+      //   LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(leftJoystick);
+      //   RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(rightJoystick);
+      // } 
+      // else {
         LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
         RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
-      }
+      // }
 
       // QSpeed leftDriveSpeed = LslewOutput * 1666.6666666666666666666666666667 * tps;
       // QSpeed rightDriveSpeed = RslewOutput * 1666.6666666666666666666666666667 * tps;
