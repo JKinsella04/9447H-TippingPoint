@@ -5,7 +5,7 @@ pros::Controller master(CONTROLLER_MASTER);
 
 // Motor Definitions //
 // Lift Definition
-pros::Motor arm(1, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
+pros::Motor arm(1, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS);
 
 // Intake Definition
 pros::Motor intake(9, MOTOR_GEARSET_6, 1, MOTOR_ENCODER_COUNTS);
