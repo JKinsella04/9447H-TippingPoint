@@ -46,7 +46,7 @@ bool Chassis::isBraking = false, Chassis::gotTime = true;
 int Chassis::oneSide = 0;
 bool Chassis::isParking = false;
 
-double Chassis::driveSpeed = 127, Chassis::driveConversion = 12000 / driveSpeed;
+double Chassis::driveSpeed = 7.2, Chassis::driveConversion = 127 / driveSpeed;
 
 double lastvalue;
 
@@ -276,23 +276,21 @@ void Chassis::run() {
 
       // macro::print("TURN ERR", turn_PID.getError());
 
-      QSpeed leftSpeed = LslewOutput * ftps; 
-      QSpeed rightSpeed = RslewOutput * ftps;
+      QSpeed leftDriveSpeed = (LslewOutput * 12000 / 8.51) * tps; 
+      QSpeed rightDriveSpeed = (RslewOutput * 12000 / 8.51) * tps;
       QAngularSpeed turnSpeed = TslewOutput * radps;
 
-      LslewOutput = leftSpeed.convert(tps); // Convert to voltage range
-      RslewOutput = rightSpeed.convert(tps);
       TslewOutput = turnSpeed.convert(radps) * (12000 / 27.643373493975904);
       
       macro::print("Lateral: ", drive_PID.getError());
       macro::print("Turn: ", turn_PID.getError());
 
       if(!adjustAngle){
-        left(LslewOutput);
-        right(RslewOutput);
+        left(leftDriveSpeed.convert(tps));
+        right(rightDriveSpeed.convert(tps));
       }else{
-        left(LslewOutput - TslewOutput);
-        right(RslewOutput + TslewOutput);
+        left(leftDriveSpeed.convert(tps) - TslewOutput);
+        right(rightDriveSpeed.convert(tps) + TslewOutput);
       }
 
       if ( fabs(drive_PID.getError()) < drive_tol.convert(foot) && fabs(turn_PID.getError()) < turn_tol.convert(radian) || !adjustAngle && fabs(drive_PID.getError()) < drive_tol.convert(foot)) { 
@@ -357,51 +355,51 @@ void Chassis::run() {
     }
 
     case ChassisState::OPCONTROL: {
-      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) * driveConversion );
-      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) * driveConversion );
+      double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) / driveConversion );
+      double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) / driveConversion );
 
-      // if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
-      //   brakeTime = robot->getTime().convert(millisecond);
-      //   gotTime = true;
-      // }else if ( fabs( master.get_analog(ANALOG_LEFT_Y) ) > 5 || fabs ( master.get_analog(ANALOG_RIGHT_Y) ) > 5 && gotTime){
-      //   gotTime = isBraking = false;
-      // }
+      if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
+        brakeTime = robot->getTime().convert(millisecond);
+        gotTime = true;
+      }else if ( fabs( master.get_analog(ANALOG_LEFT_Y) ) > 5 || fabs ( master.get_analog(ANALOG_RIGHT_Y) ) > 5 && gotTime){
+        gotTime = isBraking = false;
+      }
 
-      // if (gotTime && !isBraking && robot->getTime().convert(millisecond) - brakeTime >= 1500 || gotTime && !isBraking && isParking) {
-      //   lastRot = robot->Odom::getRotation();
-      //   isBraking = true;
-      // }
-      // if (isBraking) {
-      //   leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
-      //   rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
-      // }
+      if (gotTime && !isBraking && robot->getTime().convert(millisecond) - brakeTime >= 1500 || gotTime && !isBraking && isParking) {
+        lastRot = robot->Odom::getRotation();
+        isBraking = true;
+      }
+      if (isBraking) {
+        leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
+        rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
+      }
 
-      // if (arm.get_position() >= 500) { // Slow accel when holding a goal.
-      //   LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
-      //   RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
-      // }else if (isParking){
-      //   LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(leftJoystick);
-      //   RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(rightJoystick);
-      // } 
-      // else {
-        LslewOutput = leftSlew.withGains(900, 900, true).withLimit(12000).calculate(leftJoystick);
-        RslewOutput = rightSlew.withGains(900, 900, true).withLimit(12000).calculate(rightJoystick);
-      // }
+      if (arm.get_position() >= 500) { // Slow accel when holding a goal.
+        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
+      }else if (isParking){
+        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed*0.75).calculate(rightJoystick);
+      } 
+      else {
+        LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);
+        RslewOutput = rightSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(rightJoystick);
+      }
 
-      // QSpeed leftDriveSpeed = LslewOutput * 1666.6666666666666666666666666667 * tps;
-      // QSpeed rightDriveSpeed = RslewOutput * 1666.6666666666666666666666666667 * tps;
+      QSpeed leftDriveSpeed = (LslewOutput * 12000 / driveSpeed) * tps; 
+      QSpeed rightDriveSpeed = (RslewOutput * 12000 / driveSpeed) * tps;
       macro::print("Speed: ", LslewOutput);
 
-      left(LslewOutput);
-      right(RslewOutput);
+      left(leftDriveSpeed.convert(tps));
+      right(rightDriveSpeed.convert(tps));
 
-      // if( robot->getTime().convert(millisecond) > 60000 || auton.getAuton() == "Skills" && robot->getTime().convert(millisecond) > 40000){
-        // if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
-      //   if(isParking) setBrakeType(HOLD);
-      //   master.print(2, 0, "Parking Time");
-      // }else{
-      //   setBrakeType(COAST);
-      // }
+      if( robot->getTime().convert(millisecond) > 60000 || auton.getAuton() == "Skills" && robot->getTime().convert(millisecond) > 40000){
+        if(L_Imu.get_roll() >= 10 || L_Imu.get_roll() <= -10) isParking = true;
+        if(isParking) setBrakeType(HOLD);
+        master.print(2, 0, "Parking Time");
+      }else{
+        setBrakeType(COAST);
+      }
       break;
     }
 

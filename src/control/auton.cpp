@@ -296,11 +296,16 @@ void test() { // Testing
                     LB.get_actual_velocity() + RF.get_actual_velocity() +
                     RM.get_actual_velocity() + RB.get_actual_velocity()) /6;
 
-  std::string str = std::to_string(avgVelo) + "\n";
   chassis.left(12000);
   chassis.right(12000);
-  while (avgVelo < 600) {
+  if(avgVelo < 600) {
+    avgVelo = (LF.get_actual_velocity() + LM.get_actual_velocity() +
+               LB.get_actual_velocity() + RF.get_actual_velocity() +
+               RM.get_actual_velocity() + RB.get_actual_velocity()) / 6;
+
+    std::string str = std::to_string(avgVelo) + "\n";
     fputs(str.c_str(), file);
     pros::delay(20);
   }
+  fclose(file);
 }

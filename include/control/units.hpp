@@ -19,7 +19,7 @@ constexpr Number pct = number / 100;
 // Predefined Length Units
 constexpr QLength tile = 2 * foot;
 constexpr QLength court = 12 * foot;
-constexpr QLength revolution = 0.08255 * meter; // Diameter
+constexpr QLength revolution = 0.259207 * meter; // Diameter
 constexpr QLength tick = revolution / 300; // 1800 red, 900 green, 300 blue.
 
 // Predefined Angle Units
