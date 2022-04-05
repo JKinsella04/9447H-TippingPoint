@@ -78,16 +78,17 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
   if (lv_obj_get_free_num(btn) == 1) {
     currAWP++;
     if (currAWP > 3) currAWP = 1;
-    auton.setId(currAWP);
-
     switch (currAWP) {
     case 1:{
+      auton.setId(1);
       lv_img_set_src(autonGraphic, &leftAWP_IMG);
       break;}
     case 2:{
+      auton.setId(2);
       lv_img_set_src(autonGraphic, &rightAWP_IMG);
       break;}
     case 3:{
+      auton.setId(3);
       lv_img_set_src(autonGraphic, &AWP);
       break;}
     }
@@ -95,17 +96,18 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
   if (lv_obj_get_free_num(btn) == 2) {
     currElim++;
     if (currElim > 2) currElim = 1;
-    auton.setId(currElim);
     switch (currElim) {
     case 1:{
       lv_img_set_src(autonGraphic, &middleGoal_IMG);
+      auton.setId(4);
       break;}
     case 2:{
       lv_img_set_src(autonGraphic, &twoGoal_IMG);
+      auton.setId(5);
       break;}
     }
   }else{
-    auton.setId(lv_obj_get_free_num(btn));
+    auton.setId(6);
     lv_img_set_src(autonGraphic, &skills_IMG);
   }
   return LV_RES_OK;
