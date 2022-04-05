@@ -360,21 +360,21 @@ void Chassis::run() {
       double leftJoystick = ( master.get_analog(ANALOG_LEFT_Y) / driveConversion );
       double rightJoystick = ( master.get_analog(ANALOG_RIGHT_Y) / driveConversion );
 
-      if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
-        brakeTime = robot->getTime().convert(millisecond);
-        gotTime = true;
-      }else if ( fabs( master.get_analog(ANALOG_LEFT_Y) ) > 5 || fabs ( master.get_analog(ANALOG_RIGHT_Y) ) > 5 && gotTime){
-        gotTime = isBraking = false;
-      }
+      // if(!gotTime && fabs( master.get_analog(ANALOG_LEFT_Y) ) < 5 && fabs ( master.get_analog(ANALOG_RIGHT_Y) ) < 5 ){
+      //   brakeTime = robot->getTime().convert(millisecond);
+      //   gotTime = true;
+      // }else if ( fabs( master.get_analog(ANALOG_LEFT_Y) ) > 5 || fabs ( master.get_analog(ANALOG_RIGHT_Y) ) > 5 && gotTime){
+      //   gotTime = isBraking = false;
+      // }
 
-      if (gotTime && !isBraking && robot->getTime().convert(millisecond) - brakeTime >= 1500 || gotTime && !isBraking && isParking) {
-        lastRot = robot->Odom::getRotation();
-        isBraking = true;
-      }
-      if (isBraking) {
-        leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
-        rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
-      }
+      // if (gotTime && !isBraking && robot->getTime().convert(millisecond) - brakeTime >= 1500 || gotTime && !isBraking && isParking) {
+      //   lastRot = robot->Odom::getRotation();
+      //   isBraking = true;
+      // }
+      // if (isBraking) {
+      //   leftJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
+      //   rightJoystick = drive_PID.set(30, 0, 0).calculate(lastRot.convert(foot), robot->Odom::getRotation().convert(foot));
+      // }
 
       if (arm.get_position() >= 500) { // Slow accel when holding a goal.
         LslewOutput = leftSlew.withGains(1.44, 1.44, true).withLimit(driveSpeed).calculate(leftJoystick);

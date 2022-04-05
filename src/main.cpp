@@ -19,7 +19,7 @@ void initialize() {
 	
 	// Sensor and Motor Reset  
 	frontLift.reset();
-	robot->Odom::tarePosition()->Odom::calibrateGyro()->Odom::zero();
+	// robot->Odom::tarePosition()->Odom::calibrateGyro()->Odom::zero();
 
 	// Threads
 	pros::Task PositionController(robot->start, NULL, "Position Controller");
