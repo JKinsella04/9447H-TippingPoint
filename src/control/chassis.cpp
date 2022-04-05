@@ -46,7 +46,7 @@ bool Chassis::isBraking = false, Chassis::gotTime = true;
 int Chassis::oneSide = 0;
 bool Chassis::isParking = false;
 
-double Chassis::driveSpeed = 8.51, Chassis::driveConversion = 127 / driveSpeed;
+double Chassis::driveSpeed = 127, Chassis::driveConversion = 12000 / driveSpeed;
 
 double lastvalue;
 
