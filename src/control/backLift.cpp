@@ -12,6 +12,7 @@ BackLift::lastClampState = true, BackLift::checkDist = true, BackLift::isDelayin
 
 QTime BackLift::lastTimeCheck, BackLift::delay = 250 * millisecond;
 bool checkJam = false;
+double BackLift::goalDist;
 
 double intakeSpeed = 12000;
 
@@ -55,6 +56,7 @@ void BackLift::run() {
   isRunning = true;
 
   while (isRunning) {
+    goalDist = (LB_dist.get() + RB_dist.get()) / 2.0;
 
     if(pros::competition::is_disabled()) goto end;
 
@@ -77,13 +79,13 @@ void BackLift::run() {
       break;
     }
     case BackLiftState::OPCONTROL: {
-      if( backDist.get() >= 45 || backDist.get() == 0){
+      if( goalDist >= 45 || goalDist == 0){
         checkDist = true;
       }
       
       if ( master.get_digital_new_press(DIGITAL_R2) ) { // Grab Goal
         toggleClamp(250_ms).updateClamp();
-      } else if( checkDist && backDist.get() <= 30 && backDist.get() != 0 ){
+      } else if( checkDist && goalDist <= 25 && goalDist != 0 ){
         clampState = true;
         updateClamp();
         checkDist = false;

@@ -96,7 +96,8 @@ QLength Chassis::getTol(){
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    if( checkBack == true && backDist.get() <= 25 && backDist.get() != 0 )isSettled = true;
+    double goalDist = (LB_dist.get() + RB_dist.get()) / 2.0;
+    if( checkBack == true && goalDist <= 25 && goalDist != 0 )isSettled = true;
     pros::delay(20);
   }
 }

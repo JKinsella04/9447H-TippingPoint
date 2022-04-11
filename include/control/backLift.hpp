@@ -46,6 +46,7 @@ class BackLift{
   
   static bool isRunning, clampState, lastClampState, checkDist, isDelayingClamp;
   static QTime delay, lastTimeCheck;
+  static double goalDist;
 
   /*
   Check current clampState to lastClampState and update if needed.
