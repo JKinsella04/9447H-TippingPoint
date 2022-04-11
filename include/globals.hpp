@@ -23,8 +23,6 @@ extern pros::Imu L_Imu, R_Imu;
 
 extern pros::ADIDigitalOut frontClamp, backClamp;
 
-extern pros::ADIDigitalIn backLimit, frontLimit;
-
 extern pros::Gps gps;
 
-extern pros::Distance backDist;
+extern pros::Distance LB_dist, RB_dist;
