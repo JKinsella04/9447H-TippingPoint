@@ -92,8 +92,7 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
       lv_img_set_src(autonGraphic, &AWP);
       break;}
     }
-  }
-  if (lv_obj_get_free_num(btn) == 2) {
+  } else if (lv_obj_get_free_num(btn) == 2) {
     currElim++;
     if (currElim > 2) currElim = 1;
     switch (currElim) {
@@ -106,7 +105,7 @@ static lv_res_t btn_auton_action(lv_obj_t *btn) {
       auton.setId(5);
       break;}
     }
-  }else{
+  } else if(lv_obj_get_free_num(btn) == 3){
     auton.setId(6);
     lv_img_set_src(autonGraphic, &skills_IMG);
   }
