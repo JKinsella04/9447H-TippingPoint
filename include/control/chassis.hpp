@@ -84,7 +84,7 @@ class Chassis {
     /*
     Sets drive PID constants.
     */
-    Chassis& withGains(double kP_ = 2.75, double kI_ = 0, double kD_ = 0.5);
+    Chassis& withGains(double kP_ = 5, double kI_ = 0, double kD_ = 1);
 
     /*
     Sets turn PID constants.
@@ -105,8 +105,9 @@ class Chassis {
 
     /*
     Sets Target angle to reach while driving.
+    Will hold current angle by default.
     */
-    Chassis& withAngle(QAngle theta, QAngularAcceleration rate = 2.2_radps2, QAngularSpeed speed = 27.643373493975904_radps);
+    Chassis& withAngle(QAngle theta = robot->Odom::getTheta(), QAngularAcceleration rate = 2.2_radps2, QAngularSpeed speed = 27.643373493975904_radps);
 
     /*
     Sets Target angle to reach while driving then updates it to the second target angle after reaching the first angle.
