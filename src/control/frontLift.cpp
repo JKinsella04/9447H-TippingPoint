@@ -178,3 +178,18 @@ void FrontLift::updateClamp() {
     lastClampState = clampState;
   }
 }
+
+Clamp::Clamp(std::uint8_t port, bool state){
+  piston = new pros::ADIDigitalOut(port);
+  ClampState = state;
+  piston->set_value(ClampState);
+}
+
+bool Clamp::getState(){
+  return ClampState;
+}
+
+void Clamp::toggle(){
+ ClampState = !ClampState;
+ piston->set_value(ClampState); 
+}

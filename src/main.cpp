@@ -55,14 +55,18 @@ void opcontrol() {
   chassis.setState(ChassisState::OPCONTROL); // Runs Tank Control.
   chassis.setBrakeType(COAST);
 
-  FrontLift frontLift;
-  frontLift.setState(FrontLiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
-	if ( !frontLift.getClampState() && auton.getAuton() == "Skills") frontLift.toggleClamp(); // If clamped Unclamp.
+  // FrontLift frontLift;
+  // frontLift.setState(FrontLiftState::OPCONTROL); // Controls Lift + Pneumatic Clamp.
+	// if ( !frontLift.getClampState() && auton.getAuton() == "Skills") frontLift.toggleClamp(); // If clamped Unclamp.
 
-  BackLift backLift;
-  backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
+  // BackLift backLift;
+  // backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
+	Clamp front('H', false);
+	Clamp back('D', false);
 
   while (true) {
+		if(master.get_digital(DIGITAL_A))front.toggle();
+		if(master.get_digital(DIGITAL_B))back.toggle();
 	  double delay = (75000 - robot->getTime().convert(millisecond)) / 7.5;
     pros::delay(delay);
     if (delay > 0)
