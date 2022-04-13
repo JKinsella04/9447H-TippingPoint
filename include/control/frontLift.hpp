@@ -109,6 +109,6 @@ class Clamp{
   void toggle();
 
   private:
-  bool ClampState;
+  bool clampState;
   pros::ADIDigitalOut * piston = nullptr;
 };
