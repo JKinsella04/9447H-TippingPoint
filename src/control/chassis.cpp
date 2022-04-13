@@ -389,7 +389,7 @@ void Chassis::run() {
 
       QSpeed leftDriveSpeed = (LslewOutput * 12000 / driveSpeed) * tps; 
       QSpeed rightDriveSpeed = (RslewOutput * 12000 / driveSpeed) * tps;
-      macro::print("Speed: ", LslewOutput);
+      // macro::print("Speed: ", LslewOutput);
 
       left(leftDriveSpeed.convert(tps));
       right(rightDriveSpeed.convert(tps));

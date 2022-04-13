@@ -18,8 +18,8 @@ bool FrontLift::isRunning = false, FrontLift::isSettled = true,
      FrontLift::isDelayingClamp = false, FrontLift::clampState = false,
      FrontLift::lastClampState = !clampState, FrontLift::checkFrontLift = true;
 
-PID_constants up{100, 10, 45}, mid{30, 0.01, 12.5}, down{20, 0.01, 5};
-double FrontLift::downPos = 100, FrontLift::midPos = 1000, FrontLift::upPos = 2100;
+PID_constants up{40, 1, 20}, mid{30, 0.01, 12.5}, down{20, 0.01, 5};
+double FrontLift::downPos = 75, FrontLift::midPos = 1000, FrontLift::upPos = 1950;
 QTime FrontLift::delay = 100_ms, FrontLift::lastTimeCheck; 
 
 FrontLiftState FrontLift::getState() { return FrontLiftMode; }
@@ -153,7 +153,7 @@ void FrontLift::move(double target) {
 
   slewOutput = FrontLift_Slew.withLimit(12000).calculate(output);
 
-  // macro::print("Output: ", slewOutput);
+  macro::print("Output: ", slewOutput);
 
   arm.move_voltage(slewOutput);
 
@@ -181,15 +181,15 @@ void FrontLift::updateClamp() {
 
 Clamp::Clamp(std::uint8_t port, bool state){
   piston = new pros::ADIDigitalOut(port);
-  ClampState = state;
-  piston->set_value(ClampState);
+  clampState = state;
+  piston->set_value(clampState);
 }
 
 bool Clamp::getState(){
-  return ClampState;
+  return clampState;
 }
 
 void Clamp::toggle(){
- ClampState = !ClampState;
- piston->set_value(ClampState); 
+ clampState = !clampState;
+ piston->set_value(clampState); 
 }

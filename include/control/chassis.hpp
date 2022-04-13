@@ -89,7 +89,7 @@ class Chassis {
     /*
     Sets turn PID constants.
     */
-    Chassis& withTurnGains(double kP_ = 18, double kI_ = 0, double kD_ = 4.5);
+    Chassis& withTurnGains(double kP_ = 26, double kI_ = 0, double kD_ = 4.5);
 
     /*
     Sets the tolerance range for lateral movements.

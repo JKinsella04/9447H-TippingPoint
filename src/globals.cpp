@@ -22,8 +22,8 @@ pros::Motor LF(6, MOTOR_GEARSET_6, 1, MOTOR_ENCODER_COUNTS),
 pros::Imu L_Imu(17), R_Imu(18);
 
 // Pneumatic Definitions //
-pros::ADIDigitalOut frontClamp ('A'), //H
-                    backClamp('B'); //D
+pros::ADIDigitalOut frontClamp ('H'), //H
+                    backClamp('D'); //D
 
 // GPS Definition // 
 pros::Gps gps(4,0.1651,0.0762); 
