@@ -10,7 +10,7 @@ PositionTracker *BackLift::robot;
 bool BackLift::isRunning = false, BackLift::clampState = false, 
 BackLift::lastClampState = true, BackLift::checkDist = true, BackLift::isDelayingClamp = false;
 
-QTime BackLift::lastTimeCheck, BackLift::delay = 250 * millisecond;
+QTime BackLift::lastTimeCheck, BackLift::delay = 250_ms;
 bool checkJam = false;
 double BackLift::goalDist;
 
