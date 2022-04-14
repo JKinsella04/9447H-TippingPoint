@@ -153,7 +153,7 @@ void FrontLift::move(double target) {
 
   slewOutput = FrontLift_Slew.withLimit(12000).calculate(output);
 
-  macro::print("Output: ", slewOutput);
+  // macro::print("Output: ", slewOutput);
 
   arm.move_voltage(slewOutput);
 
@@ -177,19 +177,4 @@ void FrontLift::updateClamp() {
     frontClamp.set_value(clampState);
     lastClampState = clampState;
   }
-}
-
-Clamp::Clamp(std::uint8_t port, bool state){
-  piston = new pros::ADIDigitalOut(port);
-  clampState = state;
-  piston->set_value(clampState);
-}
-
-bool Clamp::getState(){
-  return clampState;
-}
-
-void Clamp::toggle(){
- clampState = !clampState;
- piston->set_value(clampState); 
 }

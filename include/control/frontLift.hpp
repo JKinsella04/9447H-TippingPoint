@@ -89,26 +89,3 @@ class FrontLift{
   void updateClamp();
 
 };
-
-class Clamp{
-  public:
-  // Constructor
-  /*
-  Set solenoid port and its initial state.
-  */
-  Clamp(std::uint8_t port, bool state);
-
-  /*
-  Return current clamp state.
-  */
-  bool getState();
-
-  /*
-  Toggle piston to opposite of current state.
-  */
-  void toggle();
-
-  private:
-  bool clampState;
-  pros::ADIDigitalOut * piston = nullptr;
-};

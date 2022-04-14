@@ -61,12 +61,8 @@ void opcontrol() {
 
   BackLift backLift;
   backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
-	// Clamp front('H', false);
-	// Clamp back('D', false);
 
   while (true) {
-		// if(master.get_digital(DIGITAL_A))front.toggle();
-		// if(master.get_digital(DIGITAL_B))back.toggle();
 	  double delay = (75000 - robot->getTime().convert(millisecond)) / 7.5;
     pros::delay(delay);
     if (delay > 0)
