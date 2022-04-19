@@ -64,7 +64,7 @@ void BackLift::run() {
     case BackLiftState::AUTON: {
       if (clampState && intake.get_efficiency() == 0) {
         conveyer::spin(-intakeSpeed);
-        pros::delay(300);
+        pros::delay(100);
         conveyer::spin(intakeSpeed);
         checkJam = false;
       }
