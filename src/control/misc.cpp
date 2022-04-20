@@ -186,4 +186,16 @@ double PID::calculate(double target, double current) {
 double PID::getError() { return error; }
 
 void PID::reset(){ output = target = current = error = integral = derivative = prevError = 0; }
+
+bool GoalCover::state = false;
+
+void GoalCover::toggle(){
+  state = !state;
+  cover.set_value(state);
+}
+
+bool GoalCover::getState(){
+  return state;
+}
+
 } // namespace macro

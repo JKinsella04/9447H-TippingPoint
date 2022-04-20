@@ -23,7 +23,8 @@ pros::Imu L_Imu(17), R_Imu(18);
 
 // Pneumatic Definitions //
 pros::ADIDigitalOut frontClamp ('H'), //H
-                    backClamp('D'); //D
+                    backClamp('D'),
+                    cover('B'); //D
 
 // GPS Definition // 
 pros::Gps gps(4,0.1651,0.0762); 

@@ -4,6 +4,7 @@
 #include "positionTracking.hpp"
 
 static Chassis chassis;
+static macro::GoalCover goalCover;
 PositionTracker *FrontLift::robot;
 
 FrontLiftState FrontLiftMode = FrontLiftState::DOWN;
@@ -135,6 +136,9 @@ void FrontLift::run() {
       // Clamp Control
       if (master.get_digital_new_press(DIGITAL_R1)) {
         toggleClamp().updateClamp();
+      }
+      if(master.get_digital_new_press(DIGITAL_A)){
+        goalCover.toggle();
       }
       break;
     }

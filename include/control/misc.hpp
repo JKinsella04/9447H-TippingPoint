@@ -136,4 +136,18 @@ private:
          prevError = 0, kP = 0, kI = 0, kD = 0, output = 0;
   bool calcErr = true;
 };
+
+class GoalCover{
+public:
+/*
+Toggle goal cover to opposite of current state.
+*/
+void toggle();
+/*
+Get current goal cover state.
+*/
+bool getState();
+private:
+static bool state;
+};
 } // namespace macro

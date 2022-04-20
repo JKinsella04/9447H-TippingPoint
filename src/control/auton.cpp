@@ -11,6 +11,7 @@
 static Chassis chassis;
 static BackLift backLift;
 static FrontLift frontLift;
+static macro::GoalCover goalCover;
 
 std::string Autonomous::name;
 
@@ -86,6 +87,8 @@ void Autonomous::runAuton() {
 
 // Autons
 void leftAWP() { // One yellow + left AWP
+  backLift.toggleClamp();
+  goalCover.toggle();
   frontLift.toggleClamp();
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
@@ -107,6 +110,8 @@ void leftAWP() { // One yellow + left AWP
 }
 
 void rightAWP(){ // One yellow + right AWP
+  backLift.toggleClamp();
+  goalCover.toggle();
   frontLift.toggleClamp();
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
@@ -149,6 +154,7 @@ void fullAwp() { // FULL AWP
   chassis.drive(-30_in, 0.15_ftps2, 0.15_ftps2, -8.51_ftps).withAngle(270_deg).withTol(5_in).withTurnTol(2_deg).waitUntilSettled();
   // AWP BONUS
   chassis.turn(280_deg).withTurnGains(36).waitUntilSettled();
+  goalCover.toggle();
   chassis.drive(32_in).waitUntilSettled();
   frontLift.toggleClamp().setState(FrontLiftState::UP, 100_ms).waitUntilClamped();
   chassis.turn(270_deg).withTurnGains(36).withTurnTol(10_deg).waitUntilSettled();
@@ -159,6 +165,7 @@ void fullAwp() { // FULL AWP
 }
 
 void middleGoal(){ // Gets Middle Neutral Goal.
+  goalCover.toggle();
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   frontLift.toggleClamp().setState(FrontLiftState::DOWN);
@@ -174,6 +181,7 @@ void middleGoal(){ // Gets Middle Neutral Goal.
 }
 
 void elim() { // Right Side Neutral Goals.
+  goalCover.toggle();
   chassis.setBrakeType(COAST);
   backLift.setState(BackLiftState::AUTON);
   frontLift.toggleClamp().setState(FrontLiftState::DOWN);
