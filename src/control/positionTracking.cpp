@@ -1,5 +1,6 @@
 #include "positionTracking.hpp"
 #include "misc.hpp"
+#include "okapi/api/units/QLength.hpp"
 #include "units.hpp"
 
   QLength Odom::currentL, Odom::currentR, Odom::deltaL, Odom::deltaR, Odom::lastL, Odom::lastR;
@@ -50,17 +51,22 @@ Odom *Odom::tarePosition() {
 }
 
 void Odom::run(){
+  // Reverse IMU data and convert to radians.
   double inertL = abs(L_Imu.get_heading() - 360) * PI / 180;
   double inertR = abs(R_Imu.get_heading() - 360) * PI / 180;
-
+  
+  // Filter and combine both IMU data.
   float x = (cos(inertL - offset.convert(radian) + PI) + cos(inertR - offset.convert(radian) + PI)) / 2;
   float y = (sin(inertL - offset.convert(radian) + PI) + sin(inertR - offset.convert(radian) + PI)) / 2;
-
+  
+  // Get current heading.
   theta = abs(atan2f(y, x) + PI) * radian;
-
+  
+  // Get current left and right drive positions.
   currentL = ((LF.get_position() + LM.get_position() + LB.get_position()) / 3) * tick;
   currentR = ((RF.get_position() + RM.get_position() + RB.get_position()) / 3) * tick;
 
+  // Get Change between current and previous position.
   deltaL = currentL - lastL;
   deltaR = currentR - lastR;
 
@@ -68,6 +74,7 @@ void Odom::run(){
   posX += (((deltaL.convert(inch) + deltaR.convert(inch)) / 2) * cos(theta.convert(radian))) * inch;
   posY += (((deltaL.convert(inch) + deltaR.convert(inch)) / 2) * sin(theta.convert(radian))) * inch;
 
+  // Store current position as last position for the next run.
   lastL = ((LF.get_position() + LM.get_position() + LB.get_position()) / 3) * tick;
   lastR = ((RF.get_position() + RM.get_position() + RB.get_position()) / 3) * tick;
 
