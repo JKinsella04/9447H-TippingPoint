@@ -61,7 +61,8 @@ void opcontrol() {
 
   BackLift backLift;
   backLift.setState(BackLiftState::OPCONTROL); // Controls Mobile Goal.
-
+	if ( !backLift.getClampState() && auton.getAuton() == "Skills") backLift.toggleClamp().updateClamp();
+	
   while (true) {
 	  double delay = (75000 - robot->getTime().convert(millisecond)) / 7.5;
     pros::delay(delay);

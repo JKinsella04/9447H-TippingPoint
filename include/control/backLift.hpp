@@ -37,6 +37,11 @@ class BackLift{
   */
   BackLift& delayClamp(QTime delay_);
 
+  /*
+  Check current clampState to lastClampState and update if needed.
+  */
+  void updateClamp();
+
   static void start(void * ignore);
 
   void run();
@@ -48,9 +53,5 @@ class BackLift{
   static QTime delay, lastTimeCheck;
   static double goalDist;
 
-  /*
-  Check current clampState to lastClampState and update if needed.
-  */
-  void updateClamp();
 };
 

@@ -38,3 +38,4 @@ void middleGoal();
 void elim();
 void skills();
 void test();
+void winPointSafety();
